@@ -1,15 +1,17 @@
 {
   "expo": {
-    "name": "breath-app",
+    "name": "Breath",
     "slug": "breath-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aviratna.breath"
     },
     "android": {
+      "package": "com.aviratna.breath",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -19,6 +21,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "78fb96e4-fe67-4c7d-827d-328a8674f131"
+      }
     }
   }
 }
