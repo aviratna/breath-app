@@ -11,3 +11,6 @@ npm-debug.*
 *.key
 *.mobileprovision
 *.orig.*
+
+# Google Play service account key (written by CI)
+google-service-account.json
