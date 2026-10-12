@@ -83,32 +83,46 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Check secrets
+        id: secrets
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
         run: |
           missing=0
-          [ -n "$EXPO_TOKEN" ] || { echo "::error::EXPO_TOKEN secret is not set."; missing=1; }
-          [ -n "$GOOGLE_SERVICE_ACCOUNT_JSON" ] || { echo "::error::GOOGLE_SERVICE_ACCOUNT_JSON secret is not set."; missing=1; }
-          [ "$missing" = 0 ] || { echo "See breath-app/PUBLISHING.md."; exit 1; }
+          [ -n "$EXPO_TOKEN" ] || { echo "::warning::EXPO_TOKEN secret is not set."; missing=1; }
+          [ -n "$GOOGLE_SERVICE_ACCOUNT_JSON" ] || { echo "::warning::GOOGLE_SERVICE_ACCOUNT_JSON secret is not set."; missing=1; }
+          if [ "$missing" = 1 ]; then
+            # On tag pushes, skip Play quietly until it's configured; manual runs should fail loudly.
+            if [ "${{ github.event_name }}" = push ]; then
+              echo "::notice::Skipping Google Play submission: secrets not configured (see breath-app/PUBLISHING.md)."
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "See breath-app/PUBLISHING.md."; exit 1
+          fi
 
-      - uses: actions/setup-node@v4
+      - if: steps.secrets.outputs.skip != 'true'
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: breath-app/package-lock.json
 
-      - uses: expo/expo-github-action@v8
+      - if: steps.secrets.outputs.skip != 'true'
+        uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - run: npm ci
+      - if: steps.secrets.outputs.skip != 'true'
+        run: npm ci
 
-      - name: Write Google Play service account key
+      - if: steps.secrets.outputs.skip != 'true'
+        name: Write Google Play service account key
         env:
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
         run: printf '%s' "$GOOGLE_SERVICE_ACCOUNT_JSON" > google-service-account.json
 
-      - name: Build AAB and submit to Google Play
+      - if: steps.secrets.outputs.skip != 'true'
+        name: Build AAB and submit to Google Play
         run: eas build --platform android --profile production --non-interactive --wait --auto-submit
