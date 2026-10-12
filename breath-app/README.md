@@ -29,3 +29,9 @@ or press `i` / `a` in the terminal for a simulator.
       state/BreathContext.js  shared app state (count, contacts, gifting)
       components/            PlateNumber, HoldToSendRow
       screens/                the 7 screens (see design/design_handoff_breath/README.md)
+
+## Android release
+
+Android builds run on EAS via GitHub Actions. Tag a version (`git tag v1.0.0 && git push --tags`)
+to publish a downloadable APK on GitHub Releases and submit to Google Play.
+See [PUBLISHING.md](PUBLISHING.md) for the one-time setup.
