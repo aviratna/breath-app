@@ -37,9 +37,10 @@ page to get the download link.
    content rating questionnaire, target audience, data safety form and a
    privacy policy URL.
 3. **The first upload must be manual** (a Google API limitation). Run the
-   workflow once with `play`. It builds the AAB, then the submit step fails.
-   Download the `.aab` from the build page on expo.dev, and upload it in
-   Play Console → Testing → Internal testing → Create release.
+   workflow with `play` (Actions → Android release → Run workflow). Without the
+   Google key it builds the AAB and attaches `breath.aab` to a GitHub pre-release
+   named "Breath Play Store bundle". Download it and upload it in Play Console →
+   Testing → Internal testing → Create new release.
 4. Create a service account so CI can upload later builds:
    - Google Cloud Console → IAM → Service accounts → create one → Keys →
      Add key → JSON. Enable the "Google Play Android Developer API" for the project.
