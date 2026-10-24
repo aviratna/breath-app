@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, SafeAreaView } from 'react-native';
 import { colors, fonts, spacing, radius } from '../theme/tokens';
+import { useBreath } from '../state/BreathContext';
 
 const STEPS = [
   {
@@ -12,7 +13,7 @@ const STEPS = [
   },
   {
     title: 'the problem is we think we have time.',
-    attribution: '— the Buddha',
+    attribution: '— often attributed to the Buddha',
     callout:
       'Your count is a contemplative estimate, not a medical or actuarial prediction. It is a device for attention, not a diagnosis.',
   },
@@ -26,12 +27,14 @@ const STEPS = [
 ];
 
 export default function OnboardingScreen({ navigation }) {
+  const { completeOnboarding } = useBreath();
   const [step, setStep] = useState(0);
   const s = STEPS[step];
   const isLast = step === STEPS.length - 1;
 
   function next() {
     if (isLast) {
+      completeOnboarding();
       navigation.replace('Home');
     } else {
       setStep(step + 1);

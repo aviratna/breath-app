@@ -14,8 +14,12 @@ breaths remaining in the day and lets you "gift a breath" to someone.
 - does not access your contacts, location, camera, microphone or files.
   The names shown in the app ("Mom", "Dad", and so on) are built-in examples;
 - does not use analytics, advertising or tracking SDKs;
-- does not send data over the network. Everything happens on your device, in
-  memory, and is cleared when the app is closed.
+- does not send data over the network. Everything happens on your device.
+
+The app saves a few settings on your device only, so it can remember them between
+launches: how many breaths you have gifted today, which names you have blocked, and
+whether you have seen the introduction. They never leave your phone and are deleted
+when you uninstall the app or clear its storage.
 
 Because no data is collected, none is shared with or sold to third parties.
 
