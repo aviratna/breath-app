@@ -81,8 +81,13 @@ jobs:
             open it, and allow "Install unknown apps" for your browser when prompted.
 
   play:
+    # Builds the signed AAB. With GOOGLE_SERVICE_ACCOUNT_JSON set it is also submitted to
+    # Google Play; without it, the AAB is attached to a GitHub pre-release so it can be
+    # uploaded by hand (Google requires the very first upload to be manual anyway).
     if: github.ref_type == 'tag' || inputs.target == 'play' || inputs.target == 'both'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -92,41 +97,54 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
         run: |
-          missing=0
-          [ -n "$EXPO_TOKEN" ] || { echo "::warning::EXPO_TOKEN secret is not set."; missing=1; }
-          [ -n "$GOOGLE_SERVICE_ACCOUNT_JSON" ] || { echo "::warning::GOOGLE_SERVICE_ACCOUNT_JSON secret is not set."; missing=1; }
-          if [ "$missing" = 1 ]; then
-            # On tag pushes, skip Play quietly until it's configured; manual runs should fail loudly.
-            if [ "${{ github.event_name }}" = push ]; then
-              echo "::notice::Skipping Google Play submission: secrets not configured (see breath-app/PUBLISHING.md)."
-              echo "skip=true" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-            echo "See breath-app/PUBLISHING.md."; exit 1
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error::EXPO_TOKEN secret is not set. See breath-app/PUBLISHING.md."
+            exit 1
+          fi
+          if [ -n "$GOOGLE_SERVICE_ACCOUNT_JSON" ]; then
+            echo "submit=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::GOOGLE_SERVICE_ACCOUNT_JSON not set: building the AAB without submitting it to Google Play."
           fi
 
-      - if: steps.secrets.outputs.skip != 'true'
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: breath-app/package-lock.json
 
-      - if: steps.secrets.outputs.skip != 'true'
-        uses: expo/expo-github-action@v8
+      - uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - if: steps.secrets.outputs.skip != 'true'
-        run: npm ci
+      - run: npm ci
 
-      - if: steps.secrets.outputs.skip != 'true'
-        name: Write Google Play service account key
+      - if: steps.secrets.outputs.submit == 'true'
+        name: Build AAB and submit to Google Play
         env:
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
-        run: printf '%s' "$GOOGLE_SERVICE_ACCOUNT_JSON" > google-service-account.json
+        run: |
+          printf '%s' "$GOOGLE_SERVICE_ACCOUNT_JSON" > google-service-account.json
+          eas build --platform android --profile production --non-interactive --wait --auto-submit
 
-      - if: steps.secrets.outputs.skip != 'true'
-        name: Build AAB and submit to Google Play
-        run: eas build --platform android --profile production --non-interactive --wait --auto-submit
+      - if: steps.secrets.outputs.submit != 'true'
+        name: Build AAB
+        run: |
+          eas build --platform android --profile production --non-interactive --wait --json > build.json
+          url=$(jq -r '.[0].artifacts.buildUrl' build.json)
+          echo "Build artifact: $url"
+          curl -fsSL "$url" -o breath.aab
+
+      - if: steps.secrets.outputs.submit != 'true'
+        name: Attach AAB to a GitHub pre-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-aab-${{ github.run_number }}
+          name: Breath Play Store bundle ${{ github.run_number }}
+          prerelease: true
+          make_latest: false
+          files: breath-app/breath.aab
+          body: |
+            Signed Android App Bundle for Google Play. Upload `breath.aab` in Play Console
+            → Testing → Internal testing → Create new release.
