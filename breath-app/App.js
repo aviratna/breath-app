@@ -17,15 +17,18 @@ import LockScreenPreview from './src/screens/LockScreenPreview';
 import ReceivingScreen from './src/screens/ReceivingScreen';
 import ShareCardScreen from './src/screens/ShareCardScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
+import NameScreen from './src/screens/NameScreen';
+import ConnectScreen from './src/screens/ConnectScreen';
 
 const Stack = createNativeStackNavigator();
 
 function Root() {
-  const { ready, hasOnboarded } = useBreath();
+  const { ready, hasOnboarded, me } = useBreath();
   if (!ready) return <Loading />;
+  const initial = !hasOnboarded ? 'Onboarding' : me ? 'Home' : 'Name';
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={hasOnboarded ? 'Home' : 'Onboarding'}>
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initial}>
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Sent" component={SentScreen} />
@@ -33,6 +36,8 @@ function Root() {
         <Stack.Screen name="Receiving" component={ReceivingScreen} />
         <Stack.Screen name="ShareCard" component={ShareCardScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
+        <Stack.Screen name="Name" component={NameScreen} />
+        <Stack.Screen name="Connect" component={ConnectScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

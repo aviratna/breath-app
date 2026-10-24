@@ -3,36 +3,46 @@
 _Last updated: 24 October 2026_
 
 Breath ("the app") is a contemplative app that shows an estimated count of
-breaths remaining in the day and lets you "gift a breath" to someone.
+breaths remaining in the day and lets you "gift a breath" to people you are
+connected with.
 
-## What the app collects
+## What we collect, and why
 
-**Nothing.** The current version of Breath:
+| Data | Why | Shared with |
+|---|---|---|
+| **The name you type in** | Shown to the people you connect with and gift breaths to | Only people you are connected with |
+| **An anonymous account ID** | Created automatically so the app knows which gifts are yours. No email, phone number or password is involved | No one |
+| **Your invite code** | Lets someone connect with you when you share it | Anyone you give it to |
+| **Your connections** (names of people you connected with, and whether you blocked them) | To show your list of people and enforce blocking | No one |
+| **Gifts you receive** (who sent it and when) | To show you the gift | No one |
 
-- does not ask you to create an account or sign in;
-- does not collect, store or transmit any personal information;
-- does not access your contacts, location, camera, microphone or files.
-  The names shown in the app ("Mom", "Dad", and so on) are built-in examples;
-- does not use analytics, advertising or tracking SDKs;
-- does not send data over the network. Everything happens on your device.
+This data is stored in Google Firebase (Cloud Firestore, Singapore region), which
+Breath uses as its server. It is encrypted in transit. It is not used for
+advertising, not sold, and not shared with any other party.
 
-The app saves a few settings on your device only, so it can remember them between
-launches: how many breaths you have gifted today, which names you have blocked, and
-whether you have seen the introduction. They never leave your phone and are deleted
-when you uninstall the app or clear its storage.
+Breath does **not** access your contacts, location, camera, microphone or photos,
+and does not use analytics, advertising or tracking SDKs.
 
-Because no data is collected, none is shared with or sold to third parties.
+The app also saves a few settings on your device only: how many breaths you have
+gifted today and whether you have seen the introduction. These never leave your
+phone and are removed when you uninstall the app.
+
+When you choose "share image", the app creates a picture of your card and hands it
+to the app you pick in the share sheet. Breath does not keep or upload it.
+
+## Deleting your data
+
+In the app: **Settings → Account → delete my account**. This permanently deletes
+your name, code, connections and received gifts from Breath's server, and your
+anonymous account. Details and other options: [account deletion](DELETE-ACCOUNT.md).
 
 ## Children
 
-Breath is not directed at children under 13 and collects no information from
-anyone, including children.
+Breath is not directed at children under 13.
 
 ## Changes
 
-If a future version adds features that need data (for example, sending a gift to
-a real person), this policy will be updated before that version is released, and
-the "Last updated" date above will change.
+If this policy changes, the "Last updated" date above will change.
 
 ## Contact
 

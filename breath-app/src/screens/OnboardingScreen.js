@@ -27,7 +27,7 @@ const STEPS = [
 ];
 
 export default function OnboardingScreen({ navigation }) {
-  const { completeOnboarding } = useBreath();
+  const { completeOnboarding, me } = useBreath();
   const [step, setStep] = useState(0);
   const s = STEPS[step];
   const isLast = step === STEPS.length - 1;
@@ -35,7 +35,7 @@ export default function OnboardingScreen({ navigation }) {
   function next() {
     if (isLast) {
       completeOnboarding();
-      navigation.replace('Home');
+      navigation.replace(me ? 'Home' : 'Name');
     } else {
       setStep(step + 1);
     }

@@ -1,0 +1,76 @@
+rules_version = '2';
+
+// Breath — Firestore security rules.
+// Paste into Firebase console → Firestore Database → Rules → Publish.
+//
+//   codes/{CODE}                    invite code → { uid, name }
+//   users/{uid}                     { name, code, createdAt }       (owner only)
+//   users/{uid}/connections/{other} { name, blocked, since }        (owner reads)
+//   users/{uid}/inbox/{giftId}      { from, fromName, createdAt, seen }
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function me() { return request.auth.uid; }
+    function validName(n) { return n is string && n.size() > 0 && n.size() <= 40; }
+    function connectionPath(owner, other) {
+      return /databases/$(database)/documents/users/$(owner)/connections/$(other);
+    }
+
+    // Looking up a single code is how you connect; listing all codes is not allowed.
+    match /codes/{code} {
+      allow get: if signedIn();
+      allow create: if signedIn()
+        && code.matches('^[A-Z0-9]{6}$')
+        && request.resource.data.keys().hasOnly(['uid', 'name'])
+        && request.resource.data.uid == me()
+        && validName(request.resource.data.name);
+      allow delete: if signedIn() && resource.data.uid == me();
+    }
+
+    match /users/{uid} {
+      allow get: if signedIn() && uid == me();
+      allow create, update: if signedIn() && uid == me()
+        && request.resource.data.keys().hasOnly(['name', 'code', 'createdAt'])
+        && validName(request.resource.data.name);
+      allow delete: if signedIn() && uid == me();
+
+      // Your list of people. Having someone's invite code lets you add yourself to their
+      // list (that's the invitation). Only the owner can block; a blocked person can't
+      // remove or re-create the entry to get around it.
+      match /connections/{other} {
+        allow read: if signedIn() && uid == me();
+        allow create: if signedIn()
+          && (uid == me() || other == me())
+          && other != uid
+          && request.resource.data.keys().hasOnly(['name', 'blocked', 'since'])
+          && validName(request.resource.data.name)
+          && request.resource.data.blocked == false
+          && request.resource.data.since == request.time;
+        allow update: if signedIn() && uid == me()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['blocked'])
+          && request.resource.data.blocked is bool;
+        allow delete: if signedIn()
+          && (uid == me() || (other == me() && resource.data.blocked == false));
+      }
+
+      // Gifts you received. Someone can send one only if you are connected and you
+      // haven't blocked them.
+      match /inbox/{giftId} {
+        allow list, get: if signedIn() && uid == me();
+        allow create: if signedIn()
+          && uid != me()
+          && exists(connectionPath(uid, me()))
+          && get(connectionPath(uid, me())).data.blocked == false
+          && request.resource.data.keys().hasOnly(['from', 'fromName', 'createdAt', 'seen'])
+          && request.resource.data.from == me()
+          && validName(request.resource.data.fromName)
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.seen == false;
+        allow update: if signedIn() && uid == me()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['seen']);
+        allow delete: if signedIn() && uid == me();
+      }
+    }
+  }
+}

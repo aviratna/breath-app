@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, SafeAreaView, ScrollView } from 'react-native';
 import { colors, fonts, spacing, radius } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
@@ -6,16 +6,22 @@ import PlateNumber from '../components/PlateNumber';
 import HoldToSendRow from '../components/HoldToSendRow';
 
 export default function HomeScreen({ navigation }) {
-  const { dailyBreathsRemaining, contacts, previewMode, sendGift, blockedContacts } = useBreath();
+  const { dailyBreathsRemaining, contacts, previewMode, sendGift, unseenGifts } = useBreath();
+  const [sendError, setSendError] = useState(null);
   const isCeleb = previewMode === 'celebrity';
   const tint = isCeleb ? colors.accent2Tint : colors.accentTint;
 
-  const visibleContacts = contacts.filter((c) => !blockedContacts[c.id]);
-
-  function handleSend(name) {
-    sendGift(name);
-    navigation.navigate('Sent', { name });
+  async function handleSend(contact) {
+    setSendError(null);
+    try {
+      await sendGift(contact);
+      navigation.navigate('Sent', { name: contact.name });
+    } catch (e) {
+      setSendError(`Couldn\u2019t reach ${contact.name}. Check your connection and try again.`);
+    }
   }
+
+  const latestUnseen = unseenGifts[0];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -32,6 +38,16 @@ export default function HomeScreen({ navigation }) {
 
         {isCeleb ? <Text style={styles.tagline}>one to one, not one to a million</Text> : null}
 
+        {latestUnseen ? (
+          <Pressable style={styles.giftBanner} onPress={() => navigation.navigate('Receiving', { giftId: latestUnseen.id })}>
+            <View style={styles.giftDot} />
+            <Text style={styles.giftBannerText}>
+              <Text style={{ fontFamily: fonts.heading }}>{latestUnseen.name}</Text> used one of their breaths thinking of you
+              {unseenGifts.length > 1 ? ` · ${unseenGifts.length - 1} more` : ''}
+            </Text>
+          </Pressable>
+        ) : null}
+
         <View style={styles.ringWrap}>
           <PlateNumber value={dailyBreathsRemaining} size={40} />
         </View>
@@ -45,11 +61,21 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </View>
 
-        <View style={{ width: '100%', gap: 8, marginBottom: 28 }}>
-          {visibleContacts.map((c) => (
-            <HoldToSendRow key={c.id} name={c.name} tint={tint} onComplete={handleSend} />
+        <View style={{ width: '100%', gap: 8, marginBottom: 12 }}>
+          {contacts.map((c) => (
+            <HoldToSendRow key={c.id} name={c.name} tint={tint} onComplete={() => handleSend(c)} />
           ))}
+          {contacts.length === 0 ? (
+            <Text style={styles.empty}>
+              No one here yet. Invite someone you love — when they join with your code, their name appears here.
+            </Text>
+          ) : null}
         </View>
+        {sendError ? <Text style={styles.error}>{sendError}</Text> : null}
+
+        <Pressable style={styles.addButton} onPress={() => navigation.navigate('Connect')}>
+          <Text style={styles.addLabel}>{contacts.length === 0 ? 'invite someone' : '+ add someone'}</Text>
+        </Pressable>
 
         <Pressable onPress={() => navigation.navigate('LockScreen')}>
           <Text style={styles.link}>preview lock screen</Text>
@@ -72,5 +98,12 @@ const styles = StyleSheet.create({
   sublabel: { fontFamily: fonts.body, fontSize: 12, color: colors.textFaint },
   giftTitle: { fontFamily: fonts.heading, fontSize: 13, color: colors.text, marginBottom: 2 },
   giftSub: { fontFamily: fonts.body, fontSize: 12.5, color: colors.textMuted, marginBottom: 14 },
+  giftBanner: { flexDirection: 'row', alignItems: 'center', gap: 10, width: '100%', backgroundColor: colors.accentTint, borderRadius: radius.md, padding: 12, marginBottom: 14 },
+  giftDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.accent },
+  giftBannerText: { flex: 1, fontFamily: fonts.body, fontSize: 13, lineHeight: 19, color: colors.text },
+  empty: { fontFamily: fonts.body, fontSize: 13.5, lineHeight: 21, color: colors.textMuted, paddingVertical: 8 },
+  error: { fontFamily: fonts.body, fontSize: 13, color: colors.accent2Deep, marginBottom: 12, alignSelf: 'flex-start' },
+  addButton: { borderWidth: 1, borderColor: colors.divider, borderRadius: radius.md, paddingVertical: 12, width: '100%', alignItems: 'center', marginBottom: 24 },
+  addLabel: { fontFamily: fonts.heading, fontSize: 13, color: colors.text },
   link: { fontFamily: fonts.body, fontSize: 13, color: colors.accent, textDecorationLine: 'underline' },
 });

@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Pressable, SafeAreaView, Animated } from 'react-native';
 import { colors, fonts } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
+import { relativeTime } from '../lib/api';
 
 export default function LockScreenPreview({ navigation }) {
   const { dailyBreathsRemaining, incomingGift, now } = useBreath();
@@ -38,12 +39,15 @@ export default function LockScreenPreview({ navigation }) {
           <Text style={styles.count}>{dailyBreathsRemaining.toLocaleString()}</Text>
         </View>
 
-        <Pressable style={styles.giftCard} onPress={() => navigation.navigate('Receiving')}>
-          <View style={styles.avatar} />
-          <Text style={styles.giftText}>
-            <Text style={{ fontWeight: '600' }}>{incomingGift.name}</Text> — {incomingGift.message}
-          </Text>
-        </Pressable>
+        {incomingGift ? (
+          <Pressable style={styles.giftCard} onPress={() => navigation.navigate('Receiving', { giftId: incomingGift.id })}>
+            <View style={styles.avatar} />
+            <Text style={styles.giftText}>
+              <Text style={{ fontWeight: '600' }}>{incomingGift.name}</Text> — used one of their breaths thinking of you ·{' '}
+              {relativeTime(incomingGift.createdAt, now)}
+            </Text>
+          </Pressable>
+        ) : null}
       </View>
     </SafeAreaView>
   );
