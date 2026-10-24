@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Join me on Breath</title>
+  <meta name="description" content="Someone you know would like to gift you a breath.">
+  <meta property="og:title" content="Gift me a breath on Breath">
+  <meta property="og:description" content="Tap to connect. No reply expected.">
+  <meta property="og:image" content="https://aviratna.github.io/breath-app/og.png">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="../favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="wordmark" href="../"><img src="../icon.png" alt="">Breath</a>
+    </header>
+    <main class="card">
+      <div id="valid" class="hide">
+        <h1>Someone would like to gift you a breath.</h1>
+        <p style="color:var(--muted)">Connect with them on Breath. No thread, no reply expected.</p>
+        <a class="btn" id="open" href="#">Open in Breath</a>
+        <div id="install">
+          <p class="small" style="margin-top:26px">Don't have Breath yet?</p>
+          <a class="btn ghost" href="https://github.com/aviratna/breath-app/releases/latest/download/breath.apk">Download for Android</a>
+          <ol class="how">
+            <li>Install and open Breath, and choose your name.</li>
+            <li>Come back and tap <b>Open in Breath</b>, or tap <b>+ add someone</b> and enter this code:</li>
+          </ol>
+          <div class="code" id="code"></div>
+        </div>
+      </div>
+      <div id="invalid" class="hide">
+        <h1>This invite link isn't complete.</h1>
+        <p style="color:var(--muted)">Ask for the link again, or for their 6-character code.</p>
+        <a class="btn ghost" href="../">About Breath</a>
+      </div>
+    </main>
+  </div>
+  <script>
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var code = (params.get('c') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (code.length !== 6) {
+        document.getElementById('invalid').className = '';
+        return;
+      }
+      document.getElementById('valid').className = '';
+      document.getElementById('code').textContent = code;
+
+      var android = /Android/i.test(navigator.userAgent);
+      var fallback = location.origin + location.pathname + '?c=' + code + '&nf=1';
+      // On Android, an intent link opens the app if it's installed and comes back here otherwise.
+      var appLink = android
+        ? 'intent://join/' + code + '#Intent;scheme=breath;package=com.aviratna.breath;S.browser_fallback_url=' +
+          encodeURIComponent(fallback) + ';end'
+        : 'breath://join/' + code;
+      document.getElementById('open').href = appLink;
+
+      // Try the app once automatically, unless we just came back because it isn't installed.
+      if (android && !params.get('nf')) location.href = appLink;
+    })();
+  </script>
+</body>
+</html>

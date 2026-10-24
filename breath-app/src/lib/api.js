@@ -23,6 +23,18 @@ export const CODE_LENGTH = 6;
 export const MAX_NAME = 40;
 
 export const APK_URL = 'https://github.com/aviratna/breath-app/releases/latest/download/breath.apk';
+export const SITE_URL = 'https://aviratna.github.io/breath-app';
+
+export function inviteLink(code) {
+  return `${SITE_URL}/join/?c=${code}`;
+}
+
+// Pulls an invite code out of breath://join/CODE or https://…/join/?c=CODE.
+export function codeFromUrl(url) {
+  if (!url) return null;
+  const m = url.match(/join\/?(?:\?c=)?([A-Za-z0-9]{6})(?![A-Za-z0-9])/);
+  return m ? normalizeCode(m[1]) : null;
+}
 
 // Errors whose message is written for the person using the app.
 function userError(message) {
