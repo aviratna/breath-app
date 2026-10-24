@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Breath: gift a breath to someone you love</title>
+  <meta name="description" content="A quiet daily count of your breaths, and a way to spend one on someone you love. No thread, no reply expected.">
+  <meta property="og:title" content="Breath">
+  <meta property="og:description" content="A quiet daily count of your breaths, and a way to gift one to someone you love.">
+  <meta property="og:image" content="https://aviratna.github.io/breath-app/og.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="wordmark" href="./"><img src="icon.png" alt="">Breath</a>
+      <nav><a href="#how">How it works</a><a href="#download">Download</a></nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <h1>Every being is born with a fixed number of breaths.</h1>
+          <p class="lede">Breath keeps a quiet count of the breaths left in your day, and lets you spend one of your own to tell someone you were thinking of them. No thread. No reply expected.</p>
+          <a class="btn" id="download" href="https://github.com/aviratna/breath-app/releases/latest/download/breath.apk">Download for Android</a>
+          <a class="btn ghost" href="#how">How it works</a>
+          <p class="small">Free. Android 7 or newer. Google Play listing coming soon.</p>
+        </div>
+        <div class="count" aria-label="Breaths remaining today">
+          <div class="plate" aria-hidden="true">
+            <span class="ghost" id="n0">9,015</span><span class="c" id="n1">9,015</span><span class="m" id="n2">9,015</span><span class="y" id="n3">9,015</span>
+          </div>
+          <div class="label">breaths remaining today</div>
+          <div class="sub">a contemplative estimate, not a prediction</div>
+        </div>
+      </section>
+
+      <section class="steps" id="how">
+        <h2>Say it without saying anything.</h2>
+        <div class="grid3">
+          <figure><img src="04-home.jpg" alt="Breath home screen: breaths remaining today, and a list of names" loading="lazy" width="540" height="960">
+            <figcaption><b>Hold a name.</b>Each gift costs you one of your own breaths. That's what makes it sincere.</figcaption></figure>
+          <figure><img src="05-sent.jpg" alt="Confirmation: You gave Mom a breath" loading="lazy" width="540" height="960">
+            <figcaption><b>It's sent.</b>No message to write, no conversation to keep up. They simply know.</figcaption></figure>
+          <figure><img src="08-receiving.jpg" alt="Receiving a breath: Mom used one of her breaths thinking of you" loading="lazy" width="540" height="960">
+            <figcaption><b>They receive it.</b>They can just smile, or breathe one back.</figcaption></figure>
+        </div>
+      </section>
+
+      <section class="quiet">
+        <div><h3>Just a name</h3><p>No email, phone number or password. Connect with people through an invite link.</p></div>
+        <div><h3>Quiet by design</h3><p>No feeds, no likes, no streaks, no ads, no tracking.</p></div>
+        <div><h3>Yours to control</h3><p>Only people you connect with can reach you. Block anyone, or delete your account at any time.</p></div>
+      </section>
+    </main>
+
+    <footer>
+      <a href="https://github.com/aviratna/breath-app/blob/main/PRIVACY.md">Privacy policy</a>
+      <a href="https://github.com/aviratna/breath-app/blob/main/DELETE-ACCOUNT.md">Delete your account</a>
+      <a href="https://github.com/aviratna/breath-app/issues">Contact</a>
+      <p>The count is a device for attention, not a medical or actuarial prediction.</p>
+    </footer>
+  </div>
+  <script>
+    // Same estimate as the app: 15 breaths a minute until local midnight.
+    (function () {
+      function update() {
+        var now = new Date();
+        var midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        var n = Math.floor((midnight - now) / 60000 * 15).toLocaleString();
+        for (var i = 0; i < 4; i++) document.getElementById('n' + i).textContent = n;
+      }
+      update();
+      setInterval(update, 4000);
+    })();
+  </script>
+</body>
+</html>

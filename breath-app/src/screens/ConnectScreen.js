@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, SafeAreaView, TextInput, ScrollView, Share, ActivityIndicator } from 'react-native';
 import { colors, fonts, radius } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
-import { APK_URL, CODE_LENGTH, errorMessage, normalizeCode } from '../lib/api';
+import { CODE_LENGTH, errorMessage, inviteLink, normalizeCode } from '../lib/api';
 
-export default function ConnectScreen({ navigation }) {
+export default function ConnectScreen({ route, navigation }) {
   const { me, connect } = useBreath();
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
@@ -13,19 +13,28 @@ export default function ConnectScreen({ navigation }) {
   async function invite() {
     try {
       await Share.share({
-        message: `Gift me a breath on Breath. My code is ${me.code}.\n\nGet the app (Android): ${APK_URL}`,
+        message: `Gift me a breath on Breath: ${inviteLink(me.code)}\n\n(or add me with the code ${me.code})`,
       });
     } catch (e) {
       // Share sheet dismissed or unavailable — nothing to do.
     }
   }
 
-  async function add() {
+  // Arrived from an invite link: connect straight away.
+  const linkCode = route.params?.code;
+  useEffect(() => {
+    if (linkCode) {
+      setCode(linkCode);
+      add(linkCode);
+    }
+  }, [linkCode]);
+
+  async function add(codeToUse = code) {
     if (busy) return;
     setBusy(true);
     setResult(null);
     try {
-      const other = await connect(code);
+      const other = await connect(codeToUse);
       setResult({
         ok: true,
         text: other.already ? `You’re already connected with ${other.name}.` : `You and ${other.name} are connected.`,
@@ -73,10 +82,10 @@ export default function ConnectScreen({ navigation }) {
           autoCapitalize="characters"
           autoCorrect={false}
           returnKeyType="done"
-          onSubmitEditing={add}
+          onSubmitEditing={() => add()}
         />
         {result ? <Text style={[styles.result, !result.ok && { color: colors.accent2Deep }]}>{result.text}</Text> : null}
-        <Pressable style={[styles.secondary, (!ready || busy) && { opacity: 0.5 }]} onPress={add} disabled={!ready || busy}>
+        <Pressable style={[styles.secondary, (!ready || busy) && { opacity: 0.5 }]} onPress={() => add()} disabled={!ready || busy}>
           {busy ? <ActivityIndicator color={colors.text} /> : <Text style={styles.secondaryLabel}>connect</Text>}
         </Pressable>
       </ScrollView>
