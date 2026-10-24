@@ -1,45 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 import { colors, fonts } from '../theme/tokens';
 
+// The day's breath count: a single, plain ink numeral.
 export default function PlateNumber({ value, size = 40, dark = false }) {
-  const display = value.toLocaleString();
-  if (dark) {
-    return (
-      <Text style={[styles.plain, { fontSize: size, color: colors.bg }]}>{display}</Text>
-    );
-  }
   return (
-    <View style={{ width: size * display.length * 0.62, height: size * 1.15 }}>
-      {[
-        { color: colors.accent, dx: 0, dy: 0, opacity: 1 },
-        { color: colors.accent2, dx: 1.2, dy: 0.9, opacity: 0.85 },
-        { color: colors.processYellow, dx: -1.1, dy: -0.8, opacity: 0.7 },
-      ].map((plate, i) => (
-        <Text
-          key={i}
-          style={[
-            styles.plain,
-            {
-              position: 'absolute',
-              fontSize: size,
-              color: plate.color,
-              opacity: plate.opacity,
-              left: plate.dx,
-              top: plate.dy,
-            },
-          ]}
-        >
-          {display}
-        </Text>
-      ))}
-    </View>
+    <Text style={[styles.number, { fontSize: size, color: dark ? colors.bg : colors.text }]}>
+      {value.toLocaleString()}
+    </Text>
   );
 }
 
 const styles = StyleSheet.create({
-  plain: {
+  number: {
     fontFamily: fonts.body,
-    letterSpacing: -0.3,
+    letterSpacing: -0.5,
   },
 });

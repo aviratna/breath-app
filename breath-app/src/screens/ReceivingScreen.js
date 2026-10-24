@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable, SafeAreaView } from 'react-native';
 import { colors, fonts, radius } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
 import { relativeTime } from '../lib/api';
+import Avatar from '../components/Avatar';
 
 export default function ReceivingScreen({ route, navigation }) {
   const { gifts, incomingGift, sendGift, markSeen, blockedContacts, now } = useBreath();
@@ -43,7 +44,9 @@ export default function ReceivingScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <View style={styles.avatar} />
+        <View style={{ marginBottom: 20 }}>
+          <Avatar name={gift.name} size={72} />
+        </View>
         <Text style={styles.name}>{gift.name}</Text>
         <Text style={styles.message}>used one of their breaths thinking of you</Text>
         <Text style={styles.timestamp}>{relativeTime(gift.createdAt, now)}</Text>
@@ -70,7 +73,6 @@ export default function ReceivingScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f6f3ee' },
   content: { flex: 1, alignItems: 'center', paddingTop: 80, paddingHorizontal: 30, paddingBottom: 32 },
-  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.surface, marginBottom: 20 },
   name: { fontFamily: fonts.heading, fontSize: 19, color: colors.text, marginBottom: 8 },
   message: { fontFamily: fonts.body, fontSize: 15, color: colors.textMuted, textAlign: 'center', lineHeight: 22, marginBottom: 6 },
   timestamp: { fontFamily: fonts.body, fontSize: 12, color: colors.textFaint, marginBottom: 18 },

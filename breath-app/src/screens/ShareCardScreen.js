@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, SafeAreaView, Alert, Platform } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
+import BreathMark from '../components/BreathMark';
 import { colors, fonts, radius } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
 
@@ -45,7 +46,9 @@ export default function ShareCardScreen({ route, navigation }) {
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <View ref={cardRef} collapsable={false} style={styles.card}>
-          <View style={styles.avatar} />
+          <View style={{ marginBottom: 18 }}>
+            <BreathMark size={44} />
+          </View>
           <Text style={styles.line}>{isCeleb ? `${name === 'you' ? 'They' : name} gave a fan a breath` : 'spent a breath thinking of you'}</Text>
 
           {lastGift ? (
@@ -85,7 +88,6 @@ const styles = StyleSheet.create({
     padding: 24,
     marginBottom: 24,
   },
-  avatar: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.surface, marginBottom: 18 },
   line: { fontFamily: fonts.heading, fontSize: 16, color: colors.text, textAlign: 'center', marginBottom: 20 },
   countRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14 },
   countText: { fontFamily: fonts.body, fontSize: 13, color: colors.textMuted },
