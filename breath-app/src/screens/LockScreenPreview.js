@@ -4,7 +4,9 @@ import { colors, fonts } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
 
 export default function LockScreenPreview({ navigation }) {
-  const { dailyBreathsRemaining, incomingGift } = useBreath();
+  const { dailyBreathsRemaining, incomingGift, now } = useBreath();
+  const time = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const date = now.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
   const pulse = useRef(new Animated.Value(0.35)).current;
 
   useEffect(() => {
@@ -25,8 +27,8 @@ export default function LockScreenPreview({ navigation }) {
       </Pressable>
 
       <View style={styles.content}>
-        <Text style={styles.time}>9:41</Text>
-        <Text style={styles.date}>Friday, September 6</Text>
+        <Text style={styles.time}>{time}</Text>
+        <Text style={styles.date}>{date}</Text>
 
         <View style={styles.countBlock}>
           <View style={styles.labelRow}>
