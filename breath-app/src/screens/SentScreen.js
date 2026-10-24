@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable, SafeAreaView } from 'react-native';
 import { colors, fonts, radius } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
+import BreathMark from '../components/BreathMark';
 
 export default function SentScreen({ route, navigation }) {
   const { name } = route.params;
@@ -11,7 +12,9 @@ export default function SentScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <View style={styles.circle} />
+        <View style={{ marginBottom: 26 }}>
+          <BreathMark size={56} />
+        </View>
         <Text style={styles.headline}>You gave {name} a breath.</Text>
         <Text style={styles.reassure}>
           {isCeleb
@@ -43,7 +46,6 @@ export default function SentScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   content: { flex: 1, alignItems: 'center', paddingTop: 90, paddingHorizontal: 30, paddingBottom: 32 },
-  circle: { width: 56, height: 56, borderRadius: 28, backgroundColor: colors.accentTint, borderWidth: 2, borderColor: colors.accent, marginBottom: 26 },
   headline: { fontFamily: fonts.heading, fontSize: 20, color: colors.text, textAlign: 'center', marginBottom: 12 },
   reassure: { fontFamily: fonts.body, fontSize: 14, color: colors.textMuted, textAlign: 'center', lineHeight: 21, marginBottom: 28 },
   countRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },

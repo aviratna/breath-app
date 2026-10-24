@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, StyleSheet, Animated, Pressable } from 'react-native';
 import { colors, fonts, radius, spacing } from '../theme/tokens';
+import Avatar from './Avatar';
 
 const HOLD_MS = 900;
 
@@ -40,7 +41,7 @@ export default function HoldToSendRow({ name, tint, onComplete }) {
     >
       <Animated.View style={[styles.fill, { width, backgroundColor: tint }]} />
       <View style={styles.content}>
-        <View style={styles.avatar} />
+        <Avatar name={name} size={36} />
         <Text style={styles.name}>{name}</Text>
       </View>
     </Pressable>
@@ -66,13 +67,6 @@ const styles = StyleSheet.create({
     gap: spacing[2],
     paddingVertical: 11,
     paddingHorizontal: 14,
-  },
-  avatar: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: colors.dark,
-    opacity: 0.12,
   },
   name: {
     fontFamily: fonts.body,

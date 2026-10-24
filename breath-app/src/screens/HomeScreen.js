@@ -49,7 +49,7 @@ export default function HomeScreen({ navigation }) {
         ) : null}
 
         <View style={styles.ringWrap}>
-          <PlateNumber value={dailyBreathsRemaining} size={40} />
+          <PlateNumber value={dailyBreathsRemaining} size={48} />
         </View>
         <Text style={styles.label}>breaths remaining today</Text>
         <Text style={styles.sublabel}>a contemplative estimate, not a prediction</Text>

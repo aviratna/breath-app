@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontFamily: fonts.heading, fontSize: 13, color: colors.textMuted, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 0.5, borderBottomColor: colors.divider },
   rowLabel: { fontFamily: fonts.body, fontSize: 15, color: colors.text },
-  action: { fontFamily: fonts.body, fontSize: 14, color: colors.accent2 },
+  action: { fontFamily: fonts.body, fontSize: 14, color: colors.textMuted, textDecorationLine: 'underline' },
   link: { fontFamily: fonts.body, fontSize: 13, color: colors.accent },
   note: { fontFamily: fonts.body, fontSize: 12.5, lineHeight: 18, color: colors.textFaint, marginTop: 10 },
   error: { fontFamily: fonts.body, fontSize: 13, color: colors.accent2Deep, marginBottom: 20 },

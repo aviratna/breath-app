@@ -33,9 +33,9 @@
           <a class="btn ghost" href="#how">How it works</a>
           <p class="small">Free. Android 7 or newer. Google Play listing coming soon.</p>
         </div>
-        <div class="count" aria-label="Breaths remaining today">
-          <div class="plate" aria-hidden="true">
-            <span class="ghost" id="n0">9,015</span><span class="c" id="n1">9,015</span><span class="m" id="n2">9,015</span><span class="y" id="n3">9,015</span>
+        <div class="count">
+          <div class="ring">
+            <div class="num" id="count">9,015</div>
           </div>
           <div class="label">breaths remaining today</div>
           <div class="sub">a contemplative estimate, not a prediction</div>
@@ -45,11 +45,11 @@
       <section class="steps" id="how">
         <h2>Say it without saying anything.</h2>
         <div class="grid3">
-          <figure><img src="04-home.jpg" alt="Breath home screen: breaths remaining today, and a list of names" loading="lazy" width="540" height="960">
+          <figure><img src="02-home.jpg" alt="Breath home screen: breaths remaining today, a received gift, and a list of people" loading="lazy" width="540" height="960">
             <figcaption><b>Hold a name.</b>Each gift costs you one of your own breaths. That's what makes it sincere.</figcaption></figure>
-          <figure><img src="05-sent.jpg" alt="Confirmation: You gave Mom a breath" loading="lazy" width="540" height="960">
+          <figure><img src="03-sent.jpg" alt="Confirmation: You gave Dad a breath" loading="lazy" width="540" height="960">
             <figcaption><b>It's sent.</b>No message to write, no conversation to keep up. They simply know.</figcaption></figure>
-          <figure><img src="08-receiving.jpg" alt="Receiving a breath: Mom used one of her breaths thinking of you" loading="lazy" width="540" height="960">
+          <figure><img src="04-receiving.jpg" alt="Receiving a breath: Mom used one of their breaths thinking of you" loading="lazy" width="540" height="960">
             <figcaption><b>They receive it.</b>They can just smile, or breathe one back.</figcaption></figure>
         </div>
       </section>
@@ -75,7 +75,7 @@
         var now = new Date();
         var midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
         var n = Math.floor((midnight - now) / 60000 * 15).toLocaleString();
-        for (var i = 0; i < 4; i++) document.getElementById('n' + i).textContent = n;
+        document.getElementById('count').textContent = n;
       }
       update();
       setInterval(update, 4000);
