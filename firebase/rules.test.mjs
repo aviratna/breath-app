@@ -1,5 +1,5 @@
 import { initializeTestEnvironment, assertSucceeds, assertFails } from '@firebase/rules-unit-testing';
-import { doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, collection, getDocs, query, orderBy, limit, serverTimestamp, writeBatch } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, collection, getDocs, query, orderBy, limit, serverTimestamp, writeBatch, where } from 'firebase/firestore';
 import fs from 'fs';
 import { setLogLevel } from 'firebase/firestore';
 setLogLevel('silent');
@@ -52,6 +52,15 @@ let ids; await env.withSecurityRulesDisabled(async c => { ids = (await getDocs(c
 await ok('alice marks seen', updateDoc(doc(A, 'users', 'alice', 'inbox', ids[0]), { seen: true }));
 await no('alice edits sender', updateDoc(doc(A, 'users', 'alice', 'inbox', ids[0]), { from: 'x' }));
 
+console.log('sent log');
+await ok('bob logs a breath he gave', addDoc(collection(B, 'users', 'bob', 'sent'), { to: 'alice', createdAt: ts() }));
+await ok('bob reads his sent log by month', getDocs(query(collection(B, 'users', 'bob', 'sent'), where('createdAt', '>=', new Date(0)))));
+await ok('alice reads her inbox by month', getDocs(query(collection(A, 'users', 'alice', 'inbox'), where('createdAt', '>=', new Date(0)), where('createdAt', '<', new Date(Date.now() + 864e5)))));
+await no('alice reads bob sent log', getDocs(collection(A, 'users', 'bob', 'sent')));
+await no('alice writes into bob sent log', addDoc(collection(A, 'users', 'bob', 'sent'), { to: 'alice', createdAt: ts() }));
+await no('backdated sent entry', addDoc(collection(B, 'users', 'bob', 'sent'), { to: 'alice', createdAt: new Date(0) }));
+await no('sent entry with extra fields', addDoc(collection(B, 'users', 'bob', 'sent'), { to: 'alice', createdAt: ts(), note: 'x' }));
+
 console.log('blocking');
 await no('bob changes the block flag in alice list', updateDoc(conn(B, 'alice', 'bob'), { blocked: true }));
 await ok('alice blocks bob', updateDoc(conn(A, 'alice', 'bob'), { blocked: true }));
@@ -97,6 +106,8 @@ await ok('bob removes himself from alice list', deleteDoc(conn(B, 'alice', 'bob'
 await ok('bob deletes own connection', deleteDoc(conn(B, 'bob', 'alice')));
 let bobInbox; await env.withSecurityRulesDisabled(async c => { bobInbox = (await getDocs(collection(c.firestore(), 'users', 'bob', 'inbox'))).docs.map(d => d.id); });
 for (const id of bobInbox) await ok('bob deletes received gift', deleteDoc(doc(B, 'users', 'bob', 'inbox', id)));
+const bobSent = await getDocs(collection(B, 'users', 'bob', 'sent'));
+for (const d of bobSent.docs) await ok('bob deletes his sent log', deleteDoc(d.ref));
 await no('mallory deletes bob code', deleteDoc(doc(M, 'codes', 'BBBBB2')));
 await ok('bob publishes invite name', setDoc(doc(B, 'invites', 'BBBBB2'), { name: 'Robert' }));
 await ok('bob deletes invite name', deleteDoc(doc(B, 'invites', 'BBBBB2')));

@@ -14,6 +14,7 @@ import {
   onSnapshot,
   serverTimestamp,
   writeBatch,
+  where,
 } from 'firebase/firestore';
 import { auth, db } from './firebase';
 
@@ -161,7 +162,23 @@ export async function sendGift(me, toUid) {
     createdAt: serverTimestamp(),
     seen: false,
   });
+  // Your own private note of it, for the month view you share with that person.
+  await addDoc(collection(db, 'users', me.uid, 'sent'), { to: toUid, createdAt: serverTimestamp() }).catch(() => {});
   return ref.id;
+}
+
+// Breaths between you and one person in [start, end): the days you gave (from your own
+// sent log) and the days they gave (from your inbox). Single-field ranges only, so no
+// composite index is needed; the person is filtered here.
+export async function breathsBetween(meUid, otherUid, start, end) {
+  const range = (col) => query(collection(db, 'users', meUid, col), where('createdAt', '>=', start), where('createdAt', '<', end));
+  const [sent, inbox] = await Promise.all([
+    getDocs(range('sent')).catch(() => ({ docs: [] })),
+    getDocs(range('inbox')),
+  ]);
+  const dates = (docs, key, value) =>
+    docs.map((d) => d.data()).filter((g) => g[key] === value && g.createdAt).map((g) => g.createdAt.toDate());
+  return { given: dates(sent.docs, 'to', otherUid), received: dates(inbox.docs, 'from', otherUid) };
 }
 
 // Changes your name everywhere it is shown: your profile, your invite code, and your entry
@@ -199,6 +216,8 @@ export async function deleteAccount(me) {
   }
   const inbox = await getDocs(collection(db, 'users', uid, 'inbox'));
   for (const g of inbox.docs) await deleteDoc(g.ref);
+  const sent = await getDocs(collection(db, 'users', uid, 'sent')).catch(() => ({ docs: [] }));
+  for (const g of sent.docs) await deleteDoc(g.ref).catch(() => {});
   if (me.code) await deleteDoc(doc(db, 'invites', me.code)).catch(() => {});
   if (me.code) await deleteDoc(doc(db, 'codes', me.code)).catch(() => {});
   await deleteDoc(doc(db, 'pushTokens', uid)).catch(() => {});

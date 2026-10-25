@@ -105,7 +105,7 @@ export default function HomeScreen({ navigation }) {
 
         <View style={styles.sectionHead}>
           <Text style={styles.sectionTitle}>Give a breath</Text>
-          {contacts.length ? <Text style={type.small}>{isPublic ? 'Hold a name · once each' : 'Hold a name'}</Text> : null}
+          {contacts.length ? <Text style={type.small}>{isPublic ? 'Hold a name · once each' : 'Tap to open · hold to give'}</Text> : null}
         </View>
 
         {showSearch ? (
@@ -143,6 +143,7 @@ export default function HomeScreen({ navigation }) {
                   onPressIn={() => hold.start(c)}
                   onPressOut={hold.cancel}
                   onGiveNow={() => give(c)}
+                  onOpen={() => navigation.navigate('Person', { id: c.id, name: c.name })}
                 />
               ))}
             </View>

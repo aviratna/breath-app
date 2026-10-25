@@ -8,6 +8,7 @@ rules_version = '2';
 //   users/{uid}                     { name, code, createdAt }       (owner only)
 //   users/{uid}/connections/{other} { name, blocked, since }        (owner reads)
 //   users/{uid}/inbox/{giftId}      { from, fromName, createdAt, seen }
+//   users/{uid}/sent/{id}           { to, createdAt }               (owner only: your own log)
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -86,6 +87,16 @@ service cloud.firestore {
           && validName(request.resource.data.name);
         allow delete: if signedIn()
           && (uid == me() || (other == me() && resource.data.blocked == false));
+      }
+
+      // Your private log of breaths you gave, for the month view with each person.
+      match /sent/{id} {
+        allow read, delete: if signedIn() && uid == me();
+        allow create: if signedIn() && uid == me()
+          && request.resource.data.keys().hasOnly(['to', 'createdAt'])
+          && request.resource.data.to is string
+          && request.resource.data.to.size() < 128
+          && request.resource.data.createdAt == request.time;
       }
 
       // Gifts you received. Someone can send one only if you are connected and you

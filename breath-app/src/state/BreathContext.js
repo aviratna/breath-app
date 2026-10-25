@@ -3,6 +3,7 @@ import { AppState } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as api from '../lib/api';
 import { notifyGift, registerForPush } from '../lib/push';
+import { updateWidget } from '../widget';
 
 // A resting adult breathes roughly 12–20 times a minute; 15 is the contemplative middle.
 // "Breaths remaining today" is that rate times the minutes left until local midnight,
@@ -115,7 +116,21 @@ export function BreathProvider({ children }) {
   useEffect(() => {
     const tick = () => setNow(new Date());
     const id = setInterval(tick, TICK_MS);
-    const sub = AppState.addEventListener('change', (s) => s === 'active' && tick());
+    // Breaths given from the home-screen widget are saved straight to storage; pick them up.
+    const reload = () =>
+      AsyncStorage.getItem(STORAGE_KEY)
+        .then((raw) => {
+          const saved = raw ? JSON.parse(raw) : null;
+          if (!saved) return;
+          if (saved.spent) setSpent((cur) => (saved.spent.date === cur.date && saved.spent.count > cur.count ? saved.spent : cur.date !== saved.spent.date && saved.spent.date > cur.date ? saved.spent : cur));
+          if (saved.lastGiven) setLastGiven((cur) => ({ ...cur, ...saved.lastGiven }));
+        })
+        .catch(() => {});
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s !== 'active') return;
+      tick();
+      reload();
+    });
     return () => {
       clearInterval(id);
       sub.remove();
@@ -146,6 +161,16 @@ export function BreathProvider({ children }) {
       return { id: c.id, name: c.name, favourite: !!favourites[c.id], lastReceived: received, lastGiven: given, lastActivity: last };
     });
   const unseenGifts = gifts.filter((g) => !g.seen);
+
+  // The home-screen widget shows up to three people: pinned first, then the most recent.
+  const widgetPeople = [...contacts]
+    .sort((a, b) => (b.favourite ? 1 : 0) - (a.favourite ? 1 : 0) || (b.lastActivity || 0) - (a.lastActivity || 0) || a.name.localeCompare(b.name))
+    .slice(0, 3)
+    .map((c) => ({ id: c.id, name: c.name }));
+  const widgetKey = JSON.stringify([me?.uid, me?.name, widgetPeople, spentToday, today]);
+  useEffect(() => {
+    if (storageReady && authReady) updateWidget({ me, people: widgetPeople });
+  }, [widgetKey, storageReady, authReady]);
   const incomingGift = gifts[0] || null;
 
   // Spends one of today's breaths and sends it. Throws if it couldn't be sent.
