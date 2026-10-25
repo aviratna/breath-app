@@ -3,13 +3,15 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { colors, fonts } from '../theme/tokens';
+import { useLiveBreaths } from '../lib/breathClock';
 import { useBreath } from '../state/BreathContext';
 import { relativeTime } from '../lib/api';
 import { BreathMark, IconButton } from '../components/ui';
 import BreathDial from '../components/BreathDial';
 
 export default function LockScreenPreview({ navigation }) {
-  const { dailyBreathsRemaining, dayProgress, incomingGift, now, gifts, givenToday } = useBreath();
+  const { dayProgress, incomingGift, now, gifts, givenToday } = useBreath();
+  const dailyBreathsRemaining = useLiveBreaths(givenToday);
   const receivedToday = gifts.filter((g) => g.createdAt.toDateString() === now.toDateString()).length;
   const time = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M$/i, '');
   const date = now.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' });

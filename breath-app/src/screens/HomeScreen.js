@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, fonts, radius, type } from '../theme/tokens';
+import { useLiveBreaths } from '../lib/breathClock';
 import { useBreath } from '../state/BreathContext';
 import { relativeTime } from '../lib/api';
 import { Avatar, BreathMark, Icon, IconButton, ProgressRing, SecondaryButton } from '../components/ui';
 import { PersonRow, useHoldToGive } from '../components/HoldToGive';
 
 export default function HomeScreen({ navigation }) {
-  const { dailyBreathsRemaining, dayProgress, contacts, previewMode, sendGift, unseenGifts, now, toggleFavourite } = useBreath();
+  const { dayProgress, contacts, previewMode, sendGift, unseenGifts, now, toggleFavourite, givenToday } = useBreath();
+  const dailyBreathsRemaining = useLiveBreaths(givenToday);
   const [sendError, setSendError] = useState(null);
   const [query, setQuery] = useState('');
   const isPublic = previewMode === 'celebrity';

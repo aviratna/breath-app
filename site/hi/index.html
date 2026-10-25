@@ -72,7 +72,7 @@
                 <div class="label">आज बची साँसें</div>
               </div>
             </div>
-            <figcaption class="dial-note">आपका दिन, अभी: हर बिंदु पंद्रह मिनट है। घेरे के साथ साँस लें — चार गिनती तक अंदर, छह तक बाहर।</figcaption>
+            <figcaption class="dial-note">आपका दिन, अभी: हर बिंदु पंद्रह मिनट है। हर बार जब घेरा साँस छोड़ता है, एक साँस बीत जाती है — लगभग पंद्रह प्रति मिनट, आराम की गति।</figcaption>
           </figure>
         </div>
       </section>
@@ -164,9 +164,12 @@
       var QUOTES = [{"original":"","script":"","text":"मुश्किल यह है कि तुम सोचते हो, तुम्हारे पास समय है।","source":"लोकप्रिय रूप से बुद्ध से जोड़ा जाता है; जैक कॉर्नफ़ील्ड की पुस्तक Buddha’s Little Instruction Book (1994) से"},{"original":"Pare ca na vijānanti, mayam ettha yamāmase …","script":"latn","text":"दूसरे यह नहीं जानते कि हम सब यहाँ मृत्यु की ओर बढ़ रहे हैं। जो यह जान लेते हैं, उनके झगड़े शांत हो जाते हैं।","source":"धम्मपद, गाथा 6 (पालि)"},{"original":"आयुः पल्लवकोणाग्रलम्बाम्बुकणभङ्गुरम्","script":"deva","text":"आयु पत्ते की नोक पर लटकती पानी की बूँद जैसी क्षणभंगुर है।","source":"योगवासिष्ठ, वैराग्य प्रकरण 1.14.1 (संस्कृत)"},{"original":"यावद्वायुः स्थितो देहे तावज्जीवनमुच्यते । …","script":"deva","text":"जब तक वायु देह में स्थित है, तब तक उसे जीवन कहते हैं। उसका निकल जाना ही मृत्यु है। इसलिए वायु को रोकना (प्राणायाम) सीखना चाहिए।","source":"हठयोग प्रदीपिका 2.3 (संस्कृत)"},{"original":"Aho vatāhaṃ tadantaraṃ jīveyyaṃ yadantaraṃ assasitvā vā passasāmi, passasitvā vā assasāmi.","script":"latn","text":"काश मैं उतनी देर जी सकूँ जितनी देर में साँस छोड़कर फिर साँस ली जाती है, या साँस लेकर फिर छोड़ी जाती है।","source":"अंगुत्तर निकाय 6.19, मरणस्सति सुत्त (पालि)"},{"original":"སང་དང་ཕྱི་མ་གང་སྔ་ཆ་མེད།","script":"tibt","text":"कल या अगला जन्म — पहले कौन आएगा, हम कभी नहीं जानते।","source":"तिब्बती कहावत"},{"original":"जातस्य हि ध्रुवो मृत्युर्ध्रुवं जन्म मृतस्य च । …","script":"deva","text":"जन्मे हुए की मृत्यु निश्चित है, और मरे हुए का जन्म निश्चित है। इसलिए जो टाला नहीं जा सकता, उस पर तुम्हें शोक नहीं करना चाहिए।","source":"भगवद्गीता 2.27 (संस्कृत)"}];
       var IN = "साँस लें", OUT = "साँस छोड़ें", LOCALE = "hi-IN";
       var dots = document.querySelectorAll('#dial .dots circle');
+      // One breath every 4 seconds on the wall clock (1.6 s in, 2.4 s out), exactly as in the
+      // app: the count falls by one as each out-breath ends.
+      var BREATH = 4000, INHALE = 1600;
       function left(now) {
         var midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-        return Math.floor((midnight - now) / 60000 * 15);
+        return Math.floor((midnight - now) / BREATH);
       }
       function draw() {
         var now = new Date();
@@ -182,14 +185,17 @@
         document.getElementById('dial').setAttribute('aria-label', "आज बची साँसें" + ': ' + n);
         document.getElementById('today').textContent = ((n) => `आज लगभग ${n} साँसें बची हैं।`)(n);
       }
+      var cue = document.getElementById('cue');
+      var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // Start the halo's 4 s CSS cycle at the clock's current point in the breath.
+      document.querySelector('#dial .halo').style.animationDelay = -(Date.now() % BREATH) + 'ms';
+      (function tick() {
+        var p = Date.now() % BREATH, inhaling = p < INHALE;
+        if (!still) cue.textContent = inhaling ? IN : OUT;
+        if (p < 50) draw();
+        setTimeout(tick, (inhaling ? INHALE : BREATH) - p + 5);
+      })();
       draw();
-      setInterval(draw, 4000);
-
-      // Breathe in for 4 seconds, out for 6 — in step with the halo's CSS animation.
-      var cue = document.getElementById('cue'), inhale = true;
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        (function tick() { cue.textContent = inhale ? IN : OUT; setTimeout(tick, inhale ? 4000 : 6000); inhale = !inhale; })();
-      }
 
       // A different line each day, the same for everyone that day.
       var now = new Date();

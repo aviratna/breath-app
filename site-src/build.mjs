@@ -50,7 +50,7 @@ const T = {
       lede: 'Breath keeps a quiet count of the breaths left in your day. Hold a name, and one of them goes to someone you’re thinking of. No messages. No reply expected.',
       fine: 'Free · No ads · No tracking · Google Play coming soon',
       dialLabel: 'breaths left today',
-      dialNote: 'Your day, live: each dot is a quarter hour. Breathe with the circle — in for four, out for six.',
+      dialNote: 'Your day, live: each dot is a quarter hour. Each time the circle breathes out, one breath is gone — about fifteen a minute, a resting pace.',
       in: 'breathe in', out: 'breathe out',
       dailyEyebrow: 'For today',
       dailyMore: 'Read the idea behind Breath →',
@@ -90,7 +90,7 @@ const T = {
       lede: 'Breath आपके दिन में बची साँसों की एक शांत गिनती रखता है। किसी नाम को दबाकर रखें, और उनमें से एक साँस उस व्यक्ति को चली जाती है जिसे आप याद कर रहे हैं। न संदेश, न जवाब की उम्मीद।',
       fine: 'मुफ़्त · कोई विज्ञापन नहीं · कोई ट्रैकिंग नहीं · Google Play पर जल्द',
       dialLabel: 'आज बची साँसें',
-      dialNote: 'आपका दिन, अभी: हर बिंदु पंद्रह मिनट है। घेरे के साथ साँस लें — चार गिनती तक अंदर, छह तक बाहर।',
+      dialNote: 'आपका दिन, अभी: हर बिंदु पंद्रह मिनट है। हर बार जब घेरा साँस छोड़ता है, एक साँस बीत जाती है — लगभग पंद्रह प्रति मिनट, आराम की गति।',
       in: 'साँस लें', out: 'साँस छोड़ें',
       dailyEyebrow: 'आज के लिए',
       dailyMore: 'Breath के पीछे का विचार पढ़ें →',
@@ -351,9 +351,12 @@ ${footer(lang, depth)}
       var QUOTES = ${JSON.stringify(quotes)};
       var IN = ${JSON.stringify(h.in)}, OUT = ${JSON.stringify(h.out)}, LOCALE = ${JSON.stringify(lang === 'hi' ? 'hi-IN' : undefined)};
       var dots = document.querySelectorAll('#dial .dots circle');
+      // One breath every 4 seconds on the wall clock (1.6 s in, 2.4 s out), exactly as in the
+      // app: the count falls by one as each out-breath ends.
+      var BREATH = 4000, INHALE = 1600;
       function left(now) {
         var midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-        return Math.floor((midnight - now) / 60000 * 15);
+        return Math.floor((midnight - now) / BREATH);
       }
       function draw() {
         var now = new Date();
@@ -369,14 +372,17 @@ ${footer(lang, depth)}
         document.getElementById('dial').setAttribute('aria-label', ${JSON.stringify(h.dialLabel)} + ': ' + n);
         document.getElementById('today').textContent = (${h.today.toString()})(n);
       }
+      var cue = document.getElementById('cue');
+      var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // Start the halo's 4 s CSS cycle at the clock's current point in the breath.
+      document.querySelector('#dial .halo').style.animationDelay = -(Date.now() % BREATH) + 'ms';
+      (function tick() {
+        var p = Date.now() % BREATH, inhaling = p < INHALE;
+        if (!still) cue.textContent = inhaling ? IN : OUT;
+        if (p < 50) draw();
+        setTimeout(tick, (inhaling ? INHALE : BREATH) - p + 5);
+      })();
       draw();
-      setInterval(draw, 4000);
-
-      // Breathe in for 4 seconds, out for 6 — in step with the halo's CSS animation.
-      var cue = document.getElementById('cue'), inhale = true;
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        (function tick() { cue.textContent = inhale ? IN : OUT; setTimeout(tick, inhale ? 4000 : 6000); inhale = !inhale; })();
-      }
 
       // A different line each day, the same for everyone that day.
       var now = new Date();

@@ -72,7 +72,7 @@
                 <div class="label">breaths left today</div>
               </div>
             </div>
-            <figcaption class="dial-note">Your day, live: each dot is a quarter hour. Breathe with the circle — in for four, out for six.</figcaption>
+            <figcaption class="dial-note">Your day, live: each dot is a quarter hour. Each time the circle breathes out, one breath is gone — about fifteen a minute, a resting pace.</figcaption>
           </figure>
         </div>
       </section>
@@ -164,9 +164,12 @@
       var QUOTES = [{"original":"","script":"","text":"The trouble is, you think you have time.","source":"Popularly attributed to the Buddha; from Jack Kornfield, Buddha’s Little Instruction Book (1994)"},{"original":"Pare ca na vijānanti, mayam ettha yamāmase …","script":"latn","text":"Others do not realise that we are all heading towards death. Those who do realise it — their quarrels come to rest.","source":"Dhammapada, verse 6 (Pāli)"},{"original":"आयुः पल्लवकोणाग्रलम्बाम्बुकणभङ्गुरम्","script":"deva","text":"Life is as fragile as a drop of water hanging at the tip of a leaf.","source":"Yoga Vāsiṣṭha, Vairāgya Prakaraṇa 1.14.1 (Sanskrit)"},{"original":"यावद्वायुः स्थितो देहे तावज्जीवनमुच्यते । …","script":"deva","text":"As long as breath remains in the body, that is called life. Death is its leaving. Therefore, one should learn to restrain the breath.","source":"Haṭha Yoga Pradīpikā 2.3 (Sanskrit)"},{"original":"Aho vatāhaṃ tadantaraṃ jīveyyaṃ yadantaraṃ assasitvā vā passasāmi, passasitvā vā assasāmi.","script":"latn","text":"If only I might live for the time it takes to breathe in after breathing out, or to breathe out after breathing in.","source":"Aṅguttara Nikāya 6.19, Maraṇassati Sutta (Pāli)"},{"original":"སང་དང་ཕྱི་མ་གང་སྔ་ཆ་མེད།","script":"tibt","text":"Tomorrow or the next life — which comes first, we never know.","source":"Tibetan saying"},{"original":"जातस्य हि ध्रुवो मृत्युर्ध्रुवं जन्म मृतस्य च । …","script":"deva","text":"For one who is born, death is certain; for one who dies, birth is certain. Over what cannot be avoided, you should not grieve.","source":"Bhagavad Gītā 2.27 (Sanskrit)"}];
       var IN = "breathe in", OUT = "breathe out", LOCALE = undefined;
       var dots = document.querySelectorAll('#dial .dots circle');
+      // One breath every 4 seconds on the wall clock (1.6 s in, 2.4 s out), exactly as in the
+      // app: the count falls by one as each out-breath ends.
+      var BREATH = 4000, INHALE = 1600;
       function left(now) {
         var midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-        return Math.floor((midnight - now) / 60000 * 15);
+        return Math.floor((midnight - now) / BREATH);
       }
       function draw() {
         var now = new Date();
@@ -182,14 +185,17 @@
         document.getElementById('dial').setAttribute('aria-label', "breaths left today" + ': ' + n);
         document.getElementById('today').textContent = ((n) => `About ${n} breaths left today.`)(n);
       }
+      var cue = document.getElementById('cue');
+      var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // Start the halo's 4 s CSS cycle at the clock's current point in the breath.
+      document.querySelector('#dial .halo').style.animationDelay = -(Date.now() % BREATH) + 'ms';
+      (function tick() {
+        var p = Date.now() % BREATH, inhaling = p < INHALE;
+        if (!still) cue.textContent = inhaling ? IN : OUT;
+        if (p < 50) draw();
+        setTimeout(tick, (inhaling ? INHALE : BREATH) - p + 5);
+      })();
       draw();
-      setInterval(draw, 4000);
-
-      // Breathe in for 4 seconds, out for 6 — in step with the halo's CSS animation.
-      var cue = document.getElementById('cue'), inhale = true;
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        (function tick() { cue.textContent = inhale ? IN : OUT; setTimeout(tick, inhale ? 4000 : 6000); inhale = !inhale; })();
-      }
 
       // A different line each day, the same for everyone that day.
       var now = new Date();

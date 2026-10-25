@@ -2,13 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Animated, Easing, StyleSheet, AccessibilityInfo } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { colors, fonts } from '../theme/tokens';
+import { breathPhase } from '../lib/breathClock';
 
 const DOTS = 96; // one per quarter hour
-const INHALE_MS = 4000;
-const EXHALE_MS = 6000;
 
 // The day as a ring of 96 quarter-hour dots: spent ones fade, remaining ones stay bright,
-// the current one glows. Inside, a soft halo breathes at a calm 4-in, 6-out pace.
+// the current one glows. Inside, a soft halo breathes once per counted breath (see breathClock).
 export default function BreathDial({ size = 300, progress, breathsLeft, dark = true }) {
   const fg = dark ? colors.moon : colors.ink;
   const muted = dark ? colors.moonMuted : colors.stone;
@@ -38,15 +37,20 @@ export default function BreathDial({ size = 300, progress, breathsLeft, dark = t
       breath.setValue(0.6);
       return undefined;
     }
+    // Follow the shared breath clock, so the halo, the cue and the count move together.
     let alive = true;
+    let timer;
     const cycle = () => {
       if (!alive) return;
-      setInhaling(true);
-      Animated.timing(breath, { toValue: 1, duration: INHALE_MS, easing: Easing.inOut(Easing.sin), useNativeDriver: true }).start(({ finished }) => {
-        if (!finished || !alive) return;
-        setInhaling(false);
-        Animated.timing(breath, { toValue: 0, duration: EXHALE_MS, easing: Easing.inOut(Easing.sin), useNativeDriver: true }).start(({ finished: f }) => f && cycle());
-      });
+      const { inhaling: inNow, remaining } = breathPhase();
+      setInhaling(inNow);
+      Animated.timing(breath, {
+        toValue: inNow ? 1 : 0,
+        duration: remaining,
+        easing: Easing.inOut(Easing.sin),
+        useNativeDriver: true,
+      }).start();
+      timer = setTimeout(cycle, remaining + 5);
     };
     cycle();
     const pulse = Animated.loop(
@@ -58,6 +62,7 @@ export default function BreathDial({ size = 300, progress, breathsLeft, dark = t
     pulse.start();
     return () => {
       alive = false;
+      clearTimeout(timer);
       breath.stopAnimation();
       pulse.stop();
     };
@@ -90,7 +95,7 @@ export default function BreathDial({ size = 300, progress, breathsLeft, dark = t
             backgroundColor: dark ? 'rgba(140,195,207,0.16)' : 'rgba(45,106,120,0.10)',
             borderColor: dark ? 'rgba(140,195,207,0.35)' : 'rgba(45,106,120,0.25)',
             opacity: breath.interpolate({ inputRange: [0, 1], outputRange: [0.45, 1] }),
-            transform: [{ scale: breath.interpolate({ inputRange: [0, 1], outputRange: [0.72, 1.12] }) }],
+            transform: [{ scale: breath.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.06] }) }],
           },
         ]}
       />
