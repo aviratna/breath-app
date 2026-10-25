@@ -214,6 +214,7 @@ export function BreathProvider({ children }) {
         me,
         dailyBreathsRemaining,
         dayProgress,
+        givenToday: spentToday,
         contacts,
         connections,
         previewMode,

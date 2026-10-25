@@ -5,10 +5,12 @@ import { StatusBar } from 'expo-status-bar';
 import { colors, fonts } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
 import { relativeTime } from '../lib/api';
-import { BreathMark, IconButton, ProgressRing } from '../components/ui';
+import { BreathMark, IconButton } from '../components/ui';
+import BreathDial from '../components/BreathDial';
 
 export default function LockScreenPreview({ navigation }) {
-  const { dailyBreathsRemaining, dayProgress, incomingGift, now } = useBreath();
+  const { dailyBreathsRemaining, dayProgress, incomingGift, now, gifts, givenToday } = useBreath();
+  const receivedToday = gifts.filter((g) => g.createdAt.toDateString() === now.toDateString()).length;
   const time = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M$/i, '');
   const date = now.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' });
 
@@ -24,13 +26,17 @@ export default function LockScreenPreview({ navigation }) {
         <Text style={styles.date}>{date}</Text>
         <Text style={styles.time}>{time}</Text>
 
-        <View style={styles.widget}>
-          <ProgressRing size={40} strokeWidth={2.5} progress={dayProgress} track="rgba(239,234,224,0.2)" color={colors.moon}>
-            <View style={styles.widgetDot} />
-          </ProgressRing>
-          <View>
-            <Text style={styles.widgetNum}>{dailyBreathsRemaining.toLocaleString()}</Text>
-            <Text style={styles.widgetLabel}>breaths left today</Text>
+        <View style={{ marginTop: 34 }}>
+          <BreathDial size={300} progress={dayProgress} breathsLeft={dailyBreathsRemaining} />
+        </View>
+        <View style={styles.summary}>
+          <View style={styles.summaryItem}>
+            <View style={styles.givenDot} />
+            <Text style={styles.summaryText}>{givenToday} given</Text>
+          </View>
+          <View style={styles.summaryItem}>
+            <View style={styles.receivedDot} />
+            <Text style={styles.summaryText}>{receivedToday} received</Text>
           </View>
         </View>
 
@@ -60,25 +66,14 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.night },
   top: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10 },
   previewTag: { fontFamily: fonts.ui, fontSize: 13, color: colors.moonMuted },
-  content: { flex: 1, alignItems: 'center', paddingTop: 40, paddingHorizontal: 20, paddingBottom: 24 },
+  content: { flex: 1, alignItems: 'center', paddingTop: 20, paddingHorizontal: 20, paddingBottom: 24 },
   date: { fontFamily: fonts.ui, fontSize: 17, color: colors.moonMuted },
-  time: { fontFamily: fonts.displayLight, fontSize: 96, lineHeight: 104, letterSpacing: -2, color: colors.moon, marginTop: 2 },
-  widget: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    marginTop: 26,
-    paddingVertical: 12,
-    paddingLeft: 12,
-    paddingRight: 20,
-    borderRadius: 999,
-    backgroundColor: 'rgba(239,234,224,0.07)',
-    borderWidth: 1,
-    borderColor: 'rgba(239,234,224,0.12)',
-  },
-  widgetDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: colors.tideLight },
-  widgetNum: { fontFamily: fonts.display, fontSize: 22, lineHeight: 26, color: colors.moon },
-  widgetLabel: { fontFamily: fonts.ui, fontSize: 12, color: colors.moonMuted },
+  time: { fontFamily: fonts.displayLight, fontSize: 84, lineHeight: 92, letterSpacing: -2, color: colors.moon, marginTop: 2 },
+  summary: { flexDirection: 'row', gap: 22, marginTop: 22 },
+  summaryItem: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  givenDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: colors.tideLight },
+  receivedDot: { width: 9, height: 9, borderRadius: 5, borderWidth: 2, borderColor: colors.tideLight },
+  summaryText: { fontFamily: fonts.ui, fontSize: 14, color: colors.moonMuted },
   note: {
     alignSelf: 'stretch',
     flexDirection: 'row',
