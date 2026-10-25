@@ -1,6 +1,5 @@
 // "The idea behind Breath" — the in-app screen and the website's philosophy page are both
-// built from this file (run `node site-src/build.mjs` after editing). The Hindi page's prose
-// lives in site-src/philosophy.hi.mjs; keep it in step.
+// built from this file (run `node site-src/build.mjs` after editing).
 //
 // Accuracy notes for editors:
 // - "Born with a fixed number of breaths" is a traditional teaching without a single

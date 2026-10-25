@@ -57,14 +57,12 @@ img { display: block; max-width: 100%; }
 a { color: var(--accent); }
 a:hover { color: var(--accent-strong); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
-[lang="hi"] body, body[lang="hi"] { font-family: var(--ui); }
 .skip { position: absolute; left: -9999px; top: 8px; background: var(--btn-bg); color: var(--btn-fg); padding: 10px 16px; border-radius: 8px; z-index: 10; }
 .skip:focus { left: 16px; }
 
 .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent); margin: 0 0 18px; }
 h1, h2, h3 { font-family: var(--display); font-weight: 400; margin: 0; }
-:lang(hi) h1, :lang(hi) h2, :lang(hi) h3 { font-family: var(--deva); line-height: 1.35; }
 
 /* Header */
 .top { display: flex; align-items: center; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; padding: 18px 0; }
@@ -74,7 +72,6 @@ h1, h2, h3 { font-family: var(--display); font-weight: 400; margin: 0; }
 .top nav { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
 .top nav a { color: var(--muted); text-decoration: none; font-size: 15px; padding: 12px 10px; }
 .top nav a:hover, .top nav a[aria-current="page"] { color: var(--text); }
-.top nav a.lang { border: 1px solid var(--border); border-radius: 999px; padding: 6px 12px; margin: 0 6px; font-size: 14px; }
 .top nav a.btn, .top nav a.btn:hover { color: var(--btn-fg); padding: 10px 20px; }
 
 /* Buttons */
@@ -94,7 +91,6 @@ h1, h2, h3 { font-family: var(--display); font-weight: 400; margin: 0; }
 .hero { display: flex; flex-wrap: wrap; align-items: center; gap: 48px; padding: 32px 0 88px; }
 .hero-copy { flex: 999 1 460px; min-width: 0; }
 .hero h1 { font-size: clamp(42px, 6vw, 76px); line-height: 1.04; letter-spacing: -1.5px; margin-bottom: 24px; }
-:lang(hi) .hero h1 { letter-spacing: 0; line-height: 1.25; }
 .lede { font-size: 19px; line-height: 1.6; color: var(--muted); max-width: 520px; margin: 0 0 34px; }
 .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
 .fine { margin-top: 20px; font-size: 14px; color: var(--muted); }
@@ -108,7 +104,6 @@ h1, h2, h3 { font-family: var(--display); font-weight: 400; margin: 0; }
   border: 1px solid rgba(140,195,207,0.35); animation: breathe 4s ease-in-out infinite; }
 .dial .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .dial .cue { font-family: var(--display); font-style: italic; font-size: clamp(20px, 3vw, 26px); min-height: 1.4em; }
-:lang(hi) .dial .cue { font-family: var(--deva); font-style: normal; font-size: clamp(18px, 2.6vw, 22px); }
 .dial .count { font-family: var(--display); font-weight: 300; font-size: clamp(34px, 5vw, 46px); letter-spacing: -1px; margin-top: 6px; line-height: 1.1; }
 .dial .label { font-size: 13px; color: var(--moon-muted); }
 .dial .dots .now { fill: var(--tide-light); animation: pulse 4s ease-in-out infinite; }
@@ -172,9 +167,7 @@ footer nav a { color: var(--muted); padding: 10px; }
 /* Long-form pages: philosophy, privacy, FAQ */
 .essay { max-width: 680px; margin: 0 auto; padding: 40px 24px 96px; }
 .essay h1 { font-size: clamp(40px, 6vw, 64px); line-height: 1.05; letter-spacing: -1.2px; margin-bottom: 22px; }
-:lang(hi) .essay h1 { letter-spacing: 0; line-height: 1.3; }
 .essay-lede { font-family: var(--display); font-size: 23px; line-height: 1.5; color: var(--text-2); margin: 0 0 16px; }
-:lang(hi) .essay-lede { font-family: var(--deva); font-size: 21px; }
 .essay section { border-top: 1px solid var(--line); margin-top: 48px; padding-top: 40px; }
 .essay h2 { font-size: 30px; line-height: 1.15; letter-spacing: -0.3px; margin-bottom: 16px; }
 .essay h3 { font-family: var(--ui); font-size: 18px; font-weight: 600; margin: 28px 0 8px; }
@@ -193,7 +186,6 @@ footer nav a { color: var(--muted); padding: 10px; }
 .essay blockquote .orig.latn { font-family: var(--display); font-style: italic; font-size: 20px; line-height: 1.55; }
 .essay blockquote .translit { font-family: var(--ui); font-style: italic; font-size: 14.5px; line-height: 1.6; color: var(--muted); margin: 0 0 10px; }
 .essay blockquote .translation { font-family: var(--display); font-style: italic; font-size: 26px; line-height: 1.35; color: var(--text); margin: 0 0 10px; }
-:lang(hi) .essay blockquote .translation { font-family: var(--deva); font-style: normal; font-size: 22px; }
 .essay cite, .essay .cite-line { font-style: normal; font-size: 13px; letter-spacing: 0.4px; color: var(--muted); }
 .essay section.founder { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 36px clamp(22px, 4vw, 40px); }
 .essay section.founder .eyebrow { margin-bottom: 10px; }
