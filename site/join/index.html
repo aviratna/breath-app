@@ -3,52 +3,56 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Join me on Breath</title>
-  <meta name="description" content="Someone you know would like to gift you a breath.">
-  <meta property="og:title" content="Gift me a breath on Breath">
-  <meta property="og:description" content="Tap to connect. No reply expected.">
+  <title>You’ve been given a breath · Breath</title>
+  <meta name="description" content="Someone you know would like to give you a breath.">
+  <meta name="theme-color" content="#F5F1EA">
+  <meta property="og:title" content="I’d like to give you a breath">
+  <meta property="og:description" content="Breath is a quiet way to tell someone you were thinking of them. Tap to connect.">
   <meta property="og:image" content="https://aviratna.github.io/breath-app/og.png">
   <meta name="robots" content="noindex">
-  <meta name="theme-color" content="#f3f2f2">
   <link rel="icon" href="../favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-  <div class="wrap">
+  <main class="join">
     <header class="top">
-      <a class="wordmark" href="../"><img src="../icon.png" alt="">Breath</a>
+      <a class="brand" href="../" aria-label="About Breath">
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="#1B1A18" stroke-width="1.4"/><circle cx="12" cy="12" r="2" fill="#2D6A78"/></svg>
+        <span style="font-size:22px">Breath</span>
+      </a>
     </header>
-    <main class="card">
-      <div id="valid" class="hide">
-        <h1>Someone would like to gift you a breath.</h1>
-        <p style="color:var(--muted)">Connect with them on Breath. No thread, no reply expected.</p>
+
+    <div id="valid" class="hide" style="display:flex;flex-direction:column;flex:1">
+      <div class="who">
+        <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="none" stroke="#2D6A78" stroke-width="1.6"/><circle cx="32" cy="32" r="4.5" fill="#2D6A78"/></svg>
+      </div>
+      <h1>Someone would like to give you a breath</h1>
+      <p>Breath is a quiet way to tell someone you were thinking of them. No messages, no reply expected.</p>
+
+      <div class="actions">
         <a class="btn" id="open" href="#">Open in Breath</a>
-        <div id="install">
-          <p class="small" style="margin-top:26px">Don't have Breath yet?</p>
-          <a class="btn ghost" href="https://github.com/aviratna/breath-app/releases/latest/download/breath.apk">Download for Android</a>
-          <ol class="how">
-            <li>Install and open Breath, and choose your name.</li>
-            <li>Come back and tap <b>Open in Breath</b>, or tap <b>+ add someone</b> and enter this code:</li>
-          </ol>
-          <div class="code" id="code"></div>
-        </div>
+        <a class="btn ghost" href="https://github.com/aviratna/breath-app/releases/latest/download/breath.apk">Get Breath for Android</a>
+        <div class="code-label">After installing, tap <b>Open in Breath</b> again, or enter this code</div>
+        <div class="code" id="code"></div>
       </div>
-      <div id="invalid" class="hide">
-        <h1>This invite link isn't complete.</h1>
-        <p style="color:var(--muted)">Ask for the link again, or for their 6-character code.</p>
-        <a class="btn ghost" href="../">About Breath</a>
-      </div>
-    </main>
-  </div>
+    </div>
+
+    <div id="invalid" class="hide" style="flex-direction:column;flex:1">
+      <h1>This invite link isn’t complete</h1>
+      <p>Ask for the link again, or for their six-letter code.</p>
+      <div class="actions"><a class="btn ghost" href="../">About Breath</a></div>
+    </div>
+  </main>
   <script>
     (function () {
       var params = new URLSearchParams(location.search);
       var code = (params.get('c') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
       if (code.length !== 6) {
         document.getElementById('invalid').className = '';
+        document.getElementById('invalid').style.display = 'flex';
         return;
       }
       document.getElementById('valid').className = '';

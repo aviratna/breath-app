@@ -1,52 +1,54 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Pressable, SafeAreaView, Animated } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { colors, fonts } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
 import { relativeTime } from '../lib/api';
-import Avatar from '../components/Avatar';
+import { BreathMark, IconButton, ProgressRing } from '../components/ui';
 
 export default function LockScreenPreview({ navigation }) {
-  const { dailyBreathsRemaining, incomingGift, now } = useBreath();
-  const time = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-  const date = now.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
-  const pulse = useRef(new Animated.Value(0.35)).current;
-
-  useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulse, { toValue: 1, duration: 2500, useNativeDriver: true }),
-        Animated.timing(pulse, { toValue: 0.35, duration: 2500, useNativeDriver: true }),
-      ])
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [pulse]);
+  const { dailyBreathsRemaining, dayProgress, incomingGift, now } = useBreath();
+  const time = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M$/i, '');
+  const date = now.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' });
 
   return (
     <SafeAreaView style={styles.container}>
-      <Pressable style={styles.exit} onPress={() => navigation.goBack()}>
-        <Text style={styles.exitLabel}>← exit preview</Text>
-      </Pressable>
+      <StatusBar style="light" />
+      <View style={styles.top}>
+        <IconButton name="back" label="Exit preview" color={colors.moon} onPress={() => navigation.goBack()} />
+        <Text style={styles.previewTag}>Lock screen preview</Text>
+      </View>
 
       <View style={styles.content}>
-        <Text style={styles.time}>{time}</Text>
         <Text style={styles.date}>{date}</Text>
+        <Text style={styles.time}>{time}</Text>
 
-        <View style={styles.countBlock}>
-          <View style={styles.labelRow}>
-            <Animated.View style={[styles.dot, { opacity: pulse }]} />
-            <Text style={styles.label}>breaths remaining today</Text>
+        <View style={styles.widget}>
+          <ProgressRing size={40} strokeWidth={2.5} progress={dayProgress} track="rgba(239,234,224,0.2)" color={colors.moon}>
+            <View style={styles.widgetDot} />
+          </ProgressRing>
+          <View>
+            <Text style={styles.widgetNum}>{dailyBreathsRemaining.toLocaleString()}</Text>
+            <Text style={styles.widgetLabel}>breaths left today</Text>
           </View>
-          <Text style={styles.count}>{dailyBreathsRemaining.toLocaleString()}</Text>
         </View>
 
+        <View style={{ flex: 1 }} />
+
         {incomingGift ? (
-          <Pressable style={styles.giftCard} onPress={() => navigation.navigate('Receiving', { giftId: incomingGift.id })}>
-            <Avatar name={incomingGift.name} size={32} dark />
-            <Text style={styles.giftText}>
-              <Text style={{ fontWeight: '600' }}>{incomingGift.name}</Text> — used one of their breaths thinking of you ·{' '}
-              {relativeTime(incomingGift.createdAt, now)}
-            </Text>
+          <Pressable style={styles.note} accessibilityRole="button" onPress={() => navigation.navigate('Receiving', { giftId: incomingGift.id })}>
+            <View style={styles.noteIcon}>
+              <BreathMark size={24} color={colors.moon} dot={colors.tideLight} />
+            </View>
+            <View style={{ flex: 1, minWidth: 0 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={styles.noteApp}>Breath</Text>
+                <Text style={styles.noteApp}>{relativeTime(incomingGift.createdAt, now)}</Text>
+              </View>
+              <Text style={styles.noteTitle}>{incomingGift.name} spent a breath on you</Text>
+              <Text style={styles.noteBody}>No reply needed.</Text>
+            </View>
           </Pressable>
         ) : null}
       </View>
@@ -55,17 +57,41 @@ export default function LockScreenPreview({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.dark },
-  exit: { paddingTop: 16, paddingLeft: 16 },
-  exitLabel: { fontFamily: fonts.body, fontSize: 13, color: colors.accent },
-  content: { flex: 1, alignItems: 'center', paddingTop: 60, paddingHorizontal: 24 },
-  time: { fontFamily: fonts.body, fontSize: 15, color: '#e8e3d5' },
-  date: { fontFamily: fonts.body, fontSize: 12, color: '#a8a293', marginTop: 2, marginBottom: 60 },
-  countBlock: { alignItems: 'center', marginBottom: 40 },
-  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
-  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.accent },
-  label: { fontFamily: fonts.heading, fontSize: 11, letterSpacing: 0.9, textTransform: 'uppercase', color: '#c9c2ab' },
-  count: { fontFamily: fonts.body, fontSize: 48, color: '#f3efe4' },
-  giftCard: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: 'rgba(255,255,255,0.06)', borderWidth: 0.5, borderColor: 'rgba(255,255,255,0.15)', borderRadius: 12, padding: 14, marginTop: 20, width: '100%' },
-  giftText: { flex: 1, fontFamily: fonts.body, fontSize: 12.5, color: '#c9c2ab', lineHeight: 18 },
+  container: { flex: 1, backgroundColor: colors.night },
+  top: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10 },
+  previewTag: { fontFamily: fonts.ui, fontSize: 13, color: colors.moonMuted },
+  content: { flex: 1, alignItems: 'center', paddingTop: 40, paddingHorizontal: 20, paddingBottom: 24 },
+  date: { fontFamily: fonts.ui, fontSize: 17, color: colors.moonMuted },
+  time: { fontFamily: fonts.displayLight, fontSize: 96, lineHeight: 104, letterSpacing: -2, color: colors.moon, marginTop: 2 },
+  widget: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    marginTop: 26,
+    paddingVertical: 12,
+    paddingLeft: 12,
+    paddingRight: 20,
+    borderRadius: 999,
+    backgroundColor: 'rgba(239,234,224,0.07)',
+    borderWidth: 1,
+    borderColor: 'rgba(239,234,224,0.12)',
+  },
+  widgetDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: colors.tideLight },
+  widgetNum: { fontFamily: fonts.display, fontSize: 22, lineHeight: 26, color: colors.moon },
+  widgetLabel: { fontFamily: fonts.ui, fontSize: 12, color: colors.moonMuted },
+  note: {
+    alignSelf: 'stretch',
+    flexDirection: 'row',
+    gap: 12,
+    padding: 14,
+    paddingHorizontal: 16,
+    borderRadius: 22,
+    backgroundColor: 'rgba(239,234,224,0.09)',
+    borderWidth: 1,
+    borderColor: 'rgba(239,234,224,0.12)',
+  },
+  noteIcon: { width: 38, height: 38, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(239,234,224,0.18)', alignItems: 'center', justifyContent: 'center' },
+  noteApp: { fontFamily: fonts.ui, fontSize: 13, color: colors.moonMuted },
+  noteTitle: { fontFamily: fonts.uiMedium, fontSize: 15, color: colors.moon, marginTop: 2 },
+  noteBody: { fontFamily: fonts.ui, fontSize: 14, color: colors.moonMuted, marginTop: 2 },
 });

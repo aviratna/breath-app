@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, SafeAreaView, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
-import { colors, fonts, radius } from '../theme/tokens';
+import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors, fonts, radius, type } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
 import { MAX_NAME, errorMessage } from '../lib/api';
+import { PrimaryButton } from '../components/ui';
 
 export default function NameScreen({ navigation }) {
   const { createProfile } = useBreath();
@@ -11,7 +13,7 @@ export default function NameScreen({ navigation }) {
   const [error, setError] = useState(null);
 
   async function submit() {
-    if (busy) return;
+    if (busy || !name.trim()) return;
     setBusy(true);
     setError(null);
     try {
@@ -27,40 +29,51 @@ export default function NameScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={styles.content} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <Text style={styles.wordmark}>Breath</Text>
-        <Text style={styles.title}>What should people call you?</Text>
-        <Text style={styles.body}>
-          This is the name the people you gift will see. No email, no password — just a name.
+        <Text style={[type.h1, { marginTop: 56, marginBottom: 14 }]}>What should people call you?</Text>
+        <Text style={[type.body, { marginBottom: 36 }]}>
+          Only the people you connect with will see it. No email, no phone number, no password.
+        </Text>
+
+        <Text nativeID="nameLabel" style={styles.label}>
+          Your name
         </Text>
         <TextInput
+          accessibilityLabelledBy="nameLabel"
+          accessibilityLabel="Your name"
           style={styles.input}
           value={name}
           onChangeText={setName}
-          placeholder="Your name"
-          placeholderTextColor={colors.textFaint}
+          placeholder="Maya"
+          placeholderTextColor="#9C968F"
           maxLength={MAX_NAME}
           autoFocus
+          autoCapitalize="words"
           returnKeyType="done"
           onSubmitEditing={submit}
         />
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {error ? <Text style={styles.error}>{error}</Text> : <Text style={[type.small, { marginTop: 10 }]}>Use the name your people know you by.</Text>}
+
         <View style={{ flex: 1 }} />
-        <Pressable style={[styles.button, (!name.trim() || busy) && { opacity: 0.5 }]} onPress={submit} disabled={!name.trim() || busy}>
-          {busy ? <ActivityIndicator color={colors.bg} /> : <Text style={styles.buttonLabel}>Continue</Text>}
-        </Pressable>
+        <PrimaryButton label="Continue" onPress={submit} busy={busy} disabled={!name.trim()} />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  content: { flex: 1, paddingTop: 52, paddingHorizontal: 30, paddingBottom: 32 },
-  wordmark: { fontFamily: fonts.headingItalic, fontSize: 30, color: colors.text, marginBottom: 40 },
-  title: { fontFamily: fonts.heading, fontSize: 22, lineHeight: 29, color: colors.text, marginBottom: 14 },
-  body: { fontFamily: fonts.body, fontSize: 15, lineHeight: 24, color: 'rgba(32,30,29,0.75)', marginBottom: 24 },
-  input: { fontFamily: fonts.body, fontSize: 18, color: colors.text, borderBottomWidth: 1, borderBottomColor: colors.text, paddingVertical: 10 },
-  error: { fontFamily: fonts.body, fontSize: 13, color: colors.accent2Deep, marginTop: 10 },
-  button: { backgroundColor: colors.text, borderRadius: radius.md, padding: 15, alignItems: 'center' },
-  buttonLabel: { fontFamily: fonts.heading, fontSize: 14, color: colors.bg },
+  container: { flex: 1, backgroundColor: colors.linen },
+  content: { flex: 1, paddingHorizontal: 28, paddingBottom: 20 },
+  label: { fontFamily: fonts.uiMedium, fontSize: 13, color: colors.stone, marginBottom: 8 },
+  input: {
+    fontFamily: fonts.display,
+    fontSize: 26,
+    color: colors.ink,
+    backgroundColor: colors.paper,
+    borderWidth: 1.5,
+    borderColor: colors.ink,
+    borderRadius: radius.input,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  error: { fontFamily: fonts.ui, fontSize: 13, color: colors.danger, marginTop: 10 },
 });

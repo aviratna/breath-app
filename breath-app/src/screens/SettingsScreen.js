@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, SafeAreaView, ScrollView, Switch } from 'react-native';
-import { colors, fonts } from '../theme/tokens';
+import { View, Text, StyleSheet, Pressable, ScrollView, Switch, Linking } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors, fonts, type } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
-import { errorMessage } from '../lib/api';
+import { errorMessage, SITE_URL } from '../lib/api';
+import { Avatar, Card, Icon, ScreenHeader } from '../components/ui';
+
+const PRIVACY_URL = 'https://github.com/aviratna/breath-app/blob/main/PRIVACY.md';
 
 export default function SettingsScreen({ navigation }) {
   const { me, connections, toggleBlock, previewMode, setPreviewMode, deleteAccount } = useBreath();
@@ -39,65 +43,73 @@ export default function SettingsScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <Pressable onPress={() => navigation.goBack()}>
-            <Text style={styles.back}>‹</Text>
-          </Pressable>
-          <Text style={styles.title}>Settings</Text>
-        </View>
+        <ScreenHeader title="Settings" onBack={() => navigation.goBack()} />
 
         {me ? (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>You</Text>
-            <View style={styles.row}>
-              <Text style={styles.rowLabel}>{me.name}</Text>
-              <Pressable onPress={() => navigation.navigate('Connect')}>
-                <Text style={styles.link}>code {me.code}</Text>
-              </Pressable>
+          <Card style={styles.profile}>
+            <Avatar name={me.name} size={52} tone="tide" />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.profileName}>{me.name}</Text>
+              <Text style={type.small}>Invite code {me.code}</Text>
             </View>
-          </View>
+            <Pressable accessibilityRole="button" onPress={() => navigation.navigate('Connect')} style={styles.smallBtn}>
+              <Text style={styles.smallBtnLabel}>Invite</Text>
+            </Pressable>
+          </Card>
         ) : null}
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Preview mode</Text>
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>Public figure account</Text>
-            <Switch
-              value={previewMode === 'celebrity'}
-              onValueChange={(v) => setPreviewMode(v ? 'celebrity' : 'personal')}
-            />
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Privacy</Text>
-          {connections.map((c) => (
-            <View key={c.id} style={styles.row}>
-              <Text style={[styles.rowLabel, c.blocked && { color: colors.textFaint }]}>{c.name}</Text>
-              <Pressable onPress={() => onBlock(c.id)}>
-                <Text style={styles.action}>{c.blocked ? 'Unblock' : 'Block'}</Text>
+        <Text style={[type.label, styles.sectionLabel]}>Your people</Text>
+        <Card style={{ overflow: 'hidden' }}>
+          {connections.map((c, i) => (
+            <View key={c.id} style={[styles.row, i < connections.length - 1 && styles.rowDivider]}>
+              <Text style={[styles.rowLabel, c.blocked && { color: colors.stone }]}>{c.name}</Text>
+              <Pressable accessibilityRole="button" accessibilityLabel={`${c.blocked ? 'Unblock' : 'Block'} ${c.name}`} onPress={() => onBlock(c.id)} style={styles.rowAction}>
+                <Text style={styles.rowActionLabel}>{c.blocked ? 'Unblock' : 'Block'}</Text>
               </Pressable>
             </View>
           ))}
-          {connections.length === 0 ? <Text style={styles.note}>No one yet.</Text> : null}
-          <Text style={styles.note}>Blocked people can't send you breaths, and you won't see their earlier ones.</Text>
-        </View>
+          {connections.length === 0 ? (
+            <View style={styles.row}>
+              <Text style={type.small}>No one yet.</Text>
+            </View>
+          ) : null}
+        </Card>
+        <Text style={[type.small, styles.note]}>Blocked people can{'’'}t give you breaths. They aren{'’'}t told.</Text>
+
+        <Card style={{ overflow: 'hidden', marginTop: 18 }}>
+          <View style={[styles.row, styles.rowDivider]}>
+            <Text style={styles.rowLabel}>Public figure mode</Text>
+            <Switch
+              accessibilityLabel="Public figure mode"
+              value={previewMode === 'celebrity'}
+              onValueChange={(v) => setPreviewMode(v ? 'celebrity' : 'personal')}
+              trackColor={{ true: colors.tide, false: colors.mist }}
+              thumbColor={colors.paper}
+            />
+          </View>
+          <Pressable style={[styles.row, styles.rowDivider]} onPress={() => navigation.replace('Onboarding')}>
+            <Text style={styles.rowLabel}>Replay the introduction</Text>
+            <Icon name="chevron" size={16} color={colors.stone} />
+          </Pressable>
+          <Pressable style={[styles.row, styles.rowDivider]} onPress={() => Linking.openURL(SITE_URL)}>
+            <Text style={styles.rowLabel}>About Breath</Text>
+            <Icon name="external" size={16} color={colors.stone} />
+          </Pressable>
+          <Pressable style={styles.row} onPress={() => Linking.openURL(PRIVACY_URL)}>
+            <Text style={styles.rowLabel}>Privacy policy</Text>
+            <Icon name="external" size={16} color={colors.stone} />
+          </Pressable>
+        </Card>
+
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
-        <Pressable onPress={() => navigation.replace('Onboarding')}>
-          <Text style={styles.replay}>replay onboarding</Text>
-        </Pressable>
-
         {me ? (
-          <View style={[styles.section, { marginTop: 40 }]}>
-            <Text style={styles.sectionTitle}>Account</Text>
-            <Pressable onPress={onDelete} disabled={busy}>
-              <Text style={styles.danger}>
-                {busy ? 'deleting\u2026' : confirmDelete ? 'tap again to delete everything' : 'delete my account'}
-              </Text>
+          <View style={{ marginTop: 34, alignItems: 'center' }}>
+            <Pressable accessibilityRole="button" onPress={onDelete} disabled={busy} style={{ padding: 12 }}>
+              <Text style={styles.danger}>{busy ? 'Deleting…' : confirmDelete ? 'Tap again to delete everything' : 'Delete my account'}</Text>
             </Pressable>
-            <Text style={styles.note}>
-              Removes your name, code, connections and received breaths from Breath's servers. This can't be undone.
+            <Text style={[type.small, { textAlign: 'center', paddingHorizontal: 12 }]}>
+              Removes your name, code, connections and received breaths from Breath{'’'}s servers. This can{'’'}t be undone.
             </Text>
           </View>
         ) : null}
@@ -107,19 +119,19 @@ export default function SettingsScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  content: { paddingTop: 52, paddingHorizontal: 24, paddingBottom: 32 },
-  header: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 30 },
-  back: { fontSize: 24, color: colors.text },
-  title: { fontFamily: fonts.heading, fontSize: 18, color: colors.text },
-  section: { marginBottom: 30 },
-  sectionTitle: { fontFamily: fonts.heading, fontSize: 13, color: colors.textMuted, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 0.5, borderBottomColor: colors.divider },
-  rowLabel: { fontFamily: fonts.body, fontSize: 15, color: colors.text },
-  action: { fontFamily: fonts.body, fontSize: 14, color: colors.textMuted, textDecorationLine: 'underline' },
-  link: { fontFamily: fonts.body, fontSize: 13, color: colors.accent },
-  note: { fontFamily: fonts.body, fontSize: 12.5, lineHeight: 18, color: colors.textFaint, marginTop: 10 },
-  error: { fontFamily: fonts.body, fontSize: 13, color: colors.accent2Deep, marginBottom: 20 },
-  danger: { fontFamily: fonts.body, fontSize: 14, color: colors.accent2Deep, textDecorationLine: 'underline' },
-  replay: { fontFamily: fonts.body, fontSize: 13, color: colors.accent, textDecorationLine: 'underline' },
+  container: { flex: 1, backgroundColor: colors.linen },
+  content: { paddingTop: 4, paddingHorizontal: 20, paddingBottom: 32 },
+  profile: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, marginBottom: 22 },
+  profileName: { fontFamily: fonts.display, fontSize: 21, color: colors.ink },
+  smallBtn: { paddingVertical: 10, paddingHorizontal: 14, borderRadius: 999, borderWidth: 1, borderColor: colors.border },
+  smallBtnLabel: { fontFamily: fonts.uiMedium, fontSize: 14, color: colors.ink },
+  sectionLabel: { marginHorizontal: 4, marginBottom: 8 },
+  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 54, paddingLeft: 16, paddingRight: 8 },
+  rowDivider: { borderBottomWidth: 1, borderBottomColor: colors.hairline },
+  rowLabel: { fontFamily: fonts.ui, fontSize: 15, color: colors.ink, flex: 1 },
+  rowAction: { paddingVertical: 12, paddingHorizontal: 10 },
+  rowActionLabel: { fontFamily: fonts.ui, fontSize: 14, color: colors.stone },
+  note: { marginHorizontal: 4, marginTop: 8 },
+  error: { fontFamily: fonts.ui, fontSize: 13, color: colors.danger, marginTop: 14 },
+  danger: { fontFamily: fonts.uiMedium, fontSize: 15, color: colors.danger },
 });

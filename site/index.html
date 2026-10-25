@@ -3,82 +3,127 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Breath: gift a breath to someone you love</title>
-  <meta name="description" content="A quiet daily count of your breaths, and a way to spend one on someone you love. No thread, no reply expected.">
+  <title>Breath: spend a breath on someone you love</title>
+  <meta name="description" content="Breath keeps a quiet count of the breaths left in your day. Hold a name, and one of them goes to someone you’re thinking of. No messages. No reply expected.">
+  <meta name="theme-color" content="#F5F1EA">
   <meta property="og:title" content="Breath">
-  <meta property="og:description" content="A quiet daily count of your breaths, and a way to gift one to someone you love.">
+  <meta property="og:description" content="Spend a breath on someone you love. No messages. No reply expected.">
   <meta property="og:image" content="https://aviratna.github.io/breath-app/og.png">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#f3f2f2">
   <link rel="icon" href="favicon.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="wrap">
     <header class="top">
-      <a class="wordmark" href="./"><img src="icon.png" alt="">Breath</a>
-      <nav><a href="#how">How it works</a><a href="#download">Download</a></nav>
+      <a class="brand" href="./" aria-label="Breath home">
+        <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="#1B1A18" stroke-width="1.3"/><circle cx="12" cy="12" r="2" fill="#2D6A78"/></svg>
+        <span>Breath</span>
+      </a>
+      <nav aria-label="Main">
+        <a href="#how">How it works</a>
+        <a href="#privacy">Privacy</a>
+        <a class="btn small" href="#download">Download</a>
+      </nav>
     </header>
 
     <main>
       <section class="hero">
-        <div>
-          <h1>Every being is born with a fixed number of breaths.</h1>
-          <p class="lede">Breath keeps a quiet count of the breaths left in your day, and lets you spend one of your own to tell someone you were thinking of them. No thread. No reply expected.</p>
-          <a class="btn" id="download" href="https://github.com/aviratna/breath-app/releases/latest/download/breath.apk">Download for Android</a>
-          <a class="btn ghost" href="#how">How it works</a>
-          <p class="small">Free. Android 7 or newer. Google Play listing coming soon.</p>
-        </div>
-        <div class="count">
-          <div class="ring">
-            <div class="num" id="count">9,015</div>
+        <div class="hero-copy">
+          <p class="eyebrow">A contemplative app for Android</p>
+          <h1>Spend a breath on someone you love.</h1>
+          <p class="lede">Breath keeps a quiet count of the breaths left in your day. Hold a name, and one of them goes to someone you’re thinking of. No messages. No reply expected.</p>
+          <div class="ctas">
+            <a class="btn" href="https://github.com/aviratna/breath-app/releases/latest/download/breath.apk">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>
+              Download for Android
+            </a>
+            <a class="btn ghost" href="#how">How it works</a>
           </div>
-          <div class="label">breaths remaining today</div>
-          <div class="sub">a contemplative estimate, not a prediction</div>
+          <p class="fine">Free · No ads · No tracking · Google Play coming soon</p>
         </div>
-      </section>
-
-      <section class="steps" id="how">
-        <h2>Say it without saying anything.</h2>
-        <div class="grid3">
-          <figure><img src="02-home.jpg" alt="Breath home screen: breaths remaining today, a received gift, and a list of people" loading="lazy" width="540" height="960">
-            <figcaption><b>Hold a name.</b>Each gift costs you one of your own breaths. That's what makes it sincere.</figcaption></figure>
-          <figure><img src="03-sent.jpg" alt="Confirmation: You gave Dad a breath" loading="lazy" width="540" height="960">
-            <figcaption><b>It's sent.</b>No message to write, no conversation to keep up. They simply know.</figcaption></figure>
-          <figure><img src="04-receiving.jpg" alt="Receiving a breath: Mom used one of their breaths thinking of you" loading="lazy" width="540" height="960">
-            <figcaption><b>They receive it.</b>They can just smile, or breathe one back.</figcaption></figure>
+        <div class="hero-phone">
+          <div class="phone"><img src="img/home.jpg" width="585" height="1266" alt="The Breath home screen: 14,599 breaths left today inside a ring that fills as the day passes, a card saying Mom spent a breath on you, and a list of people to give a breath to."></div>
         </div>
-      </section>
-
-      <section class="quiet">
-        <div><h3>Just a name</h3><p>No email, phone number or password. Connect with people through an invite link.</p></div>
-        <div><h3>Quiet by design</h3><p>No feeds, no likes, no streaks, no ads, no tracking.</p></div>
-        <div><h3>Yours to control</h3><p>Only people you connect with can reach you. Block anyone, or delete your account at any time.</p></div>
       </section>
     </main>
+  </div>
+
+  <section class="idea">
+    <div class="inner">
+      <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="none" stroke="#EFEAE0" stroke-width="1.4"/><circle cx="32" cy="32" r="4" fill="#8CC3CF"/></svg>
+      <h2>Every being is born with a fixed number of breaths.</h2>
+      <p>The Vedic and Tibetan Buddhist traditions counted a life not in years, but in breaths. To notice one passing is to notice a little of a life passing with it. Breath borrows that practice, gently.</p>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="how" id="how">
+      <p class="eyebrow">How it works</p>
+      <h2>Say it without saying anything.</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="stage"><div class="phone"><img src="img/invite.jpg" width="585" height="1266" loading="lazy" alt="The invite screen with a six-letter invite code and a Share invite link button."></div></div>
+          <div class="text"><div class="n">01</div><div><h3>Invite your people</h3><p>Share a link over WhatsApp or anywhere. When they open it, you’re connected. No phone numbers, no contact uploads.</p></div></div>
+        </div>
+        <div class="step">
+          <div class="stage"><div class="phone"><img src="img/hold.jpg" width="585" height="1266" loading="lazy" alt="Holding a name: a ring fills around Dad’s initial, with Keep holding underneath."></div></div>
+          <div class="text"><div class="n">02</div><div><h3>Hold a name</h3><p>A ring fills as you hold. Let go to cancel. Each gift costs one of your own breaths, which is what makes it sincere.</p></div></div>
+        </div>
+        <div class="step">
+          <div class="stage"><div class="phone"><img src="img/received.jpg" width="585" height="1266" loading="lazy" alt="Receiving: Mom spent a breath on you, three minutes ago. No reply needed."></div></div>
+          <div class="text"><div class="n">03</div><div><h3>They simply know</h3><p>They see that you spent a breath on them. They can just smile, or breathe one back. There is no thread to keep up.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="principles" id="privacy">
+      <div class="grid">
+        <div><h3>Just a name</h3><p>No email, phone number or password. Only the people you connect with can see you.</p></div>
+        <div><h3>Quiet by design</h3><p>No feeds, likes, streaks or ads. Nothing asks for your attention except the people you love.</p></div>
+        <div><h3>Yours to control</h3><p>Block anyone, and they won’t be told. Delete your account and everything with it, any time. <a href="https://github.com/aviratna/breath-app/blob/main/PRIVACY.md">Privacy policy</a></p></div>
+      </div>
+    </section>
+
+    <section class="download" id="download">
+      <div class="box">
+        <div>
+          <h2>Today still has thousands of breaths in it.</h2>
+          <p>Spend one well.</p>
+        </div>
+        <div class="get">
+          <a class="btn" href="https://github.com/aviratna/breath-app/releases/latest/download/breath.apk">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>
+            Download for Android
+          </a>
+          <small>Free. Android 7 or newer. <span id="today"></span></small>
+        </div>
+      </div>
+    </section>
 
     <footer>
-      <a href="https://github.com/aviratna/breath-app/blob/main/PRIVACY.md">Privacy policy</a>
-      <a href="https://github.com/aviratna/breath-app/blob/main/DELETE-ACCOUNT.md">Delete your account</a>
-      <a href="https://github.com/aviratna/breath-app/issues">Contact</a>
-      <p>The count is a device for attention, not a medical or actuarial prediction.</p>
+      <div class="note">
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="#1B1A18" stroke-width="1.3"/><circle cx="12" cy="12" r="2" fill="#2D6A78"/></svg>
+        The count is a device for attention, not a medical or actuarial prediction.
+      </div>
+      <nav aria-label="Footer">
+        <a href="https://github.com/aviratna/breath-app/blob/main/PRIVACY.md">Privacy</a>
+        <a href="https://github.com/aviratna/breath-app/blob/main/DELETE-ACCOUNT.md">Delete your account</a>
+        <a href="https://github.com/aviratna/breath-app/issues">Contact</a>
+      </nav>
     </footer>
   </div>
   <script>
-    // Same estimate as the app: 15 breaths a minute until local midnight.
+    // Same estimate as the app: about 15 breaths a minute until local midnight.
     (function () {
-      function update() {
-        var now = new Date();
-        var midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-        var n = Math.floor((midnight - now) / 60000 * 15).toLocaleString();
-        document.getElementById('count').textContent = n;
-      }
-      update();
-      setInterval(update, 4000);
+      var now = new Date();
+      var midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      var n = Math.floor((midnight - now) / 60000 * 15);
+      document.getElementById('today').textContent = 'About ' + n.toLocaleString() + ' breaths left today.';
     })();
   </script>
 </body>

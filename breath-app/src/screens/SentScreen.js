@@ -1,58 +1,58 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, SafeAreaView } from 'react-native';
-import { colors, fonts, radius } from '../theme/tokens';
+import { View, Text, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors, fonts, radius, type } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
-import BreathMark from '../components/BreathMark';
+import { BreathMark, Icon, PrimaryButton, TextButton } from '../components/ui';
 
 export default function SentScreen({ route, navigation }) {
   const { name } = route.params;
   const { lastGift, previewMode } = useBreath();
-  const isCeleb = previewMode === 'celebrity';
+  const isPublic = previewMode === 'celebrity';
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <View style={{ marginBottom: 26 }}>
-          <BreathMark size={56} />
+        <View style={{ marginTop: 96 }}>
+          <BreathMark size={96} strokeWidth={1.6} />
         </View>
-        <Text style={styles.headline}>You gave {name} a breath.</Text>
-        <Text style={styles.reassure}>
-          {isCeleb
-            ? 'One fan. One breath. No thread to follow up.'
-            : 'No reply needed. They\u2019ll simply know you were thinking of them.'}
+        <Text style={[type.h1, styles.center, { marginTop: 36, marginBottom: 14 }]}>You gave {name} a breath.</Text>
+        <Text style={[type.body, styles.center, { maxWidth: 300 }]}>
+          {isPublic ? 'One person. One breath. Nothing to follow up.' : 'No message, no reply needed. They’ll simply know you were thinking of them.'}
         </Text>
 
         {lastGift ? (
-          <View style={styles.countRow}>
-            <Text style={styles.countText}>{lastGift.before.toLocaleString()}</Text>
-            <Text style={styles.arrow}>→</Text>
-            <Text style={styles.countText}>{lastGift.after.toLocaleString()}</Text>
+          <View style={styles.pill} accessibilityLabel={`${lastGift.after} breaths left today`}>
+            <Text style={styles.pillNum}>{lastGift.before.toLocaleString()}</Text>
+            <Icon name="arrow" size={16} color={colors.stone} />
+            <Text style={styles.pillNum}>{lastGift.after.toLocaleString()}</Text>
+            <Text style={type.small}>left today</Text>
           </View>
         ) : null}
 
         <View style={{ flex: 1 }} />
-
-        <Pressable style={styles.primary} onPress={() => navigation.navigate('ShareCard', { name })}>
-          <Text style={styles.primaryLabel}>share this moment</Text>
-        </Pressable>
-        <Pressable style={styles.secondary} onPress={() => navigation.navigate('Home')}>
-          <Text style={styles.secondaryLabel}>done</Text>
-        </Pressable>
+        <PrimaryButton label="Share this moment" icon="share" onPress={() => navigation.navigate('ShareCard', { name })} style={{ alignSelf: 'stretch' }} />
+        <TextButton label="Done" onPress={() => navigation.navigate('Home')} style={{ alignSelf: 'stretch', marginTop: 6 }} />
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  content: { flex: 1, alignItems: 'center', paddingTop: 90, paddingHorizontal: 30, paddingBottom: 32 },
-  headline: { fontFamily: fonts.heading, fontSize: 20, color: colors.text, textAlign: 'center', marginBottom: 12 },
-  reassure: { fontFamily: fonts.body, fontSize: 14, color: colors.textMuted, textAlign: 'center', lineHeight: 21, marginBottom: 28 },
-  countRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  countText: { fontFamily: fonts.body, fontSize: 15, color: colors.textMuted },
-  arrow: { fontFamily: fonts.body, fontSize: 15, color: '#a8a293' },
-  primary: { width: '100%', backgroundColor: colors.text, borderRadius: radius.md, padding: 15, alignItems: 'center', marginBottom: 10 },
-  primaryLabel: { fontFamily: fonts.heading, fontSize: 14, color: colors.bg },
-  secondary: { width: '100%', padding: 15, alignItems: 'center' },
-  secondaryLabel: { fontFamily: fonts.body, fontSize: 14, color: colors.textMuted },
+  container: { flex: 1, backgroundColor: colors.linen },
+  content: { flex: 1, alignItems: 'center', paddingHorizontal: 28, paddingBottom: 16 },
+  center: { textAlign: 'center' },
+  pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: 32,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: radius.pill,
+    backgroundColor: colors.paper,
+    borderWidth: 1,
+    borderColor: colors.mist,
+  },
+  pillNum: { fontFamily: fonts.display, fontSize: 17, color: colors.ink },
 });
