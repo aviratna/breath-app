@@ -93,6 +93,24 @@ export const PHILOSOPHY = {
       ],
     },
     {
+      heading: 'The one gift no one can buy',
+      founder: 'Aviratna, founder of Breath',
+      body: [
+        'Remember what you are giving. A breath is the most precious gift in the world — more precious than anything that can be bought, because it cannot be bought at all.',
+        'No one earns it and no one can purchase it. Every one of us was given it by God, freely, from our very first moment. What we do with it is our own choice — and choosing to spend one on someone you love is a gift no price can match.',
+        'A breath does not know rich or poor. A king’s breath is worth no more than a beggar’s; the gift weighs the same in every hand. And no one — not kings, not those who rose from rags to riches — has ever escaped what is written for them. That is the eternal truth, the atal satya.',
+      ],
+      quotes: [
+        {
+          original: 'जातस्य हि ध्रुवो मृत्युर्ध्रुवं जन्म मृतस्य च ।\nतस्मादपरिहार्येऽर्थे न त्वं शोचितुमर्हसि ॥',
+          script: 'deva',
+          translit: 'jātasya hi dhruvo mṛtyur dhruvaṃ janma mṛtasya ca,\ntasmād aparihārye ’rthe na tvaṃ śocitum arhasi.',
+          translation: 'For one who is born, death is certain; for one who dies, birth is certain. Over what cannot be avoided, you should not grieve.',
+          source: 'Bhagavad Gītā 2.27 (Sanskrit)',
+        },
+      ],
+    },
+    {
       heading: 'Why give one away',
       body: [
         'Counting breaths is not meant to frighten. Breath turns that attention outward. When someone crosses your mind, you spend one of today’s breaths on them. It is small, it is finite, and it costs you something — which is what makes it sincere.',
