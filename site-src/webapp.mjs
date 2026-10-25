@@ -30,7 +30,15 @@ const meta = `<link rel="icon" href="../favicon.png"/>
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Breath" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <style>html, body { background: #F5F1EA; }</style>`;
+    <style>
+      html, body { background: #F5F1EA; }
+      /* On a laptop, keep the app phone-shaped in the middle of the window. */
+      @media (min-width: 600px) {
+        html, body { background: #EAE4DA; }
+        #root { max-width: 440px; width: 100%; margin: 0 auto; position: relative; transform: translateZ(0);
+          background: #F5F1EA; box-shadow: 0 0 0 1px #E3DDD3, 0 30px 80px -40px rgba(27, 26, 24, 0.35); }
+      }
+    </style>`;
 let html = relative(fs.readFileSync(path.join(to, 'index.html'), 'utf8'));
 html = html
   .replace('<link rel="icon" href="./favicon.ico"/>', meta)
