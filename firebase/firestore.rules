@@ -4,6 +4,7 @@ rules_version = '2';
 // Paste into Firebase console → Firestore Database → Rules → Publish.
 //
 //   codes/{CODE}                    invite code → { uid, name }
+//   invites/{CODE}                  { name }  public, so an invite link can say who sent it
 //   users/{uid}                     { name, code, createdAt }       (owner only)
 //   users/{uid}/connections/{other} { name, blocked, since }        (owner reads)
 //   users/{uid}/inbox/{giftId}      { from, fromName, createdAt, seen }
@@ -29,6 +30,19 @@ service cloud.firestore {
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name'])
         && validName(request.resource.data.name);
       allow delete: if signedIn() && resource.data.uid == me();
+    }
+
+    // What an invite link page shows: just the inviter's first name, readable by anyone
+    // who has the code. Only the code's owner can write it.
+    match /invites/{code} {
+      allow get: if true;
+      allow create, update: if signedIn()
+        && get(/databases/$(database)/documents/codes/$(code)).data.uid == me()
+        && request.resource.data.keys().hasOnly(['name'])
+        && validName(request.resource.data.name);
+      allow delete: if signedIn()
+        && (!exists(/databases/$(database)/documents/codes/$(code))
+          || get(/databases/$(database)/documents/codes/$(code)).data.uid == me());
     }
 
     // A phone's notification address. Readable by its owner and by people it is

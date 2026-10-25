@@ -88,8 +88,12 @@ export function BreathProvider({ children }) {
   }, []);
 
   // Ask for notification permission once there is someone to be notified as.
+  // Also make sure the invite link page can show your name (profiles made before it existed).
   useEffect(() => {
-    if (me) registerForPush(me.uid);
+    if (me) {
+      registerForPush(me.uid);
+      api.publishInvite(me);
+    }
   }, [me?.uid]);
 
   // Live connections and received gifts while signed in.

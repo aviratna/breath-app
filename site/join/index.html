@@ -5,37 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>You’ve been given a breath · Breath</title>
   <meta name="description" content="Someone you know would like to give you a breath.">
-  <meta name="theme-color" content="#F5F1EA">
+  <meta name="theme-color" content="#F5F1EA" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#161514" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <meta name="robots" content="noindex">
+  <meta property="og:site_name" content="Breath">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://aviratna.github.io/breath-app/join/">
   <meta property="og:title" content="I’d like to give you a breath">
   <meta property="og:description" content="Breath is a quiet way to tell someone you were thinking of them. Tap to connect.">
   <meta property="og:image" content="https://aviratna.github.io/breath-app/og.png">
-  <meta name="robots" content="noindex">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="500">
+  <meta property="og:image:alt" content="Breath: a quiet ring and dot on linen.">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="../favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+  <link rel="preload" href="../fonts/newsreader-latin-standard-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-  <main class="join">
+  <main class="join" id="main">
     <header class="top">
       <a class="brand" href="../" aria-label="About Breath">
-        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="#1B1A18" stroke-width="1.4"/><circle cx="12" cy="12" r="2" fill="#2D6A78"/></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="12" r="2" style="fill:var(--accent)"/></svg>
         <span style="font-size:22px">Breath</span>
       </a>
     </header>
 
-    <div id="valid" class="hide" style="display:flex;flex-direction:column;flex:1">
-      <div class="who">
-        <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="none" stroke="#2D6A78" stroke-width="1.6"/><circle cx="32" cy="32" r="4.5" fill="#2D6A78"/></svg>
+    <div id="valid" class="hide" style="flex-direction:column;flex:1">
+      <div class="who" id="who" aria-hidden="true">
+        <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="32" cy="32" r="4.5" fill="currentColor"/></svg>
       </div>
-      <h1>Someone would like to give you a breath</h1>
+      <h1 id="title">Someone would like to give you a breath</h1>
       <p>Breath is a quiet way to tell someone you were thinking of them. No messages, no reply expected.</p>
 
       <div class="actions">
-        <a class="btn" id="open" href="#">Open in Breath</a>
-        <a class="btn ghost" href="https://github.com/aviratna/breath-app/releases/latest/download/breath.apk">Get Breath for Android</a>
-        <div class="code-label">After installing, tap <b>Open in Breath</b> again, or enter this code</div>
+        <a class="btn" id="primary" href="#">Open in Breath</a>
+        <a class="btn ghost" id="secondary" href="https://github.com/aviratna/breath-app/releases/latest/download/breath.apk">Get Breath for Android</a>
+        <a id="tertiary" href="#" style="padding:10px;font-size:15px">Or use Breath on the web</a>
+        <div class="code-label" id="code-label">After installing, tap <b>Open in Breath</b> again, or enter this code</div>
         <div class="code" id="code"></div>
       </div>
     </div>
@@ -50,25 +61,43 @@
     (function () {
       var params = new URLSearchParams(location.search);
       var code = (params.get('c') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-      if (code.length !== 6) {
-        document.getElementById('invalid').className = '';
-        document.getElementById('invalid').style.display = 'flex';
-        return;
-      }
-      document.getElementById('valid').className = '';
+      function show(id) { var el = document.getElementById(id); el.className = ''; el.style.display = 'flex'; }
+      if (code.length !== 6) return show('invalid');
+      show('valid');
       document.getElementById('code').textContent = code;
+      var web = '../app/?join=' + code;
+
+      // Who sent it: the inviter's name is public for anyone holding the code.
+      fetch('https://firestore.googleapis.com/v1/projects/breath-17213/databases/(default)/documents/invites/' + code + '?key=AIzaSyBu26g29oVjswOdabRoBSZS-Mtx7AKBGTE')
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          var name = d && d.fields && d.fields.name && d.fields.name.stringValue;
+          if (!name) return;
+          document.getElementById('title').textContent = name + ' would like to give you a breath';
+          document.title = name + ' would like to give you a breath · Breath';
+          var who = document.getElementById('who');
+          who.textContent = Array.from(name.trim())[0].toUpperCase();
+        })
+        .catch(function () {});
 
       var android = /Android/i.test(navigator.userAgent);
-      var fallback = location.origin + location.pathname + '?c=' + code + '&nf=1';
-      // On Android, an intent link opens the app if it's installed and comes back here otherwise.
-      var appLink = android
-        ? 'intent://join/' + code + '#Intent;scheme=breath;package=com.aviratna.breath;S.browser_fallback_url=' +
-          encodeURIComponent(fallback) + ';end'
-        : 'breath://join/' + code;
-      document.getElementById('open').href = appLink;
-
-      // Try the app once automatically, unless we just came back because it isn't installed.
-      if (android && !params.get('nf')) location.href = appLink;
+      var primary = document.getElementById('primary'), secondary = document.getElementById('secondary'), tertiary = document.getElementById('tertiary');
+      if (android) {
+        // An intent link opens the app if it's installed and comes back here otherwise.
+        var fallback = location.origin + location.pathname + '?c=' + code + '&nf=1';
+        var appLink = 'intent://join/' + code + '#Intent;scheme=breath;package=com.aviratna.breath;S.browser_fallback_url=' + encodeURIComponent(fallback) + ';end';
+        primary.href = appLink;
+        tertiary.href = web;
+        // Try the app once automatically, unless we just came back because it isn't installed.
+        if (!params.get('nf')) location.href = appLink;
+      } else {
+        // iPhone and computers: the web version of Breath, already holding the code.
+        primary.textContent = 'Open Breath';
+        primary.href = web;
+        secondary.textContent = 'I’m on Android: get the app';
+        tertiary.style.display = 'none';
+        document.getElementById('code-label').textContent = 'Your invite code';
+      }
     })();
   </script>
 </body>

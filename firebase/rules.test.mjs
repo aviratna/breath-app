@@ -61,6 +61,15 @@ await no('blocked bob re-creates entry', setDoc(conn(B, 'alice', 'bob'), { name:
 await ok('alice unblocks bob', updateDoc(conn(A, 'alice', 'bob'), { blocked: false }));
 await ok('bob gifts again', gift(B, 'alice', 'bob', 'Bob'));
 
+console.log('invite names');
+await ok('alice publishes her invite name', setDoc(doc(A, 'invites', 'AAAAA2'), { name: 'Alice' }));
+await ok('signed-out visitor reads invite name', getDoc(doc(U, 'invites', 'AAAAA2')));
+await no('signed-out visitor lists invites', getDocs(collection(U, 'invites')));
+await no('mallory writes alice invite name', setDoc(doc(M, 'invites', 'AAAAA2'), { name: 'Evil' }));
+await no('invite for a code nobody owns', setDoc(doc(M, 'invites', 'ZZZZZ2'), { name: 'M' }));
+await no('invite with extra fields', setDoc(doc(A, 'invites', 'AAAAA2'), { name: 'Alice', uid: 'alice' }));
+await no('mallory deletes alice invite', deleteDoc(doc(M, 'invites', 'AAAAA2')));
+
 console.log('push tokens');
 await ok('alice saves her token', setDoc(doc(A, 'pushTokens', 'alice'), { token: 'ExponentPushToken[a]', updatedAt: ts() }));
 await no('mallory overwrites alice token', setDoc(doc(M, 'pushTokens', 'alice'), { token: 'x', updatedAt: ts() }));
@@ -89,6 +98,8 @@ await ok('bob deletes own connection', deleteDoc(conn(B, 'bob', 'alice')));
 let bobInbox; await env.withSecurityRulesDisabled(async c => { bobInbox = (await getDocs(collection(c.firestore(), 'users', 'bob', 'inbox'))).docs.map(d => d.id); });
 for (const id of bobInbox) await ok('bob deletes received gift', deleteDoc(doc(B, 'users', 'bob', 'inbox', id)));
 await no('mallory deletes bob code', deleteDoc(doc(M, 'codes', 'BBBBB2')));
+await ok('bob publishes invite name', setDoc(doc(B, 'invites', 'BBBBB2'), { name: 'Robert' }));
+await ok('bob deletes invite name', deleteDoc(doc(B, 'invites', 'BBBBB2')));
 await ok('bob deletes code', deleteDoc(doc(B, 'codes', 'BBBBB2')));
 await ok('bob deletes profile', deleteDoc(doc(B, 'users', 'bob')));
 await env.cleanup();

@@ -29,10 +29,11 @@ export function inviteLink(code) {
   return `${SITE_URL}/join/?c=${code}`;
 }
 
-// Pulls an invite code out of breath://join/CODE or https://…/join/?c=CODE.
+// Pulls an invite code out of breath://join/CODE, https://…/join/?c=CODE or, for the web
+// version, https://…/app/?join=CODE.
 export function codeFromUrl(url) {
   if (!url) return null;
-  const m = url.match(/join\/?(?:\?c=)?([A-Za-z0-9]{6})(?![A-Za-z0-9])/);
+  const m = url.match(/join(?:\/?\?c=|\/|=)([A-Za-z0-9]{6})(?![A-Za-z0-9])/);
   return m ? normalizeCode(m[1]) : null;
 }
 
@@ -89,9 +90,16 @@ export async function createProfile(rawName) {
     }
     const profile = { name, code, createdAt: serverTimestamp() };
     await setDoc(doc(db, 'users', user.uid), profile);
+    await publishInvite({ code, name });
     return { ...profile, uid: user.uid };
   }
   throw userError('Couldn’t create an invite code. Please try again.');
+}
+
+// The public half of an invite: just your name, so an invite link page can say who sent it.
+export async function publishInvite(me) {
+  if (!me || !me.code) return;
+  await setDoc(doc(db, 'invites', me.code), { name: me.name }).catch(() => {});
 }
 
 // Connects the signed-in user with the owner of `rawCode`, on both sides.
@@ -164,6 +172,7 @@ export async function renameMe(me, rawName) {
   if (name === me.name) return name;
   await updateDoc(doc(db, 'users', me.uid), { name });
   if (me.code) await updateDoc(doc(db, 'codes', me.code), { name }).catch(() => {});
+  await publishInvite({ code: me.code, name });
   const conns = await getDocs(collection(db, 'users', me.uid, 'connections'));
   await Promise.all(
     conns.docs.map((c) => updateDoc(doc(db, 'users', c.id, 'connections', me.uid), { name }).catch(() => {}))
@@ -190,6 +199,7 @@ export async function deleteAccount(me) {
   }
   const inbox = await getDocs(collection(db, 'users', uid, 'inbox'));
   for (const g of inbox.docs) await deleteDoc(g.ref);
+  if (me.code) await deleteDoc(doc(db, 'invites', me.code)).catch(() => {});
   if (me.code) await deleteDoc(doc(db, 'codes', me.code)).catch(() => {});
   await deleteDoc(doc(db, 'pushTokens', uid)).catch(() => {});
   await deleteDoc(doc(db, 'users', uid));

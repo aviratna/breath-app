@@ -7,7 +7,7 @@ import { errorMessage, MAX_NAME, SITE_URL } from '../lib/api';
 import { Avatar, Card, Icon, ScreenHeader } from '../components/ui';
 import { radius } from '../theme/tokens';
 
-const PRIVACY_URL = 'https://github.com/aviratna/breath-app/blob/main/PRIVACY.md';
+const PRIVACY_URL = `${SITE_URL}/privacy/`;
 
 export default function SettingsScreen({ navigation }) {
   const { me, connections, toggleBlock, previewMode, setPreviewMode, deleteAccount, rename } = useBreath();
