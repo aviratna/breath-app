@@ -10,7 +10,7 @@ import { PrimaryButton, TextButton } from '../components/ui';
 const STEPS = [
   {
     title: 'Every being is born with a fixed number of breaths.',
-    body: 'The Vedic and Tibetan traditions measured a life not in years, but in breaths. Breath keeps a quiet count of yours, and lets you spend one on someone you love.',
+    body: 'An old yogic teaching counts a life not in years, but in breaths. Breath keeps a quiet count of yours, and lets you spend one on someone you love.',
   },
   {
     title: 'The problem is, we think we have time.',
@@ -55,6 +55,9 @@ export default function OnboardingScreen({ navigation }) {
         <Text style={styles.title}>{s.title}</Text>
         {s.attribution ? <Text style={styles.attribution}>{s.attribution}</Text> : null}
         <Text style={styles.body}>{s.body}</Text>
+        {step === 0 ? (
+          <TextButton label="Read the idea behind Breath" color={colors.tideLight} onPress={() => navigation.navigate('Philosophy')} style={{ alignSelf: 'flex-start', paddingVertical: 12 }} />
+        ) : null}
 
         <View style={{ flex: 1 }} />
 

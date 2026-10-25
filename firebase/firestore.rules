@@ -25,7 +25,23 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['uid', 'name'])
         && request.resource.data.uid == me()
         && validName(request.resource.data.name);
+      allow update: if signedIn() && resource.data.uid == me()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name'])
+        && validName(request.resource.data.name);
       allow delete: if signedIn() && resource.data.uid == me();
+    }
+
+    // A phone's notification address. Readable by its owner and by people it is
+    // connected to who aren't blocked, so they can notify it of a breath.
+    match /pushTokens/{uid} {
+      allow get: if signedIn() && (uid == me()
+        || (exists(connectionPath(uid, me())) && get(connectionPath(uid, me())).data.blocked == false));
+      allow create, update: if signedIn() && uid == me()
+        && request.resource.data.keys().hasOnly(['token', 'updatedAt'])
+        && request.resource.data.token is string
+        && request.resource.data.token.size() < 200
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if signedIn() && uid == me();
     }
 
     match /users/{uid} {
@@ -50,6 +66,10 @@ service cloud.firestore {
         allow update: if signedIn() && uid == me()
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['blocked'])
           && request.resource.data.blocked is bool;
+        // When you rename yourself, your name in other people's lists follows.
+        allow update: if signedIn() && other == me()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name'])
+          && validName(request.resource.data.name);
         allow delete: if signedIn()
           && (uid == me() || (other == me() && resource.data.blocked == false));
       }

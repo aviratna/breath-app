@@ -32,7 +32,7 @@ export default function SentScreen({ route, navigation }) {
 
         <View style={{ flex: 1 }} />
         <PrimaryButton label="Share this moment" icon="share" onPress={() => navigation.navigate('ShareCard', { name })} style={{ alignSelf: 'stretch' }} />
-        <TextButton label="Done" onPress={() => navigation.navigate('Home')} style={{ alignSelf: 'stretch', marginTop: 6 }} />
+        <TextButton label="Done" onPress={() => navigation.popTo('Home')} style={{ alignSelf: 'stretch', marginTop: 6 }} />
       </View>
     </SafeAreaView>
   );

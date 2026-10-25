@@ -147,12 +147,28 @@ export function watchInbox(uid, cb, onError) {
 }
 
 export async function sendGift(me, toUid) {
-  await addDoc(collection(db, 'users', toUid, 'inbox'), {
+  const ref = await addDoc(collection(db, 'users', toUid, 'inbox'), {
     from: me.uid,
     fromName: me.name,
     createdAt: serverTimestamp(),
     seen: false,
   });
+  return ref.id;
+}
+
+// Changes your name everywhere it is shown: your profile, your invite code, and your entry
+// in each connected person's list.
+export async function renameMe(me, rawName) {
+  const name = rawName.trim().slice(0, MAX_NAME);
+  if (!name) throw userError('Please enter a name.');
+  if (name === me.name) return name;
+  await updateDoc(doc(db, 'users', me.uid), { name });
+  if (me.code) await updateDoc(doc(db, 'codes', me.code), { name }).catch(() => {});
+  const conns = await getDocs(collection(db, 'users', me.uid, 'connections'));
+  await Promise.all(
+    conns.docs.map((c) => updateDoc(doc(db, 'users', c.id, 'connections', me.uid), { name }).catch(() => {}))
+  );
+  return name;
 }
 
 export async function markSeen(uid, giftId) {
@@ -175,6 +191,7 @@ export async function deleteAccount(me) {
   const inbox = await getDocs(collection(db, 'users', uid, 'inbox'));
   for (const g of inbox.docs) await deleteDoc(g.ref);
   if (me.code) await deleteDoc(doc(db, 'codes', me.code)).catch(() => {});
+  await deleteDoc(doc(db, 'pushTokens', uid)).catch(() => {});
   await deleteDoc(doc(db, 'users', uid));
   if (auth.currentUser) await deleteUser(auth.currentUser);
 }
