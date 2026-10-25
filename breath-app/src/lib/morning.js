@@ -39,7 +39,7 @@ export async function saveMorning(next) {
         identifier: ID,
         content: {
           title: 'Good morning. Who’s on your mind today?',
-          body: 'A whole day of breaths ahead. One of them could be theirs.',
+          body: 'A whole day of breaths ahead. Tap to choose what they’re for.',
           data: { type: 'morning' },
         },
         trigger: {
@@ -58,4 +58,16 @@ export async function saveMorning(next) {
 export function formatTime(hour, minute) {
   const h = hour % 12 || 12;
   return `${h}:${String(minute).padStart(2, '0')} ${hour < 12 ? 'am' : 'pm'}`;
+}
+
+// Tapping the morning notification opens today's intention.
+export function onMorningOpened(cb) {
+  if (!morningSupported) return () => {};
+  Notifications.getLastNotificationResponseAsync()
+    .then((r) => r && r.notification.request.content.data?.type === 'morning' && cb())
+    .catch(() => {});
+  const sub = Notifications.addNotificationResponseReceivedListener((r) => {
+    if (r.notification.request.content.data?.type === 'morning') cb();
+  });
+  return () => sub.remove();
 }

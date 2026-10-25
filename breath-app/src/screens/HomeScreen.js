@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, fonts, radius, type } from '../theme/tokens';
 import { useLiveBreaths } from '../lib/breathClock';
 import { useBreath } from '../state/BreathContext';
+import { breathsUsed, useFocus } from '../state/FocusContext';
 import { relativeTime } from '../lib/api';
 import { Avatar, BreathMark, Icon, IconButton, ProgressRing, SecondaryButton } from '../components/ui';
 import { PersonRow, useHoldToGive } from '../components/HoldToGive';
@@ -11,6 +12,8 @@ import { PersonRow, useHoldToGive } from '../components/HoldToGive';
 export default function HomeScreen({ navigation }) {
   const { dayProgress, contacts, previewMode, sendGift, unseenGifts, now, toggleFavourite, givenToday } = useBreath();
   const dailyBreathsRemaining = useLiveBreaths(givenToday);
+  const focus = useFocus();
+  const focusLeft = focus.active ? Math.max(0, focus.active.planned - breathsUsed(focus.active)) : 0;
   const [sendError, setSendError] = useState(null);
   const [query, setQuery] = useState('');
   const isPublic = previewMode === 'celebrity';
@@ -85,6 +88,23 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.countLabel}>breaths left today</Text>
           </ProgressRing>
           <Text style={styles.estimate}>A contemplative estimate, not a prediction</Text>
+          {focus.active ? (
+            <Pressable accessibilityRole="button" onPress={() => navigation.navigate('FocusSession')} style={[styles.focusPill, styles.focusPillOn]}>
+              <Icon name="focus" size={16} color={colors.linen} />
+              <Text style={[styles.focusText, { color: colors.linen }]} numberOfLines={1}>
+                {focus.active.pausedAt ? 'Paused' : 'Focusing'} · {focus.active.title} · {focusLeft} left
+              </Text>
+            </Pressable>
+          ) : (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => navigation.navigate(focus.intentions.length || focus.sessions.length ? 'FocusToday' : 'FocusStart')}
+              style={styles.focusPill}
+            >
+              <Icon name="focus" size={16} color={colors.tide} />
+              <Text style={styles.focusText}>Breath for focus</Text>
+            </Pressable>
+          )}
         </View>
 
         {latest ? (
@@ -187,6 +207,9 @@ const styles = StyleSheet.create({
   count: { fontFamily: fonts.displayLight, fontSize: 58, lineHeight: 64, letterSpacing: -1.5, color: colors.ink },
   countLabel: { fontFamily: fonts.ui, fontSize: 13, color: colors.stone, marginTop: 4 },
   estimate: { fontFamily: fonts.ui, fontSize: 12.5, color: colors.stone, marginTop: 12 },
+  focusPill: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 14, minHeight: 40, paddingHorizontal: 16, borderRadius: 999, borderWidth: 1, borderColor: colors.border, maxWidth: '100%' },
+  focusPillOn: { backgroundColor: colors.ink, borderColor: colors.ink },
+  focusText: { fontFamily: fonts.uiMedium, fontSize: 14, color: colors.ink, flexShrink: 1 },
   gift: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, paddingHorizontal: 14, borderRadius: radius.row, backgroundColor: colors.tideMist, marginBottom: 22 },
   giftTitle: { fontFamily: fonts.uiMedium, fontSize: 15, color: colors.ink },
   giftMeta: { fontFamily: fonts.ui, fontSize: 13, color: colors.tideInk, marginTop: 1 },
