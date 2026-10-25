@@ -70,12 +70,16 @@ export function useHoldToGive({ onComplete, breathsLeft }) {
   return { start, cancel, overlay };
 }
 
-export function PersonRow({ name, meta, onPressIn, onPressOut }) {
+// One person you can give to. Press and hold to give; screen-reader users get a direct
+// "Give a breath" action instead, since a long hold is hard to perform with one.
+export function PersonRow({ name, meta, favourite, onToggleFavourite, onPressIn, onPressOut, onGiveNow }) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Give ${name} a breath`}
-      accessibilityHint="Press and hold"
+      accessibilityLabel={`${name}${meta ? `, ${meta}` : ''}`}
+      accessibilityHint="Press and hold to give a breath"
+      accessibilityActions={[{ name: 'activate', label: `Give ${name} a breath` }]}
+      onAccessibilityAction={(e) => e.nativeEvent.actionName === 'activate' && onGiveNow && onGiveNow()}
       onPressIn={onPressIn}
       onPressOut={onPressOut}
       style={({ pressed }) => [styles.row, pressed && { borderColor: colors.tide, backgroundColor: colors.tideMist }]}
@@ -91,6 +95,18 @@ export function PersonRow({ name, meta, onPressIn, onPressOut }) {
           </Text>
         ) : null}
       </View>
+      {onToggleFavourite ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={favourite ? `Unpin ${name}` : `Pin ${name} to the top`}
+          accessibilityState={{ selected: !!favourite }}
+          onPress={onToggleFavourite}
+          hitSlop={6}
+          style={styles.pin}
+        >
+          <Icon name="star" size={18} strokeWidth={1.6} color={favourite ? colors.tide : '#B3ACA3'} fill={favourite ? colors.tide : 'none'} />
+        </Pressable>
+      ) : null}
     </Pressable>
   );
 }
@@ -107,8 +123,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    height: 62,
-    paddingHorizontal: 14,
+    minHeight: 62,
+    paddingVertical: 8,
+    paddingLeft: 14,
+    paddingRight: 4,
     borderRadius: radius.row,
     backgroundColor: colors.paper,
     borderWidth: 1,
@@ -116,4 +134,5 @@ const styles = StyleSheet.create({
   },
   rowName: { fontFamily: fonts.uiMedium, fontSize: 15, color: colors.ink },
   rowMeta: { fontFamily: fonts.ui, fontSize: 12.5, color: colors.stone, marginTop: 1 },
+  pin: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
 });

@@ -27,6 +27,16 @@
         "projectId": "78fb96e4-fe67-4c7d-827d-328a8674f131"
       }
     },
-    "scheme": "breath"
+    "scheme": "breath",
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#2D6A78",
+          "defaultChannel": "breaths"
+        }
+      ]
+    ]
   }
 }

@@ -17,7 +17,7 @@ export default function ReceivingScreen({ route, navigation }) {
     if (gift && !gift.seen) markSeen(gift.id);
   }, [gift?.id]);
 
-  const close = () => navigation.navigate('Home');
+  const close = () => navigation.popTo('Home');
 
   if (!gift) {
     return (

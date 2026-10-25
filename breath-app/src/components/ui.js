@@ -19,6 +19,14 @@ const ICONS = {
       <Circle cx="10" cy="17" r="2" />
     </>
   ),
+  search: (
+    <>
+      <Circle cx="11" cy="11" r="6.5" />
+      <Path d="M20 20l-4.2-4.2" />
+    </>
+  ),
+  star: <Path d="M12 3.6l2.5 5.2 5.7.8-4.1 4 1 5.6L12 16.5l-5.1 2.7 1-5.6-4.1-4 5.7-.8z" />,
+  edit: <Path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" />,
   copy: (
     <>
       <Rect x="8" y="8" width="12" height="12" rx="2" />
@@ -27,9 +35,9 @@ const ICONS = {
   ),
 };
 
-export function Icon({ name, size = 22, color = colors.ink, strokeWidth = 1.8 }) {
+export function Icon({ name, size = 22, color = colors.ink, strokeWidth = 1.8, fill = 'none' }) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
       {ICONS[name]}
     </Svg>
   );
@@ -110,7 +118,7 @@ export function PrimaryButton({ label, onPress, icon, busy, disabled, dark = fal
       onPress={onPress}
       disabled={disabled || busy}
       style={({ pressed }) => [
-        { height: 54, borderRadius: radius.pill, backgroundColor: bg, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingHorizontal: 22 },
+        { minHeight: 54, paddingVertical: 12, borderRadius: radius.pill, backgroundColor: bg, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingHorizontal: 22 },
         (disabled || busy) && { opacity: 0.45 },
         pressed && { opacity: 0.85 },
         style,
@@ -121,7 +129,7 @@ export function PrimaryButton({ label, onPress, icon, busy, disabled, dark = fal
       ) : (
         <>
           {icon ? <Icon name={icon} size={18} color={fg} /> : null}
-          <Text style={{ fontFamily: fonts.uiSemi, fontSize: 16, color: fg }}>{label}</Text>
+          <Text style={{ fontFamily: fonts.uiSemi, fontSize: 16, color: fg, textAlign: 'center', flexShrink: 1 }}>{label}</Text>
         </>
       )}
     </Pressable>
@@ -135,7 +143,7 @@ export function SecondaryButton({ label, onPress, icon, busy, disabled, style, h
       onPress={onPress}
       disabled={disabled || busy}
       style={({ pressed }) => [
-        { height, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.border, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingHorizontal: 20 },
+        { minHeight: height, paddingVertical: 10, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.border, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingHorizontal: 20 },
         (disabled || busy) && { opacity: 0.45 },
         pressed && { backgroundColor: colors.paper },
         style,
@@ -146,7 +154,7 @@ export function SecondaryButton({ label, onPress, icon, busy, disabled, style, h
       ) : (
         <>
           {icon ? <Icon name={icon} size={18} /> : null}
-          <Text style={{ fontFamily: fonts.uiMedium, fontSize: 15, color: colors.ink }}>{label}</Text>
+          <Text style={{ fontFamily: fonts.uiMedium, fontSize: 15, color: colors.ink, textAlign: 'center', flexShrink: 1 }}>{label}</Text>
         </>
       )}
     </Pressable>

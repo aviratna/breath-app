@@ -72,7 +72,7 @@ export default function ShareCardScreen({ route, navigation }) {
           busy={busy}
           style={{ alignSelf: 'stretch' }}
         />
-        <TextButton label="Done" onPress={() => navigation.navigate('Home')} style={{ alignSelf: 'stretch', marginTop: 6 }} />
+        <TextButton label="Done" onPress={() => navigation.popTo('Home')} style={{ alignSelf: 'stretch', marginTop: 6 }} />
       </View>
     </SafeAreaView>
   );

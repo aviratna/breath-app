@@ -18,7 +18,9 @@ import ShareCardScreen from './src/screens/ShareCardScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import NameScreen from './src/screens/NameScreen';
 import ConnectScreen from './src/screens/ConnectScreen';
+import PhilosophyScreen from './src/screens/PhilosophyScreen';
 import { codeFromUrl } from './src/lib/api';
+import { onGiftNotificationOpened } from './src/lib/push';
 import { colors } from './src/theme/tokens';
 
 const Stack = createNativeStackNavigator();
@@ -44,10 +46,23 @@ function useInviteLinks(me, navReady) {
   }, [pendingCode, me, navReady]);
 }
 
+// Tapping a gift notification opens that gift.
+function useGiftNotifications(me, navReady) {
+  const [pendingGift, setPendingGift] = useState(null);
+  useEffect(() => onGiftNotificationOpened((giftId) => setPendingGift(giftId || 'latest')), []);
+  useEffect(() => {
+    if (pendingGift && me && navReady && navigationRef.isReady()) {
+      navigationRef.navigate('Receiving', pendingGift === 'latest' ? {} : { giftId: pendingGift });
+      setPendingGift(null);
+    }
+  }, [pendingGift, me, navReady]);
+}
+
 function Root() {
   const { ready, hasOnboarded, me } = useBreath();
   const [navReady, setNavReady] = useState(false);
   useInviteLinks(me, navReady);
+  useGiftNotifications(me, navReady);
   if (!ready) return <Loading />;
   const initial = !hasOnboarded ? 'Onboarding' : me ? 'Home' : 'Name';
   return (
@@ -62,6 +77,7 @@ function Root() {
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Name" component={NameScreen} />
         <Stack.Screen name="Connect" component={ConnectScreen} />
+        <Stack.Screen name="Philosophy" component={PhilosophyScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

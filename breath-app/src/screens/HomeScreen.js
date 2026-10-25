@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, fonts, radius, type } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
@@ -8,8 +8,9 @@ import { Avatar, BreathMark, Icon, IconButton, ProgressRing, SecondaryButton } f
 import { PersonRow, useHoldToGive } from '../components/HoldToGive';
 
 export default function HomeScreen({ navigation }) {
-  const { dailyBreathsRemaining, dayProgress, contacts, previewMode, sendGift, gifts, unseenGifts, now } = useBreath();
+  const { dailyBreathsRemaining, dayProgress, contacts, previewMode, sendGift, unseenGifts, now, toggleFavourite } = useBreath();
   const [sendError, setSendError] = useState(null);
+  const [query, setQuery] = useState('');
   const isPublic = previewMode === 'celebrity';
 
   async function give(contact) {
@@ -23,10 +24,41 @@ export default function HomeScreen({ navigation }) {
   }
   const hold = useHoldToGive({ onComplete: give, breathsLeft: dailyBreathsRemaining });
 
-  // A quiet line under each name: the last breath they gave you.
-  function metaFor(id) {
-    const g = gifts.find((x) => x.from === id);
-    return g ? `Gave you a breath ${relativeTime(g.createdAt, now)}` : null;
+  // A quiet line under each name: the most recent breath either way.
+  function metaFor(c) {
+    if (!c.lastActivity) return null;
+    const when = relativeTime(c.lastActivity, now);
+    return c.lastActivity === c.lastGiven ? `You gave a breath ${when}` : `Gave you a breath ${when}`;
+  }
+
+  // Sections: pinned people, the five most recent, then everyone else by name.
+  // A search box appears once the list is long enough to need one.
+  const byName = (a, b) => a.name.localeCompare(b.name);
+  const showSearch = contacts.length > 8;
+  const q = query.trim().toLowerCase();
+  let sections;
+  if (q) {
+    sections = [{ title: null, people: contacts.filter((c) => c.name.toLowerCase().includes(q)).sort(byName) }];
+  } else if (contacts.length <= 6) {
+    const rank = (c) => (c.favourite ? 2 : 0) + (c.lastActivity ? 1 : 0);
+    sections = [
+      {
+        title: null,
+        people: [...contacts].sort((a, b) => rank(b) - rank(a) || (b.lastActivity || 0) - (a.lastActivity || 0) || byName(a, b)),
+      },
+    ];
+  } else {
+    const pinned = contacts.filter((c) => c.favourite).sort(byName);
+    const recent = contacts
+      .filter((c) => !c.favourite && c.lastActivity)
+      .sort((a, b) => b.lastActivity - a.lastActivity)
+      .slice(0, 5);
+    const shown = new Set([...pinned, ...recent].map((c) => c.id));
+    sections = [
+      { title: 'Pinned', people: pinned },
+      { title: 'Recent', people: recent },
+      { title: pinned.length || recent.length ? 'Everyone' : null, people: contacts.filter((c) => !shown.has(c.id)).sort(byName) },
+    ].filter((sec) => sec.people.length);
   }
 
   const latest = unseenGifts[0];
@@ -74,25 +106,67 @@ export default function HomeScreen({ navigation }) {
           {contacts.length ? <Text style={type.small}>{isPublic ? 'Hold a name · once each' : 'Hold a name'}</Text> : null}
         </View>
 
-        <View style={{ gap: 8 }}>
-          {contacts.map((c) => (
-            <PersonRow key={c.id} name={c.name} meta={metaFor(c.id)} onPressIn={() => hold.start(c)} onPressOut={hold.cancel} />
-          ))}
-          {contacts.length === 0 ? (
-            <View style={styles.empty}>
-              <Text style={styles.emptyTitle}>No one here yet</Text>
-              <Text style={[type.small, { textAlign: 'center' }]}>
-                Invite someone you love. When they open your link, their name appears here.
-              </Text>
+        {showSearch ? (
+          <View style={styles.search}>
+            <Icon name="search" size={18} color={colors.stone} />
+            <TextInput
+              accessibilityLabel="Search your people"
+              value={query}
+              onChangeText={setQuery}
+              placeholder={`Search ${contacts.length} people`}
+              placeholderTextColor="#8E887F"
+              style={styles.searchInput}
+              autoCorrect={false}
+              returnKeyType="search"
+            />
+            {query ? (
+              <Pressable accessibilityRole="button" accessibilityLabel="Clear search" onPress={() => setQuery('')} hitSlop={8} style={{ padding: 6 }}>
+                <Icon name="close" size={16} color={colors.stone} />
+              </Pressable>
+            ) : null}
+          </View>
+        ) : null}
+
+        {sections.map((sec, si) => (
+          <View key={si} style={{ marginBottom: 6 }}>
+            {sec.title ? <Text style={[type.label, styles.groupLabel]}>{sec.title}</Text> : null}
+            <View style={{ gap: 8 }}>
+              {sec.people.map((c) => (
+                <PersonRow
+                  key={c.id}
+                  name={c.name}
+                  meta={metaFor(c)}
+                  favourite={c.favourite}
+                  onToggleFavourite={() => toggleFavourite(c.id)}
+                  onPressIn={() => hold.start(c)}
+                  onPressOut={hold.cancel}
+                  onGiveNow={() => give(c)}
+                />
+              ))}
             </View>
-          ) : null}
-        </View>
+          </View>
+        ))}
+        {q && sections[0].people.length === 0 ? <Text style={[type.small, { paddingHorizontal: 4 }]}>No one called {'\u201c'}{query.trim()}{'\u201d'}.</Text> : null}
+        {contacts.length === 0 ? (
+          <View style={styles.empty}>
+            <Text style={styles.emptyTitle}>No one here yet</Text>
+            <Text style={[type.small, { textAlign: 'center' }]}>
+              Invite someone you love. When they open your link, their name appears here.
+            </Text>
+          </View>
+        ) : null}
         {sendError ? <Text style={styles.error}>{sendError}</Text> : null}
 
         <SecondaryButton label="Invite someone" icon="plus" height={50} onPress={() => navigation.navigate('Connect')} style={{ marginTop: 18 }} />
-        <Pressable onPress={() => navigation.navigate('LockScreen')} style={{ alignSelf: 'center', paddingVertical: 14 }}>
-          <Text style={styles.link}>Preview the lock screen widget</Text>
-        </Pressable>
+        <View style={styles.links}>
+          <Pressable onPress={() => navigation.navigate('Philosophy')} style={{ paddingVertical: 12 }}>
+            <Text style={styles.link}>Why breaths?</Text>
+          </Pressable>
+          <Text style={styles.dot}>·</Text>
+          <Pressable onPress={() => navigation.navigate('LockScreen')} style={{ paddingVertical: 12 }}>
+            <Text style={styles.link}>Lock screen widget</Text>
+          </Pressable>
+        </View>
       </ScrollView>
       {hold.overlay}
     </SafeAreaView>
@@ -115,8 +189,13 @@ const styles = StyleSheet.create({
   giftMeta: { fontFamily: fonts.ui, fontSize: 13, color: colors.tideInk, marginTop: 1 },
   sectionHead: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', paddingHorizontal: 4, marginBottom: 10 },
   sectionTitle: { fontFamily: fonts.uiSemi, fontSize: 15, color: colors.ink },
+  search: { flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 46, paddingLeft: 14, paddingRight: 8, borderRadius: radius.row, backgroundColor: colors.paper, borderWidth: 1, borderColor: colors.mist, marginBottom: 14 },
+  searchInput: { flex: 1, fontFamily: fonts.ui, fontSize: 15, color: colors.ink, paddingVertical: 10, outlineStyle: 'none' },
+  groupLabel: { marginHorizontal: 4, marginTop: 6, marginBottom: 8 },
   empty: { alignItems: 'center', gap: 6, paddingVertical: 26, paddingHorizontal: 24, borderRadius: radius.row, borderWidth: 1, borderStyle: 'dashed', borderColor: colors.border },
   emptyTitle: { fontFamily: fonts.display, fontSize: 21, color: colors.ink },
   error: { fontFamily: fonts.ui, fontSize: 13, color: colors.danger, marginTop: 12 },
+  links: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 10, marginTop: 6 },
+  dot: { color: colors.stone },
   link: { fontFamily: fonts.ui, fontSize: 13.5, color: colors.tide },
 });

@@ -1,15 +1,36 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView, Switch, Linking } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Switch, Linking, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, fonts, type } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
-import { errorMessage, SITE_URL } from '../lib/api';
+import { errorMessage, MAX_NAME, SITE_URL } from '../lib/api';
 import { Avatar, Card, Icon, ScreenHeader } from '../components/ui';
+import { radius } from '../theme/tokens';
 
 const PRIVACY_URL = 'https://github.com/aviratna/breath-app/blob/main/PRIVACY.md';
 
 export default function SettingsScreen({ navigation }) {
-  const { me, connections, toggleBlock, previewMode, setPreviewMode, deleteAccount } = useBreath();
+  const { me, connections, toggleBlock, previewMode, setPreviewMode, deleteAccount, rename } = useBreath();
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [query, setQuery] = useState('');
+
+  async function saveName() {
+    setSaving(true);
+    setError(null);
+    try {
+      await rename(draft);
+      setEditing(false);
+    } catch (e) {
+      setError(errorMessage(e));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const q = query.trim().toLowerCase();
+  const people = q ? connections.filter((c) => c.name.toLowerCase().includes(q)) : connections;
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
@@ -47,30 +68,73 @@ export default function SettingsScreen({ navigation }) {
 
         {me ? (
           <Card style={styles.profile}>
-            <Avatar name={me.name} size={52} tone="tide" />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.profileName}>{me.name}</Text>
-              <Text style={type.small}>Invite code {me.code}</Text>
-            </View>
-            <Pressable accessibilityRole="button" onPress={() => navigation.navigate('Connect')} style={styles.smallBtn}>
-              <Text style={styles.smallBtnLabel}>Invite</Text>
-            </Pressable>
+            <Avatar name={editing ? draft || me.name : me.name} size={52} tone="tide" />
+            {editing ? (
+              <View style={{ flex: 1, gap: 10 }}>
+                <TextInput
+                  accessibilityLabel="Your name"
+                  value={draft}
+                  onChangeText={setDraft}
+                  maxLength={MAX_NAME}
+                  autoFocus
+                  autoCapitalize="words"
+                  returnKeyType="done"
+                  onSubmitEditing={saveName}
+                  style={styles.nameInput}
+                />
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  <Pressable accessibilityRole="button" onPress={saveName} disabled={saving || !draft.trim()} style={[styles.smallBtn, styles.smallBtnDark, (saving || !draft.trim()) && { opacity: 0.5 }]}>
+                    <Text style={[styles.smallBtnLabel, { color: colors.linen }]}>{saving ? 'Saving\u2026' : 'Save'}</Text>
+                  </Pressable>
+                  <Pressable accessibilityRole="button" onPress={() => setEditing(false)} style={styles.smallBtn}>
+                    <Text style={styles.smallBtnLabel}>Cancel</Text>
+                  </Pressable>
+                </View>
+              </View>
+            ) : (
+              <>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.profileName}>{me.name}</Text>
+                  <Pressable onPress={() => navigation.navigate('Connect')} hitSlop={6}>
+                    <Text style={type.small}>Invite code {me.code}</Text>
+                  </Pressable>
+                </View>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Edit your name"
+                  onPress={() => {
+                    setDraft(me.name);
+                    setEditing(true);
+                  }}
+                  style={[styles.smallBtn, { flexDirection: 'row', alignItems: 'center', gap: 6 }]}
+                >
+                  <Icon name="edit" size={15} />
+                  <Text style={styles.smallBtnLabel}>Edit</Text>
+                </Pressable>
+              </>
+            )}
           </Card>
         ) : null}
 
         <Text style={[type.label, styles.sectionLabel]}>Your people</Text>
+        {connections.length > 8 ? (
+          <View style={styles.search}>
+            <Icon name="search" size={18} color={colors.stone} />
+            <TextInput accessibilityLabel="Search your people" value={query} onChangeText={setQuery} placeholder="Search" placeholderTextColor="#8E887F" style={styles.searchInput} autoCorrect={false} />
+          </View>
+        ) : null}
         <Card style={{ overflow: 'hidden' }}>
-          {connections.map((c, i) => (
-            <View key={c.id} style={[styles.row, i < connections.length - 1 && styles.rowDivider]}>
+          {people.map((c, i) => (
+            <View key={c.id} style={[styles.row, i < people.length - 1 && styles.rowDivider]}>
               <Text style={[styles.rowLabel, c.blocked && { color: colors.stone }]}>{c.name}</Text>
               <Pressable accessibilityRole="button" accessibilityLabel={`${c.blocked ? 'Unblock' : 'Block'} ${c.name}`} onPress={() => onBlock(c.id)} style={styles.rowAction}>
                 <Text style={styles.rowActionLabel}>{c.blocked ? 'Unblock' : 'Block'}</Text>
               </Pressable>
             </View>
           ))}
-          {connections.length === 0 ? (
+          {people.length === 0 ? (
             <View style={styles.row}>
-              <Text style={type.small}>No one yet.</Text>
+              <Text style={type.small}>{q ? 'No one by that name.' : 'No one yet.'}</Text>
             </View>
           ) : null}
         </Card>
@@ -87,12 +151,16 @@ export default function SettingsScreen({ navigation }) {
               thumbColor={colors.paper}
             />
           </View>
+          <Pressable style={[styles.row, styles.rowDivider]} onPress={() => navigation.navigate('Philosophy')}>
+            <Text style={styles.rowLabel}>The idea behind Breath</Text>
+            <Icon name="chevron" size={16} color={colors.stone} />
+          </Pressable>
           <Pressable style={[styles.row, styles.rowDivider]} onPress={() => navigation.replace('Onboarding')}>
             <Text style={styles.rowLabel}>Replay the introduction</Text>
             <Icon name="chevron" size={16} color={colors.stone} />
           </Pressable>
           <Pressable style={[styles.row, styles.rowDivider]} onPress={() => Linking.openURL(SITE_URL)}>
-            <Text style={styles.rowLabel}>About Breath</Text>
+            <Text style={styles.rowLabel}>Breath website</Text>
             <Icon name="external" size={16} color={colors.stone} />
           </Pressable>
           <Pressable style={styles.row} onPress={() => Linking.openURL(PRIVACY_URL)}>
@@ -124,6 +192,10 @@ const styles = StyleSheet.create({
   profile: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, marginBottom: 22 },
   profileName: { fontFamily: fonts.display, fontSize: 21, color: colors.ink },
   smallBtn: { paddingVertical: 10, paddingHorizontal: 14, borderRadius: 999, borderWidth: 1, borderColor: colors.border },
+  smallBtnDark: { backgroundColor: colors.ink, borderColor: colors.ink },
+  nameInput: { fontFamily: fonts.display, fontSize: 21, color: colors.ink, borderWidth: 1.5, borderColor: colors.ink, borderRadius: radius.input, paddingHorizontal: 12, paddingVertical: 8, backgroundColor: colors.linen },
+  search: { flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 44, paddingHorizontal: 14, borderRadius: radius.row, backgroundColor: colors.paper, borderWidth: 1, borderColor: colors.mist, marginBottom: 10 },
+  searchInput: { flex: 1, fontFamily: fonts.ui, fontSize: 15, color: colors.ink, paddingVertical: 8 },
   smallBtnLabel: { fontFamily: fonts.uiMedium, fontSize: 14, color: colors.ink },
   sectionLabel: { marginHorizontal: 4, marginBottom: 8 },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 54, paddingLeft: 16, paddingRight: 8 },

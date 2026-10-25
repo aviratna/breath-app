@@ -15,6 +15,7 @@ Everything Breath stores about you on its server, immediately and permanently:
 - your name and invite code;
 - your list of connections, and your entry in other people's lists;
 - the gifts you have received;
+- your phone's notification address;
 - your anonymous account.
 
 If someone had **blocked** you, their record of that block is kept, so the block

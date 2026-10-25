@@ -37,7 +37,6 @@ await no('add a third person to alice list', setDoc(conn(M, 'alice', 'bob2'), { 
 await no('create pre-blocked/forged field', setDoc(conn(M, 'alice', 'mallory'), { name: 'M', blocked: false, since: ts(), extra: 1 }));
 await no('read alice connections as bob', getDocs(collection(B, 'users', 'alice', 'connections')));
 await ok('alice reads her connections', getDocs(collection(A, 'users', 'alice', 'connections')));
-await no('bob renames himself in alice list', updateDoc(conn(B, 'alice', 'bob'), { name: 'Bobby' }));
 
 console.log('gifts');
 const gift = (db, to, from, name) => addDoc(collection(db, 'users', to, 'inbox'), { from, fromName: name, createdAt: ts(), seen: false });
@@ -61,6 +60,28 @@ await no('blocked bob deletes his entry to escape', deleteDoc(conn(B, 'alice', '
 await no('blocked bob re-creates entry', setDoc(conn(B, 'alice', 'bob'), { name: 'Bob', blocked: false, since: ts() }));
 await ok('alice unblocks bob', updateDoc(conn(A, 'alice', 'bob'), { blocked: false }));
 await ok('bob gifts again', gift(B, 'alice', 'bob', 'Bob'));
+
+console.log('push tokens');
+await ok('alice saves her token', setDoc(doc(A, 'pushTokens', 'alice'), { token: 'ExponentPushToken[a]', updatedAt: ts() }));
+await no('mallory overwrites alice token', setDoc(doc(M, 'pushTokens', 'alice'), { token: 'x', updatedAt: ts() }));
+await no('token with extra fields', setDoc(doc(B, 'pushTokens', 'bob'), { token: 'x', updatedAt: ts(), email: 'e' }));
+await ok('connected bob reads alice token', getDoc(doc(B, 'pushTokens', 'alice')));
+await no('stranger mallory reads alice token', getDoc(doc(M, 'pushTokens', 'alice')));
+await no('anyone lists all tokens', getDocs(collection(B, 'pushTokens')));
+await ok('alice blocks bob (token)', updateDoc(conn(A, 'alice', 'bob'), { blocked: true }));
+await no('blocked bob reads alice token', getDoc(doc(B, 'pushTokens', 'alice')));
+await ok('alice unblocks bob (token)', updateDoc(conn(A, 'alice', 'bob'), { blocked: false }));
+await ok('alice deletes her token', deleteDoc(doc(A, 'pushTokens', 'alice')));
+
+console.log('renaming');
+await ok('bob renames his profile', updateDoc(doc(B, 'users', 'bob'), { name: 'Robert' }));
+await ok('bob renames his code', updateDoc(doc(B, 'codes', 'BBBBB2'), { name: 'Robert' }));
+await no('mallory renames bob code', updateDoc(doc(M, 'codes', 'BBBBB2'), { name: 'Evil' }));
+await no('bob moves his code to another uid', updateDoc(doc(B, 'codes', 'BBBBB2'), { uid: 'alice' }));
+await ok('bob renames himself in alice list', updateDoc(conn(B, 'alice', 'bob'), { name: 'Robert' }));
+await no('bob unblocks himself via rename', updateDoc(conn(B, 'alice', 'bob'), { name: 'Robert', blocked: false, since: ts() }));
+await no('mallory renames bob in alice list', updateDoc(conn(M, 'alice', 'bob'), { name: 'Evil' }));
+await no('bob renames alice in his own... other person list', updateDoc(conn(B, 'alice', 'mallory'), { name: 'X' }));
 
 console.log('account deletion (bob)');
 await ok('bob removes himself from alice list', deleteDoc(conn(B, 'alice', 'bob')));

@@ -119,3 +119,17 @@ footer nav a { color: var(--stone); padding: 10px; }
   .hero .btn { flex: 1 1 100%; }
   .step .stage { height: 380px; }
 }
+
+/* Philosophy essay */
+.essay { max-width: 680px; margin: 0 auto; padding: 48px 24px 96px; }
+.essay h1 { font-size: clamp(40px, 6vw, 64px); line-height: 1.05; letter-spacing: -1.2px; margin-bottom: 22px; }
+.essay-lede { font-family: var(--display); font-size: 23px; line-height: 1.5; color: #45413C; margin: 0 0 16px; }
+.essay section { border-top: 1px solid var(--mist); margin-top: 48px; padding-top: 40px; }
+.essay h2 { font-size: 30px; line-height: 1.15; letter-spacing: -0.3px; margin-bottom: 16px; }
+.essay p { font-size: 18px; line-height: 1.75; color: #45413C; margin: 0 0 16px; }
+.essay blockquote { margin: 26px 0; padding-left: 22px; border-left: 2px solid var(--tide); }
+.essay blockquote p { font-family: var(--display); font-style: italic; font-size: 27px; line-height: 1.35; color: var(--ink); margin: 0 0 10px; }
+.essay cite, .essay .cite-line { font-style: normal; font-size: 13px; letter-spacing: 0.4px; color: var(--stone); }
+.essay-end { margin-top: 64px; display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.idea .more { margin-top: 30px; color: var(--tide-light); font-size: 16px; text-decoration: none; border-bottom: 1px solid rgba(140, 195, 207, 0.4); padding-bottom: 2px; }
+.idea .more:hover { color: var(--moon); }
