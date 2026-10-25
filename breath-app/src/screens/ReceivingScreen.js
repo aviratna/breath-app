@@ -1,29 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, SafeAreaView } from 'react-native';
-import { colors, fonts, radius } from '../theme/tokens';
+import { View, Text, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors, fonts, type } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
 import { relativeTime } from '../lib/api';
-import Avatar from '../components/Avatar';
+import { Avatar, IconButton, PrimaryButton, SecondaryButton } from '../components/ui';
 
 export default function ReceivingScreen({ route, navigation }) {
   const { gifts, incomingGift, sendGift, markSeen, blockedContacts, now } = useBreath();
   const giftId = route.params?.giftId;
   const gift = (giftId && gifts.find((g) => g.id === giftId)) || incomingGift;
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (gift && !gift.seen) markSeen(gift.id);
   }, [gift?.id]);
 
+  const close = () => navigation.navigate('Home');
+
   if (!gift) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
-          <Text style={styles.message}>No gifts yet. When someone spends a breath on you, it will appear here.</Text>
-          <View style={{ flex: 1 }} />
-          <Pressable style={[styles.outlined, { flex: 0, width: '100%' }]} onPress={() => navigation.navigate('Home')}>
-            <Text style={styles.outlinedLabel}>back</Text>
-          </Pressable>
+          <View style={styles.top}>
+            <IconButton name="close" label="Close" onPress={close} />
+          </View>
+          <Text style={[type.h1, styles.center, { marginTop: 120 }]}>No breaths yet</Text>
+          <Text style={[type.body, styles.center, { marginTop: 12 }]}>When someone spends a breath on you, it will appear here.</Text>
         </View>
       </SafeAreaView>
     );
@@ -33,37 +37,39 @@ export default function ReceivingScreen({ route, navigation }) {
 
   async function breatheBack() {
     setError(null);
+    setBusy(true);
     try {
       await sendGift({ id: gift.from, name: gift.name });
       navigation.navigate('Sent', { name: gift.name });
     } catch (e) {
-      setError('Couldn\u2019t send it. Check your connection and try again.');
+      setError('Couldn’t send it. Check your connection and try again.');
+    } finally {
+      setBusy(false);
     }
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <View style={{ marginBottom: 20 }}>
-          <Avatar name={gift.name} size={72} />
+        <View style={styles.top}>
+          <IconButton name="close" label="Close" onPress={close} />
         </View>
-        <Text style={styles.name}>{gift.name}</Text>
-        <Text style={styles.message}>used one of their breaths thinking of you</Text>
-        <Text style={styles.timestamp}>{relativeTime(gift.createdAt, now)}</Text>
-        <Text style={styles.reassure}>no reply needed</Text>
+
+        <View style={styles.avatarWrap}>
+          <View style={styles.halo} />
+          <Avatar name={gift.name} size={156} tone="tide" />
+          <View style={styles.dot} />
+        </View>
+
+        <Text style={[type.h1, styles.center, { marginTop: 40, marginBottom: 10 }]}>{gift.name} spent a breath on you</Text>
+        <Text style={[type.small, { fontSize: 14 }]}>{relativeTime(gift.createdAt, now)}</Text>
+        <Text style={styles.noReply}>No reply needed.</Text>
 
         <View style={{ flex: 1 }} />
         {error ? <Text style={styles.error}>{error}</Text> : null}
-
         <View style={styles.row}>
-          <Pressable style={styles.outlined} onPress={() => navigation.navigate('Home')}>
-            <Text style={styles.outlinedLabel}>just smile</Text>
-          </Pressable>
-          {canReply ? (
-            <Pressable style={styles.outlined} onPress={breatheBack}>
-              <Text style={styles.outlinedLabel}>breathe one back</Text>
-            </Pressable>
-          ) : null}
+          <SecondaryButton label="Just smile" onPress={close} style={{ flex: 1, paddingHorizontal: 10 }} />
+          {canReply ? <PrimaryButton label="Breathe one back" onPress={breatheBack} busy={busy} style={{ flex: 1.35, paddingHorizontal: 10 }} /> : null}
         </View>
       </View>
     </SafeAreaView>
@@ -71,14 +77,14 @@ export default function ReceivingScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f6f3ee' },
-  content: { flex: 1, alignItems: 'center', paddingTop: 80, paddingHorizontal: 30, paddingBottom: 32 },
-  name: { fontFamily: fonts.heading, fontSize: 19, color: colors.text, marginBottom: 8 },
-  message: { fontFamily: fonts.body, fontSize: 15, color: colors.textMuted, textAlign: 'center', lineHeight: 22, marginBottom: 6 },
-  timestamp: { fontFamily: fonts.body, fontSize: 12, color: colors.textFaint, marginBottom: 18 },
-  reassure: { fontFamily: fonts.bodyItalic, fontSize: 13.5, color: colors.accentDeep },
-  error: { fontFamily: fonts.body, fontSize: 13, color: colors.accent2Deep, marginBottom: 12, textAlign: 'center' },
-  row: { flexDirection: 'row', gap: 10, width: '100%' },
-  outlined: { flex: 1, borderWidth: 1, borderColor: colors.divider, borderRadius: radius.md, padding: 14, alignItems: 'center' },
-  outlinedLabel: { fontFamily: fonts.heading, fontSize: 13, color: colors.text },
+  container: { flex: 1, backgroundColor: colors.linen },
+  content: { flex: 1, alignItems: 'center', paddingHorizontal: 24, paddingBottom: 16 },
+  top: { alignSelf: 'stretch', marginLeft: -10 },
+  center: { textAlign: 'center' },
+  avatarWrap: { width: 200, height: 200, alignItems: 'center', justifyContent: 'center', marginTop: 40 },
+  halo: { position: 'absolute', width: 200, height: 200, borderRadius: 100, borderWidth: 1, borderColor: '#C9DCE0' },
+  dot: { position: 'absolute', right: 18, top: 26, width: 16, height: 16, borderRadius: 8, backgroundColor: colors.tide, borderWidth: 3, borderColor: colors.linen },
+  noReply: { fontFamily: fonts.displayItalic, fontSize: 19, color: colors.tide, marginTop: 26 },
+  row: { flexDirection: 'row', gap: 10, alignSelf: 'stretch' },
+  error: { fontFamily: fonts.ui, fontSize: 13, color: colors.danger, marginBottom: 12, textAlign: 'center' },
 });

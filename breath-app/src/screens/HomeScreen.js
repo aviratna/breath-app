@@ -1,109 +1,122 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, SafeAreaView, ScrollView } from 'react-native';
-import { colors, fonts, spacing, radius } from '../theme/tokens';
+import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors, fonts, radius, type } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
-import PlateNumber from '../components/PlateNumber';
-import HoldToSendRow from '../components/HoldToSendRow';
+import { relativeTime } from '../lib/api';
+import { Avatar, BreathMark, Icon, IconButton, ProgressRing, SecondaryButton } from '../components/ui';
+import { PersonRow, useHoldToGive } from '../components/HoldToGive';
 
 export default function HomeScreen({ navigation }) {
-  const { dailyBreathsRemaining, contacts, previewMode, sendGift, unseenGifts } = useBreath();
+  const { dailyBreathsRemaining, dayProgress, contacts, previewMode, sendGift, gifts, unseenGifts, now } = useBreath();
   const [sendError, setSendError] = useState(null);
-  const isCeleb = previewMode === 'celebrity';
-  const tint = isCeleb ? colors.accent2Tint : colors.accentTint;
+  const isPublic = previewMode === 'celebrity';
 
-  async function handleSend(contact) {
+  async function give(contact) {
     setSendError(null);
     try {
       await sendGift(contact);
       navigation.navigate('Sent', { name: contact.name });
     } catch (e) {
-      setSendError(`Couldn\u2019t reach ${contact.name}. Check your connection and try again.`);
+      setSendError(`Couldn’t reach ${contact.name}. Check your connection and try again.`);
     }
   }
+  const hold = useHoldToGive({ onComplete: give, breathsLeft: dailyBreathsRemaining });
 
-  const latestUnseen = unseenGifts[0];
+  // A quiet line under each name: the last breath they gave you.
+  function metaFor(id) {
+    const g = gifts.find((x) => x.from === id);
+    return g ? `Gave you a breath ${relativeTime(g.createdAt, now)}` : null;
+  }
+
+  const latest = unseenGifts[0];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <View style={styles.brand}>
+            <BreathMark size={24} />
             <Text style={styles.wordmark}>Breath</Text>
-            {isCeleb ? <View style={styles.badge} /> : null}
           </View>
-          <Pressable style={styles.gear} onPress={() => navigation.navigate('Settings')}>
-            <Text style={{ fontSize: 14 }}>⚙</Text>
-          </Pressable>
+          <IconButton name="settings" label="Settings" onPress={() => navigation.navigate('Settings')} />
+        </View>
+        {isPublic ? <Text style={styles.publicTag}>One to one, not one to a million</Text> : null}
+
+        <View style={styles.ringWrap}>
+          <ProgressRing size={232} progress={dayProgress}>
+            <Text style={styles.count} accessibilityLabel={`${dailyBreathsRemaining} breaths left today`}>
+              {dailyBreathsRemaining.toLocaleString()}
+            </Text>
+            <Text style={styles.countLabel}>breaths left today</Text>
+          </ProgressRing>
+          <Text style={styles.estimate}>A contemplative estimate, not a prediction</Text>
         </View>
 
-        {isCeleb ? <Text style={styles.tagline}>one to one, not one to a million</Text> : null}
-
-        {latestUnseen ? (
-          <Pressable style={styles.giftBanner} onPress={() => navigation.navigate('Receiving', { giftId: latestUnseen.id })}>
-            <View style={styles.giftDot} />
-            <Text style={styles.giftBannerText}>
-              <Text style={{ fontFamily: fonts.heading }}>{latestUnseen.name}</Text> used one of their breaths thinking of you
-              {unseenGifts.length > 1 ? ` · ${unseenGifts.length - 1} more` : ''}
-            </Text>
+        {latest ? (
+          <Pressable style={styles.gift} accessibilityRole="button" onPress={() => navigation.navigate('Receiving', { giftId: latest.id })}>
+            <Avatar name={latest.name} size={40} tone="tide" />
+            <View style={{ flex: 1, minWidth: 0 }}>
+              <Text style={styles.giftTitle} numberOfLines={1}>
+                {latest.name} spent a breath on you
+              </Text>
+              <Text style={styles.giftMeta}>
+                {relativeTime(latest.createdAt, now)}
+                {unseenGifts.length > 1 ? ` · ${unseenGifts.length - 1} more` : ''}
+              </Text>
+            </View>
+            <Icon name="chevron" size={18} />
           </Pressable>
         ) : null}
 
-        <View style={styles.ringWrap}>
-          <PlateNumber value={dailyBreathsRemaining} size={48} />
-        </View>
-        <Text style={styles.label}>breaths remaining today</Text>
-        <Text style={styles.sublabel}>a contemplative estimate, not a prediction</Text>
-
-        <View style={{ width: '100%', marginBottom: 10, marginTop: 34 }}>
-          <Text style={styles.giftTitle}>gift a breath</Text>
-          <Text style={styles.giftSub}>
-            {isCeleb ? 'hold a name — you can give this once' : 'hold a name to send — it costs you one of your own'}
-          </Text>
+        <View style={styles.sectionHead}>
+          <Text style={styles.sectionTitle}>Give a breath</Text>
+          {contacts.length ? <Text style={type.small}>{isPublic ? 'Hold a name · once each' : 'Hold a name'}</Text> : null}
         </View>
 
-        <View style={{ width: '100%', gap: 8, marginBottom: 12 }}>
+        <View style={{ gap: 8 }}>
           {contacts.map((c) => (
-            <HoldToSendRow key={c.id} name={c.name} tint={tint} onComplete={() => handleSend(c)} />
+            <PersonRow key={c.id} name={c.name} meta={metaFor(c.id)} onPressIn={() => hold.start(c)} onPressOut={hold.cancel} />
           ))}
           {contacts.length === 0 ? (
-            <Text style={styles.empty}>
-              No one here yet. Invite someone you love — when they join with your code, their name appears here.
-            </Text>
+            <View style={styles.empty}>
+              <Text style={styles.emptyTitle}>No one here yet</Text>
+              <Text style={[type.small, { textAlign: 'center' }]}>
+                Invite someone you love. When they open your link, their name appears here.
+              </Text>
+            </View>
           ) : null}
         </View>
         {sendError ? <Text style={styles.error}>{sendError}</Text> : null}
 
-        <Pressable style={styles.addButton} onPress={() => navigation.navigate('Connect')}>
-          <Text style={styles.addLabel}>{contacts.length === 0 ? 'invite someone' : '+ add someone'}</Text>
-        </Pressable>
-
-        <Pressable onPress={() => navigation.navigate('LockScreen')}>
-          <Text style={styles.link}>preview lock screen</Text>
+        <SecondaryButton label="Invite someone" icon="plus" height={50} onPress={() => navigation.navigate('Connect')} style={{ marginTop: 18 }} />
+        <Pressable onPress={() => navigation.navigate('LockScreen')} style={{ alignSelf: 'center', paddingVertical: 14 }}>
+          <Text style={styles.link}>Preview the lock screen widget</Text>
         </Pressable>
       </ScrollView>
+      {hold.overlay}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  content: { alignItems: 'center', paddingTop: 52, paddingHorizontal: 24, paddingBottom: 32 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: 20 },
-  wordmark: { fontFamily: fonts.headingItalic, fontSize: 21, color: colors.text },
-  badge: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.accent2 },
-  gear: { width: 30, height: 30, borderRadius: 15, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
-  tagline: { fontFamily: fonts.bodyItalic, fontSize: 12.5, color: colors.accent2Deep, marginBottom: 18 },
-  ringWrap: { alignItems: 'center', justifyContent: 'center', marginBottom: 10, marginTop: 10 },
-  label: { fontFamily: fonts.heading, fontSize: 11, letterSpacing: 0.9, textTransform: 'uppercase', color: '#605d5d', marginBottom: 2 },
-  sublabel: { fontFamily: fonts.body, fontSize: 12, color: colors.textFaint },
-  giftTitle: { fontFamily: fonts.heading, fontSize: 13, color: colors.text, marginBottom: 2 },
-  giftSub: { fontFamily: fonts.body, fontSize: 12.5, color: colors.textMuted, marginBottom: 14 },
-  giftBanner: { flexDirection: 'row', alignItems: 'center', gap: 10, width: '100%', backgroundColor: colors.accentTint, borderRadius: radius.md, padding: 12, marginBottom: 14 },
-  giftDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.accent },
-  giftBannerText: { flex: 1, fontFamily: fonts.body, fontSize: 13, lineHeight: 19, color: colors.text },
-  empty: { fontFamily: fonts.body, fontSize: 13.5, lineHeight: 21, color: colors.textMuted, paddingVertical: 8 },
-  error: { fontFamily: fonts.body, fontSize: 13, color: colors.accent2Deep, marginBottom: 12, alignSelf: 'flex-start' },
-  addButton: { borderWidth: 1, borderColor: colors.divider, borderRadius: radius.md, paddingVertical: 12, width: '100%', alignItems: 'center', marginBottom: 24 },
-  addLabel: { fontFamily: fonts.heading, fontSize: 13, color: colors.text },
-  link: { fontFamily: fonts.body, fontSize: 13, color: colors.accent, textDecorationLine: 'underline' },
+  container: { flex: 1, backgroundColor: colors.linen },
+  content: { paddingTop: 8, paddingHorizontal: 20, paddingBottom: 24 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginRight: -8 },
+  brand: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingLeft: 4 },
+  wordmark: { fontFamily: fonts.displayItalic, fontSize: 24, color: colors.ink },
+  publicTag: { fontFamily: fonts.displayItalic, fontSize: 15, color: colors.tide, paddingLeft: 4, marginTop: 2 },
+  ringWrap: { alignItems: 'center', marginTop: 18, marginBottom: 22 },
+  count: { fontFamily: fonts.displayLight, fontSize: 58, lineHeight: 64, letterSpacing: -1.5, color: colors.ink },
+  countLabel: { fontFamily: fonts.ui, fontSize: 13, color: colors.stone, marginTop: 4 },
+  estimate: { fontFamily: fonts.ui, fontSize: 12.5, color: colors.stone, marginTop: 12 },
+  gift: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, paddingHorizontal: 14, borderRadius: radius.row, backgroundColor: colors.tideMist, marginBottom: 22 },
+  giftTitle: { fontFamily: fonts.uiMedium, fontSize: 15, color: colors.ink },
+  giftMeta: { fontFamily: fonts.ui, fontSize: 13, color: colors.tideInk, marginTop: 1 },
+  sectionHead: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', paddingHorizontal: 4, marginBottom: 10 },
+  sectionTitle: { fontFamily: fonts.uiSemi, fontSize: 15, color: colors.ink },
+  empty: { alignItems: 'center', gap: 6, paddingVertical: 26, paddingHorizontal: 24, borderRadius: radius.row, borderWidth: 1, borderStyle: 'dashed', borderColor: colors.border },
+  emptyTitle: { fontFamily: fonts.display, fontSize: 21, color: colors.ink },
+  error: { fontFamily: fonts.ui, fontSize: 13, color: colors.danger, marginTop: 12 },
+  link: { fontFamily: fonts.ui, fontSize: 13.5, color: colors.tide },
 });

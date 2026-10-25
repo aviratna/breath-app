@@ -13,7 +13,7 @@
     "android": {
       "package": "com.aviratna.breath",
       "adaptiveIcon": {
-        "backgroundColor": "#201E1D",
+        "backgroundColor": "#161514",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"

@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
-import {
-  SourceSerif4_400Regular,
-  SourceSerif4_400Regular_Italic,
-  SourceSerif4_600SemiBold,
-} from '@expo-google-fonts/source-serif-4';
+import { Newsreader_300Light, Newsreader_400Regular, Newsreader_400Regular_Italic } from '@expo-google-fonts/newsreader';
+import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { View, ActivityIndicator, Linking } from 'react-native';
 
 import { BreathProvider, useBreath } from './src/state/BreathContext';
@@ -20,6 +19,7 @@ import SettingsScreen from './src/screens/SettingsScreen';
 import NameScreen from './src/screens/NameScreen';
 import ConnectScreen from './src/screens/ConnectScreen';
 import { codeFromUrl } from './src/lib/api';
+import { colors } from './src/theme/tokens';
 
 const Stack = createNativeStackNavigator();
 
@@ -52,7 +52,7 @@ function Root() {
   const initial = !hasOnboarded ? 'Onboarding' : me ? 'Home' : 'Name';
   return (
     <NavigationContainer ref={navigationRef} onReady={() => setNavReady(true)}>
-      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initial}>
+      <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.linen }, animation: 'fade_from_bottom' }} initialRouteName={initial}>
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Sent" component={SentScreen} />
@@ -69,24 +69,30 @@ function Root() {
 
 function Loading() {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <ActivityIndicator />
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.linen }}>
+      <ActivityIndicator color={colors.ink} />
     </View>
   );
 }
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    SourceSerif4_400Regular,
-    SourceSerif4_400Regular_Italic,
-    SourceSerif4_600SemiBold,
+    Newsreader_300Light,
+    Newsreader_400Regular,
+    Newsreader_400Regular_Italic,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
   });
 
   if (!fontsLoaded) return <Loading />;
 
   return (
-    <BreathProvider>
-      <Root />
-    </BreathProvider>
+    <SafeAreaProvider>
+      <StatusBar style="dark" />
+      <BreathProvider>
+        <Root />
+      </BreathProvider>
+    </SafeAreaProvider>
   );
 }

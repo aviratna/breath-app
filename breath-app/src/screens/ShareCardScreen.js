@@ -1,9 +1,10 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, SafeAreaView, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, Alert, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
-import BreathMark from '../components/BreathMark';
-import { colors, fonts, radius } from '../theme/tokens';
+import { colors, fonts } from '../theme/tokens';
+import { BreathMark, PrimaryButton, ScreenHeader, TextButton } from '../components/ui';
 import { useBreath } from '../state/BreathContext';
 
 export default function ShareCardScreen({ route, navigation }) {
@@ -45,56 +46,53 @@ export default function ShareCardScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <View ref={cardRef} collapsable={false} style={styles.card}>
-          <View style={{ marginBottom: 18 }}>
-            <BreathMark size={44} />
-          </View>
-          <Text style={styles.line}>{isCeleb ? `${name === 'you' ? 'They' : name} gave a fan a breath` : 'spent a breath thinking of you'}</Text>
-
-          {lastGift ? (
-            <View style={styles.countRow}>
-              <Text style={styles.countText}>{lastGift.before.toLocaleString()}</Text>
-              <Text style={styles.arrow}>→</Text>
-              <Text style={styles.countText}>{lastGift.after.toLocaleString()}</Text>
-            </View>
-          ) : null}
-
-          {isCeleb ? <Text style={styles.tagline}>one to one, not one to a million</Text> : null}
-
-          <Text style={styles.wordmark}>breath</Text>
+        <View style={{ alignSelf: 'stretch' }}>
+          <ScreenHeader title="Share this moment" onBack={() => navigation.goBack()} />
         </View>
 
-        <Pressable style={[styles.saveButton, busy && { opacity: 0.6 }]} onPress={shareImage} disabled={busy}>
-          <Text style={styles.saveLabel}>{Platform.OS === 'web' ? 'save image' : 'share image'}</Text>
-        </Pressable>
-        <Pressable onPress={() => navigation.navigate('Home')}>
-          <Text style={styles.done}>done</Text>
-        </Pressable>
+        <View ref={cardRef} collapsable={false} style={styles.card}>
+          <BreathMark size={64} color={colors.moon} dot={colors.tideLight} strokeWidth={1.4} />
+          <Text style={styles.line}>
+            {isCeleb ? `${name === 'you' ? 'They' : name} gave a fan a breath.` : 'I spent a breath thinking of you.'}
+          </Text>
+          {lastGift ? (
+            <Text style={styles.count}>
+              {lastGift.before.toLocaleString()} {'\u2192'} {lastGift.after.toLocaleString()} breaths today
+            </Text>
+          ) : null}
+          {isCeleb ? <Text style={styles.tagline}>One to one, not one to a million.</Text> : null}
+          <Text style={styles.wordmark}>Breath</Text>
+        </View>
+
+        <View style={{ flex: 1 }} />
+        <PrimaryButton
+          label={Platform.OS === 'web' ? 'Save image' : 'Share image'}
+          icon="share"
+          onPress={shareImage}
+          busy={busy}
+          style={{ alignSelf: 'stretch' }}
+        />
+        <TextButton label="Done" onPress={() => navigation.navigate('Home')} style={{ alignSelf: 'stretch', marginTop: 6 }} />
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  content: { flex: 1, alignItems: 'center', paddingTop: 40, paddingHorizontal: 24, paddingBottom: 32 },
+  container: { flex: 1, backgroundColor: colors.linen },
+  content: { flex: 1, alignItems: 'center', paddingTop: 4, paddingHorizontal: 20, paddingBottom: 16 },
   card: {
-    width: 240,
+    width: 270,
     aspectRatio: 9 / 16,
-    backgroundColor: '#f6f3ee',
-    borderRadius: radius.lg,
+    backgroundColor: colors.night,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 24,
-    marginBottom: 24,
+    paddingHorizontal: 28,
+    marginTop: 8,
   },
-  line: { fontFamily: fonts.heading, fontSize: 16, color: colors.text, textAlign: 'center', marginBottom: 20 },
-  countRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14 },
-  countText: { fontFamily: fonts.body, fontSize: 13, color: colors.textMuted },
-  arrow: { fontFamily: fonts.body, fontSize: 13, color: '#a8a293' },
-  tagline: { fontFamily: fonts.bodyItalic, fontSize: 11.5, color: colors.accent2Deep, marginBottom: 14, textAlign: 'center' },
-  wordmark: { position: 'absolute', bottom: 18, fontFamily: fonts.headingItalic, fontSize: 13, color: colors.textFaint },
-  saveButton: { backgroundColor: colors.text, borderRadius: radius.md, paddingVertical: 14, paddingHorizontal: 40, marginBottom: 12 },
-  saveLabel: { fontFamily: fonts.heading, fontSize: 13, color: colors.bg },
-  done: { fontFamily: fonts.body, fontSize: 13, color: colors.textMuted },
+  line: { fontFamily: fonts.display, fontSize: 26, lineHeight: 31, letterSpacing: -0.3, color: colors.moon, textAlign: 'center', marginTop: 30 },
+  count: { fontFamily: fonts.ui, fontSize: 12.5, color: colors.moonMuted, marginTop: 16 },
+  tagline: { fontFamily: fonts.displayItalic, fontSize: 14, color: colors.tideLight, marginTop: 12, textAlign: 'center' },
+  wordmark: { position: 'absolute', bottom: 26, fontFamily: fonts.displayItalic, fontSize: 17, color: colors.moon },
 });

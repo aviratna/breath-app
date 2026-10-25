@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, SafeAreaView, TextInput, ScrollView, Share, ActivityIndicator } from 'react-native';
-import { colors, fonts, radius } from '../theme/tokens';
+import { View, Text, StyleSheet, TextInput, ScrollView, Share } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors, fonts, radius, type } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
 import { CODE_LENGTH, errorMessage, inviteLink, normalizeCode } from '../lib/api';
+import { Card, PrimaryButton, ScreenHeader, SecondaryButton } from '../components/ui';
 
 export default function ConnectScreen({ route, navigation }) {
   const { me, connect } = useBreath();
@@ -13,7 +15,7 @@ export default function ConnectScreen({ route, navigation }) {
   async function invite() {
     try {
       await Share.share({
-        message: `Gift me a breath on Breath: ${inviteLink(me.code)}\n\n(or add me with the code ${me.code})`,
+        message: `I'd like to give you a breath on Breath: ${inviteLink(me.code)}\n\n(or add me in the app with the code ${me.code})`,
       });
     } catch (e) {
       // Share sheet dismissed or unavailable — nothing to do.
@@ -52,61 +54,72 @@ export default function ConnectScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <View style={styles.header}>
-          <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
-            <Text style={styles.back}>‹</Text>
-          </Pressable>
-          <Text style={styles.title}>Add someone</Text>
+        <ScreenHeader title="Invite someone" onBack={() => navigation.goBack()} />
+
+        <Text style={[type.h1, { fontSize: 28, lineHeight: 34, marginHorizontal: 4, marginBottom: 10 }]}>Who would you like to breathe for?</Text>
+        <Text style={[type.body, { fontSize: 15, marginHorizontal: 4, marginBottom: 22 }]}>
+          Send them your link. When they open it, you{'’'}re connected both ways.
+        </Text>
+
+        <Card style={{ padding: 20, gap: 16 }}>
+          <Text style={type.label}>Your invite code</Text>
+          <Text style={styles.code} selectable accessibilityLabel={`Your invite code: ${(me?.code || '').split('').join(' ')}`}>
+            {me ? me.code : ''}
+          </Text>
+          <PrimaryButton label="Share invite link" icon="share" onPress={invite} />
+          <Text style={[type.small, { textAlign: 'center' }]}>Opens WhatsApp, Messages or any app you choose</Text>
+        </Card>
+
+        <View style={styles.or}>
+          <View style={styles.line} />
+          <Text style={type.small}>Got someone{'’'}s code?</Text>
+          <View style={styles.line} />
         </View>
 
-        <Text style={styles.sectionTitle}>Your code</Text>
-        <Text style={styles.code} selectable>
-          {me ? me.code : ''}
+        <Text nativeID="codeLabel" style={styles.inputLabel}>
+          Their code
         </Text>
-        <Text style={styles.body}>
-          Send this to someone you&apos;d like to gift breaths to. When they enter it, you&apos;re connected — both ways.
-        </Text>
-        <Pressable style={styles.primary} onPress={invite}>
-          <Text style={styles.primaryLabel}>send an invite</Text>
-        </Pressable>
-
-        <View style={styles.divider} />
-
-        <Text style={styles.sectionTitle}>Have someone&apos;s code?</Text>
-        <TextInput
-          style={styles.input}
-          value={code}
-          onChangeText={(t) => setCode(normalizeCode(t).slice(0, CODE_LENGTH))}
-          placeholder="ABC234"
-          placeholderTextColor={colors.textFaint}
-          autoCapitalize="characters"
-          autoCorrect={false}
-          returnKeyType="done"
-          onSubmitEditing={() => add()}
-        />
-        {result ? <Text style={[styles.result, !result.ok && { color: colors.accent2Deep }]}>{result.text}</Text> : null}
-        <Pressable style={[styles.secondary, (!ready || busy) && { opacity: 0.5 }]} onPress={() => add()} disabled={!ready || busy}>
-          {busy ? <ActivityIndicator color={colors.text} /> : <Text style={styles.secondaryLabel}>connect</Text>}
-        </Pressable>
+        <View style={{ flexDirection: 'row', gap: 10 }}>
+          <TextInput
+            accessibilityLabel="Their code"
+            style={styles.input}
+            value={code}
+            onChangeText={(t) => setCode(normalizeCode(t).slice(0, CODE_LENGTH))}
+            placeholder="ABC234"
+            placeholderTextColor="#A49E97"
+            autoCapitalize="characters"
+            autoCorrect={false}
+            returnKeyType="done"
+            onSubmitEditing={() => ready && add()}
+          />
+          <SecondaryButton label="Connect" onPress={() => add()} busy={busy} disabled={!ready} height={56} style={{ borderRadius: radius.input }} />
+        </View>
+        {result ? <Text style={[styles.result, !result.ok && { color: colors.danger }]}>{result.text}</Text> : null}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  content: { paddingTop: 52, paddingHorizontal: 24, paddingBottom: 32 },
-  header: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 30 },
-  back: { fontSize: 24, color: colors.text },
-  title: { fontFamily: fonts.heading, fontSize: 18, color: colors.text },
-  sectionTitle: { fontFamily: fonts.heading, fontSize: 13, color: colors.textMuted, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
-  code: { fontFamily: fonts.body, fontSize: 40, letterSpacing: 6, color: colors.accentDeep, marginBottom: 10 },
-  body: { fontFamily: fonts.body, fontSize: 14, lineHeight: 21, color: colors.textMuted, marginBottom: 18 },
-  primary: { backgroundColor: colors.text, borderRadius: radius.md, padding: 15, alignItems: 'center' },
-  primaryLabel: { fontFamily: fonts.heading, fontSize: 14, color: colors.bg },
-  divider: { height: 0.5, backgroundColor: colors.divider, marginVertical: 30 },
-  input: { fontFamily: fonts.body, fontSize: 24, letterSpacing: 4, color: colors.text, borderBottomWidth: 1, borderBottomColor: colors.text, paddingVertical: 8, marginBottom: 12 },
-  result: { fontFamily: fonts.body, fontSize: 13, color: colors.accentDeep, marginBottom: 12 },
-  secondary: { borderWidth: 1, borderColor: colors.divider, borderRadius: radius.md, padding: 14, alignItems: 'center', marginTop: 6 },
-  secondaryLabel: { fontFamily: fonts.heading, fontSize: 13, color: colors.text },
+  container: { flex: 1, backgroundColor: colors.linen },
+  content: { paddingTop: 4, paddingHorizontal: 20, paddingBottom: 32 },
+  code: { fontFamily: fonts.display, fontSize: 44, lineHeight: 50, letterSpacing: 10, color: colors.tide },
+  or: { flexDirection: 'row', alignItems: 'center', gap: 12, marginVertical: 26, marginHorizontal: 4 },
+  line: { flex: 1, height: 1, backgroundColor: colors.mist },
+  inputLabel: { fontFamily: fonts.uiMedium, fontSize: 13, color: colors.stone, marginHorizontal: 4, marginBottom: 8 },
+  input: {
+    flex: 1,
+    minWidth: 0,
+    height: 56,
+    fontFamily: fonts.display,
+    fontSize: 22,
+    letterSpacing: 6,
+    color: colors.ink,
+    backgroundColor: colors.paper,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.input,
+    paddingHorizontal: 14,
+  },
+  result: { fontFamily: fonts.ui, fontSize: 14, color: colors.tide, marginTop: 12, marginHorizontal: 4 },
 });
