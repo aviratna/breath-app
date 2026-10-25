@@ -1,6 +1,8 @@
 name: Android release
 
-# Builds the Android app on Expo's cloud (EAS Build).
+# Builds the Android app with EAS on GitHub's own runner (`eas build --local`), so builds
+# don't use the Expo plan's monthly cloud-build quota or wait in its queue. The signing key
+# still comes from Expo's credential store via EXPO_TOKEN.
 #  - "apk":  a sideloadable APK attached to a GitHub Release (direct-download hosting).
 #            Runs on every app change merged to main; the newest one is always at
 #            https://github.com/aviratna/breath-app/releases/latest/download/breath.apk
@@ -49,6 +51,11 @@ jobs:
             exit 1
           fi
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -62,12 +69,8 @@ jobs:
 
       - run: npm ci
 
-      - name: Build APK on EAS
-        run: |
-          eas build --platform android --profile preview --non-interactive --wait --json > build.json
-          url=$(jq -r '.[0].artifacts.buildUrl' build.json)
-          echo "Build artifact: $url"
-          curl -fsSL "$url" -o breath.apk
+      - name: Build APK
+        run: eas build --platform android --profile preview --local --non-interactive --output breath.apk
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
@@ -107,6 +110,11 @@ jobs:
             echo "::notice::GOOGLE_SERVICE_ACCOUNT_JSON not set: building the AAB without submitting it to Google Play."
           fi
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -126,15 +134,12 @@ jobs:
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
         run: |
           printf '%s' "$GOOGLE_SERVICE_ACCOUNT_JSON" > google-service-account.json
-          eas build --platform android --profile production --non-interactive --wait --auto-submit
+          eas build --platform android --profile production --local --non-interactive --output breath.aab
+          eas submit --platform android --profile production --path breath.aab --non-interactive
 
       - if: steps.secrets.outputs.submit != 'true'
         name: Build AAB
-        run: |
-          eas build --platform android --profile production --non-interactive --wait --json > build.json
-          url=$(jq -r '.[0].artifacts.buildUrl' build.json)
-          echo "Build artifact: $url"
-          curl -fsSL "$url" -o breath.aab
+        run: eas build --platform android --profile production --local --non-interactive --output breath.aab
 
       - if: steps.secrets.outputs.submit != 'true'
         name: Attach AAB to a GitHub pre-release
