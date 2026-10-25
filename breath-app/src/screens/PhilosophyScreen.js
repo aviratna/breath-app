@@ -39,6 +39,7 @@ export default function PhilosophyScreen({ navigation }) {
 
         {p.sections.map((s) => (
           <View key={s.heading} style={styles.section}>
+            {s.founder ? <Text style={[type.label, { color: colors.tide, marginBottom: 8 }]}>A note from the founder</Text> : null}
             <Text accessibilityRole="header" style={styles.heading}>
               {s.heading}
             </Text>
@@ -55,6 +56,7 @@ export default function PhilosophyScreen({ navigation }) {
                 {t}
               </Text>
             ))}
+            {s.founder ? <Text style={styles.signature}>{'\u2014 '}{s.founder}</Text> : null}
           </View>
         ))}
         <Text style={[type.small, { marginTop: 36 }]}>{p.note}</Text>
@@ -76,5 +78,6 @@ const styles = StyleSheet.create({
   originalLatin: { fontFamily: fonts.displayItalic, fontSize: 17, lineHeight: 25, color: colors.ink },
   translit: { fontFamily: fonts.ui, fontSize: 13.5, lineHeight: 20, fontStyle: 'italic', color: colors.stone },
   translation: { fontFamily: fonts.displayItalic, fontSize: 20, lineHeight: 28, color: colors.ink, marginTop: 2 },
+  signature: { fontFamily: fonts.displayItalic, fontSize: 18, color: colors.ink, marginTop: 4 },
   source: { fontFamily: fonts.ui, fontSize: 12.5, letterSpacing: 0.3, color: colors.stone },
 });
