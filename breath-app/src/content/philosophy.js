@@ -1,5 +1,6 @@
-// "The idea behind Breath" — shared by the in-app screen. The website carries the same text
-// (site/philosophy/index.html); keep the two in step when editing.
+// "The idea behind Breath" — the in-app screen and the website's philosophy page are both
+// built from this file (run `node site-src/build.mjs` after editing). The Hindi page's prose
+// lives in site-src/philosophy.hi.mjs; keep it in step.
 //
 // Accuracy notes for editors:
 // - "Born with a fixed number of breaths" is a traditional teaching without a single

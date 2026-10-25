@@ -1,0 +1,4 @@
+# Built by the Website workflow from breath-app/ (see site-src/webapp.mjs)
+site/app/
+node_modules/
+firebase/*-debug.log

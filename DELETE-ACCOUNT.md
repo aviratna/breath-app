@@ -12,7 +12,7 @@
 
 Everything Breath stores about you on its server, immediately and permanently:
 
-- your name and invite code;
+- your name, invite code and the name shown on your invite link;
 - your list of connections, and your entry in other people's lists;
 - the gifts you have received;
 - your phone's notification address;

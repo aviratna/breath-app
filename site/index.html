@@ -5,54 +5,91 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Breath: spend a breath on someone you love</title>
   <meta name="description" content="Breath keeps a quiet count of the breaths left in your day. Hold a name, and one of them goes to someone you’re thinking of. No messages. No reply expected.">
-  <meta name="theme-color" content="#F5F1EA">
+  <meta name="theme-color" content="#F5F1EA" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#161514" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <link rel="canonical" href="https://aviratna.github.io/breath-app/">
+  <link rel="alternate" hreflang="en" href="https://aviratna.github.io/breath-app/">
+  <link rel="alternate" hreflang="hi" href="https://aviratna.github.io/breath-app/hi/">
+  <link rel="alternate" hreflang="x-default" href="https://aviratna.github.io/breath-app/">
+  <meta property="og:site_name" content="Breath">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://aviratna.github.io/breath-app/">
   <meta property="og:title" content="Breath">
   <meta property="og:description" content="Spend a breath on someone you love. No messages. No reply expected.">
   <meta property="og:image" content="https://aviratna.github.io/breath-app/og.png">
-  <meta property="og:type" content="website">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="500">
+  <meta property="og:image:alt" content="Breath: a quiet ring and dot on linen.">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="preload" href="fonts/newsreader-latin-standard-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Breath","url":"https://aviratna.github.io/breath-app/","description":"Breath keeps a quiet count of the breaths left in your day. Hold a name, and one of them goes to someone you’re thinking of. No messages. No reply expected.","applicationCategory":"LifestyleApplication","operatingSystem":"Android, Web","downloadUrl":"https://github.com/aviratna/breath-app/releases/latest/download/breath.apk","image":"https://aviratna.github.io/breath-app/icon.png","inLanguage":["en","hi"],"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
+  <a class="skip" href="#main">Skip to content</a>
   <div class="wrap">
     <header class="top">
-      <a class="brand" href="./" aria-label="Breath home">
-        <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="#1B1A18" stroke-width="1.3"/><circle cx="12" cy="12" r="2" fill="#2D6A78"/></svg>
+      <a class="brand" href="" aria-label="Breath home">
+        <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="12" r="2" style="fill:var(--accent)"/></svg>
         <span>Breath</span>
       </a>
       <nav aria-label="Main">
-        <a href="#how">How it works</a>
+        <a class="hide-sm" href="#how">How it works</a>
         <a href="philosophy/">The idea</a>
-        <a href="#privacy">Privacy</a>
+        <a class="hide-sm" href="faq/">FAQ</a>
+        <a class="lang" href="hi/" hreflang="hi" lang="hi" aria-label="हिन्दी में पढ़ें">हिन्दी</a>
         <a class="btn small" href="#download">Download</a>
       </nav>
     </header>
+  </div>
 
-    <main>
+  <div class="wrap">
+    <main id="main">
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">A contemplative app for Android</p>
+          <p class="eyebrow">A contemplative app for Android, iPhone and the web</p>
           <h1>Spend a breath on someone you love.</h1>
           <p class="lede">Breath keeps a quiet count of the breaths left in your day. Hold a name, and one of them goes to someone you’re thinking of. No messages. No reply expected.</p>
           <div class="ctas">
-            <a class="btn" href="https://github.com/aviratna/breath-app/releases/latest/download/breath.apk">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>
-              Download for Android
-            </a>
-            <a class="btn ghost" href="#how">How it works</a>
+            <a class="btn" href="https://github.com/aviratna/breath-app/releases/latest/download/breath.apk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg> Download for Android</a>
+            <a class="btn ghost" href="app/">Use it on iPhone or the web</a>
           </div>
           <p class="fine">Free · No ads · No tracking · Google Play coming soon</p>
         </div>
-        <div class="hero-phone">
-          <div class="phone"><img src="img/home.jpg" width="585" height="1266" alt="The Breath home screen: 14,599 breaths left today inside a ring that fills as the day passes, a card saying Mom spent a breath on you, and a list of people to give a breath to."></div>
+        <div class="hero-dial">
+          <figure style="margin:0">
+            <div class="dial" role="img" id="dial" aria-label="breaths left today">
+              <svg viewBox="0 0 440 440" aria-hidden="true"><g class="dots" fill="currentColor" opacity="0.9"><circle cx="220.0" cy="18.0" r="4.4"/><circle cx="233.2" cy="18.4" r="4.4"/><circle cx="246.4" cy="19.7" r="4.4"/><circle cx="259.4" cy="21.9" r="4.4"/><circle cx="272.3" cy="24.9" r="4.4"/><circle cx="284.9" cy="28.7" r="4.4"/><circle cx="297.3" cy="33.4" r="4.4"/><circle cx="309.3" cy="38.8" r="4.4"/><circle cx="321.0" cy="45.1" r="4.4"/><circle cx="332.2" cy="52.0" r="4.4"/><circle cx="343.0" cy="59.7" r="4.4"/><circle cx="353.2" cy="68.1" r="4.4"/><circle cx="362.8" cy="77.2" r="4.4"/><circle cx="371.9" cy="86.8" r="4.4"/><circle cx="380.3" cy="97.0" r="4.4"/><circle cx="388.0" cy="107.8" r="4.4"/><circle cx="394.9" cy="119.0" r="4.4"/><circle cx="401.2" cy="130.7" r="4.4"/><circle cx="406.6" cy="142.7" r="4.4"/><circle cx="411.3" cy="155.1" r="4.4"/><circle cx="415.1" cy="167.7" r="4.4"/><circle cx="418.1" cy="180.6" r="4.4"/><circle cx="420.3" cy="193.6" r="4.4"/><circle cx="421.6" cy="206.8" r="4.4"/><circle cx="422.0" cy="220.0" r="4.4"/><circle cx="421.6" cy="233.2" r="4.4"/><circle cx="420.3" cy="246.4" r="4.4"/><circle cx="418.1" cy="259.4" r="4.4"/><circle cx="415.1" cy="272.3" r="4.4"/><circle cx="411.3" cy="284.9" r="4.4"/><circle cx="406.6" cy="297.3" r="4.4"/><circle cx="401.2" cy="309.3" r="4.4"/><circle cx="394.9" cy="321.0" r="4.4"/><circle cx="388.0" cy="332.2" r="4.4"/><circle cx="380.3" cy="343.0" r="4.4"/><circle cx="371.9" cy="353.2" r="4.4"/><circle cx="362.8" cy="362.8" r="4.4"/><circle cx="353.2" cy="371.9" r="4.4"/><circle cx="343.0" cy="380.3" r="4.4"/><circle cx="332.2" cy="388.0" r="4.4"/><circle cx="321.0" cy="394.9" r="4.4"/><circle cx="309.3" cy="401.2" r="4.4"/><circle cx="297.3" cy="406.6" r="4.4"/><circle cx="284.9" cy="411.3" r="4.4"/><circle cx="272.3" cy="415.1" r="4.4"/><circle cx="259.4" cy="418.1" r="4.4"/><circle cx="246.4" cy="420.3" r="4.4"/><circle cx="233.2" cy="421.6" r="4.4"/><circle cx="220.0" cy="422.0" r="4.4"/><circle cx="206.8" cy="421.6" r="4.4"/><circle cx="193.6" cy="420.3" r="4.4"/><circle cx="180.6" cy="418.1" r="4.4"/><circle cx="167.7" cy="415.1" r="4.4"/><circle cx="155.1" cy="411.3" r="4.4"/><circle cx="142.7" cy="406.6" r="4.4"/><circle cx="130.7" cy="401.2" r="4.4"/><circle cx="119.0" cy="394.9" r="4.4"/><circle cx="107.8" cy="388.0" r="4.4"/><circle cx="97.0" cy="380.3" r="4.4"/><circle cx="86.8" cy="371.9" r="4.4"/><circle cx="77.2" cy="362.8" r="4.4"/><circle cx="68.1" cy="353.2" r="4.4"/><circle cx="59.7" cy="343.0" r="4.4"/><circle cx="52.0" cy="332.2" r="4.4"/><circle cx="45.1" cy="321.0" r="4.4"/><circle cx="38.8" cy="309.3" r="4.4"/><circle cx="33.4" cy="297.3" r="4.4"/><circle cx="28.7" cy="284.9" r="4.4"/><circle cx="24.9" cy="272.3" r="4.4"/><circle cx="21.9" cy="259.4" r="4.4"/><circle cx="19.7" cy="246.4" r="4.4"/><circle cx="18.4" cy="233.2" r="4.4"/><circle cx="18.0" cy="220.0" r="4.4"/><circle cx="18.4" cy="206.8" r="4.4"/><circle cx="19.7" cy="193.6" r="4.4"/><circle cx="21.9" cy="180.6" r="4.4"/><circle cx="24.9" cy="167.7" r="4.4"/><circle cx="28.7" cy="155.1" r="4.4"/><circle cx="33.4" cy="142.7" r="4.4"/><circle cx="38.8" cy="130.7" r="4.4"/><circle cx="45.1" cy="119.0" r="4.4"/><circle cx="52.0" cy="107.8" r="4.4"/><circle cx="59.7" cy="97.0" r="4.4"/><circle cx="68.1" cy="86.8" r="4.4"/><circle cx="77.2" cy="77.2" r="4.4"/><circle cx="86.8" cy="68.1" r="4.4"/><circle cx="97.0" cy="59.7" r="4.4"/><circle cx="107.8" cy="52.0" r="4.4"/><circle cx="119.0" cy="45.1" r="4.4"/><circle cx="130.7" cy="38.8" r="4.4"/><circle cx="142.7" cy="33.4" r="4.4"/><circle cx="155.1" cy="28.7" r="4.4"/><circle cx="167.7" cy="24.9" r="4.4"/><circle cx="180.6" cy="21.9" r="4.4"/><circle cx="193.6" cy="19.7" r="4.4"/><circle cx="206.8" cy="18.4" r="4.4"/></g></svg>
+              <div class="halo"></div>
+              <div class="center">
+                <div class="cue" id="cue" aria-hidden="true">breathe in</div>
+                <div class="count" id="count">&nbsp;</div>
+                <div class="label">breaths left today</div>
+              </div>
+            </div>
+            <figcaption class="dial-note">Your day, live: each dot is a quarter hour. Breathe with the circle — in for four, out for six.</figcaption>
+          </figure>
         </div>
       </section>
     </main>
   </div>
+
+  <section class="daily" aria-labelledby="daily-h">
+    <div class="wrap">
+      <p class="eyebrow" id="daily-h">For today</p>
+      <blockquote id="daily">
+        <p class="orig " hidden></p>
+        <p class="q">“The trouble is, you think you have time.”</p>
+        <cite>Popularly attributed to the Buddha; from Jack Kornfield, Buddha’s Little Instruction Book (1994)</cite>
+      </blockquote>
+      <a class="more" href="philosophy/">Read the idea behind Breath →</a>
+    </div>
+  </section>
 
   <section class="idea">
     <div class="inner">
@@ -73,11 +110,11 @@
           <div class="text"><div class="n">01</div><div><h3>Invite your people</h3><p>Share a link over WhatsApp or anywhere. When they open it, you’re connected. No phone numbers, no contact uploads.</p></div></div>
         </div>
         <div class="step">
-          <div class="stage"><div class="phone"><img src="img/hold.jpg" width="585" height="1266" loading="lazy" alt="Holding a name: a ring fills around Dad’s initial, with Keep holding underneath."></div></div>
+          <div class="stage"><div class="phone"><img src="img/hold.jpg" width="585" height="1266" loading="lazy" alt="Holding a name: a ring fills around the person’s initial, with Keep holding underneath."></div></div>
           <div class="text"><div class="n">02</div><div><h3>Hold a name</h3><p>A ring fills as you hold. Let go to cancel. Each gift costs one of your own breaths, which is what makes it sincere.</p></div></div>
         </div>
         <div class="step">
-          <div class="stage"><div class="phone"><img src="img/received.jpg" width="585" height="1266" loading="lazy" alt="Receiving: Mom spent a breath on you, three minutes ago. No reply needed."></div></div>
+          <div class="stage"><div class="phone"><img src="img/received.jpg" width="585" height="1266" loading="lazy" alt="Receiving: Mom spent a breath on you, a few minutes ago. No reply needed."></div></div>
           <div class="text"><div class="n">03</div><div><h3>They simply know</h3><p>They see that you spent a breath on them. They can just smile, or breathe one back. There is no thread to keep up.</p></div></div>
         </div>
       </div>
@@ -87,7 +124,7 @@
       <div class="grid">
         <div><h3>Just a name</h3><p>No email, phone number or password. Only the people you connect with can see you.</p></div>
         <div><h3>Quiet by design</h3><p>No feeds, likes, streaks or ads. Nothing asks for your attention except the people you love.</p></div>
-        <div><h3>Yours to control</h3><p>Block anyone, and they won’t be told. Delete your account and everything with it, any time. <a href="https://github.com/aviratna/breath-app/blob/main/PRIVACY.md">Privacy policy</a></p></div>
+        <div><h3>Yours to control</h3><p>Block anyone, and they won’t be told. Delete your account and everything with it, any time. <a href="privacy/">Privacy policy</a></p></div>
       </div>
     </section>
 
@@ -98,34 +135,70 @@
           <p>Spend one well.</p>
         </div>
         <div class="get">
-          <a class="btn" href="https://github.com/aviratna/breath-app/releases/latest/download/breath.apk">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>
-            Download for Android
-          </a>
-          <small>Free. Android 7 or newer. <span id="today"></span></small>
+          <a class="btn" href="https://github.com/aviratna/breath-app/releases/latest/download/breath.apk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg> Download for Android</a>
+          <a class="btn ghost" href="app/">Use it on iPhone or the web</a>
+          <small>Free. Android 7 or newer, or any modern browser. <span id="today"></span></small>
         </div>
       </div>
     </section>
+  </div>
 
+  <div class="wrap">
     <footer>
       <div class="note">
-        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="#1B1A18" stroke-width="1.3"/><circle cx="12" cy="12" r="2" fill="#2D6A78"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="12" r="2" style="fill:var(--accent)"/></svg>
         The count is a device for attention, not a medical or actuarial prediction.
       </div>
       <nav aria-label="Footer">
-        <a href="https://github.com/aviratna/breath-app/blob/main/PRIVACY.md">Privacy</a>
-        <a href="https://github.com/aviratna/breath-app/blob/main/DELETE-ACCOUNT.md">Delete your account</a>
+        <a href="privacy/">Privacy</a>
+        <a href="delete-account/">Delete your account</a>
+        <a href="faq/">FAQ</a>
         <a href="https://github.com/aviratna/breath-app/issues">Contact</a>
       </nav>
     </footer>
   </div>
   <script>
-    // Same estimate as the app: about 15 breaths a minute until local midnight.
+    // The same estimate as the app: about 15 breaths a minute until local midnight,
+    // drawn as 96 quarter-hour dots (spent ones fade, the current one glows).
     (function () {
+      var QUOTES = [{"original":"","script":"","text":"The trouble is, you think you have time.","source":"Popularly attributed to the Buddha; from Jack Kornfield, Buddha’s Little Instruction Book (1994)"},{"original":"Pare ca na vijānanti, mayam ettha yamāmase …","script":"latn","text":"Others do not realise that we are all heading towards death. Those who do realise it — their quarrels come to rest.","source":"Dhammapada, verse 6 (Pāli)"},{"original":"आयुः पल्लवकोणाग्रलम्बाम्बुकणभङ्गुरम्","script":"deva","text":"Life is as fragile as a drop of water hanging at the tip of a leaf.","source":"Yoga Vāsiṣṭha, Vairāgya Prakaraṇa 1.14.1 (Sanskrit)"},{"original":"यावद्वायुः स्थितो देहे तावज्जीवनमुच्यते । …","script":"deva","text":"As long as breath remains in the body, that is called life. Death is its leaving. Therefore, one should learn to restrain the breath.","source":"Haṭha Yoga Pradīpikā 2.3 (Sanskrit)"},{"original":"Aho vatāhaṃ tadantaraṃ jīveyyaṃ yadantaraṃ assasitvā vā passasāmi, passasitvā vā assasāmi.","script":"latn","text":"If only I might live for the time it takes to breathe in after breathing out, or to breathe out after breathing in.","source":"Aṅguttara Nikāya 6.19, Maraṇassati Sutta (Pāli)"},{"original":"སང་དང་ཕྱི་མ་གང་སྔ་ཆ་མེད།","script":"tibt","text":"Tomorrow or the next life — which comes first, we never know.","source":"Tibetan saying"},{"original":"जातस्य हि ध्रुवो मृत्युर्ध्रुवं जन्म मृतस्य च । …","script":"deva","text":"For one who is born, death is certain; for one who dies, birth is certain. Over what cannot be avoided, you should not grieve.","source":"Bhagavad Gītā 2.27 (Sanskrit)"}];
+      var IN = "breathe in", OUT = "breathe out", LOCALE = undefined;
+      var dots = document.querySelectorAll('#dial .dots circle');
+      function left(now) {
+        var midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        return Math.floor((midnight - now) / 60000 * 15);
+      }
+      function draw() {
+        var now = new Date();
+        var start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        var cur = Math.min(95, Math.floor((now - start) / 864e5 * 96));
+        for (var i = 0; i < dots.length; i++) {
+          dots[i].setAttribute('opacity', i < cur ? '0.18' : '1');
+          dots[i].setAttribute('class', i === cur ? 'now' : '');
+          dots[i].setAttribute('r', i === cur ? '6.5' : '4.4');
+        }
+        var n = left(now).toLocaleString(LOCALE);
+        document.getElementById('count').textContent = n;
+        document.getElementById('dial').setAttribute('aria-label', "breaths left today" + ': ' + n);
+        document.getElementById('today').textContent = ((n) => `About ${n} breaths left today.`)(n);
+      }
+      draw();
+      setInterval(draw, 4000);
+
+      // Breathe in for 4 seconds, out for 6 — in step with the halo's CSS animation.
+      var cue = document.getElementById('cue'), inhale = true;
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        (function tick() { cue.textContent = inhale ? IN : OUT; setTimeout(tick, inhale ? 4000 : 6000); inhale = !inhale; })();
+      }
+
+      // A different line each day, the same for everyone that day.
       var now = new Date();
-      var midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-      var n = Math.floor((midnight - now) / 60000 * 15);
-      document.getElementById('today').textContent = 'About ' + n.toLocaleString() + ' breaths left today.';
+      var day = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 864e5) + now.getFullYear() * 366;
+      var q = QUOTES[day % QUOTES.length], box = document.getElementById('daily');
+      var orig = box.querySelector('.orig');
+      orig.textContent = q.original; orig.hidden = !q.original; orig.className = 'orig ' + q.script;
+      box.querySelector('.q').textContent = '“' + q.text + '”';
+      box.querySelector('cite').textContent = q.source;
     })();
   </script>
 </body>

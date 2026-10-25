@@ -1,12 +1,19 @@
 name: Website
 
-# Publishes site/ to GitHub Pages at https://aviratna.github.io/breath-app/
+# Publishes site/ to GitHub Pages at https://aviratna.github.io/breath-app/, together with
+# the web version of the app at /app/ (for iPhone and computers).
 # One-time setup: repo Settings → Pages → Build and deployment → Source: GitHub Actions.
 
 on:
   push:
     branches: [main]
-    paths: ['site/**', '.github/workflows/pages.yml']
+    paths:
+      - 'site/**'
+      - 'site-src/**'
+      - 'breath-app/**'
+      - 'PRIVACY.md'
+      - 'DELETE-ACCOUNT.md'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -26,6 +33,20 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: breath-app/package-lock.json
+      - name: Build the pages
+        run: node --no-warnings site-src/build.mjs
+      - name: Build the web app
+        working-directory: breath-app
+        run: |
+          npm ci
+          npx expo export -p web --output-dir dist
+      - name: Put the web app at /app/
+        run: node site-src/webapp.mjs breath-app/dist site/app
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

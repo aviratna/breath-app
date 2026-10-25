@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /breath-app/join/
+
+Sitemap: https://aviratna.github.io/breath-app/sitemap.xml
