@@ -1,40 +1,102 @@
 // "The idea behind Breath" — shared by the in-app screen. The website carries the same text
 // (site/philosophy/index.html); keep the two in step when editing.
+//
+// Accuracy notes for editors:
+// - "Born with a fixed number of breaths" is a traditional teaching without a single
+//   scriptural source; it is presented as such.
+// - "The trouble is, you think you have time" is popularly attributed to the Buddha but comes
+//   from Jack Kornfield's Buddha's Little Instruction Book (1994); it is credited that way and
+//   paired with a canonical verse (Dhammapada 6).
+// Translations are our own renderings, made with reference to standard translations.
+
 export const PHILOSOPHY = {
-  title: 'The idea behind Breath',
+  eyebrow: 'The idea behind Breath',
+  title: 'Every being is born with a fixed number of breaths.',
   intro:
-    'Breath began with an old thought: that a life is better counted in breaths than in years. It is found, in different forms, in the yogic traditions of India and in Buddhist practice, including the Tibetan schools.',
+    'So goes an old teaching, told in many forms across India and the Himalaya — by yogis counting the breath, by monks keeping death in mind. A life is not measured in years, but in breaths. Each one spent is one fewer.',
   sections: [
     {
-      heading: 'Breath is the measure of a life',
+      heading: 'We think we have time',
       body: [
-        'In the yoga traditions, breath — prāṇa — is life itself. The Haṭha Yoga Pradīpikā says it plainly:',
+        'Few lines capture the feeling as well as one that is often attributed to the Buddha:',
       ],
-      quote: 'So long as the breath remains in the body, that is life. Death is its leaving.',
-      source: 'Haṭha Yoga Pradīpikā 2.3',
-      after: [
-        'A teaching often told among yogis goes one step further: every being is born with a fixed number of breaths, and a calm, unhurried breath makes a life last longer. Whether or not one takes it literally, it turns each breath into something finite, and worth noticing.',
+      quotes: [
+        {
+          translation: 'The trouble is, you think you have time.',
+          source: 'Popularly attributed to the Buddha; from Jack Kornfield, Buddha’s Little Instruction Book (1994)',
+        },
+        {
+          original: 'Pare ca na vijānanti, mayam ettha yamāmase;\nye ca tattha vijānanti, tato sammanti medhagā.',
+          translation: 'Others do not realise that we are all heading towards death. Those who do realise it — their quarrels come to rest.',
+          source: 'Dhammapada, verse 6 (Pāli)',
+        },
+      ],
+    },
+    {
+      heading: 'The pause we stopped taking',
+      body: [
+        'Today we move faster than ever. Our days are full, our phones fuller. We answer everything except the quiet thought of someone we love — and tell ourselves there will be time later.',
+        'Somewhere in the hurry we forget what we are running for. Breath is a small way to stop: to notice that the day is passing, breath by breath, and to spend one of those breaths on the person who just crossed your mind.',
+      ],
+    },
+    {
+      heading: 'A drop at the tip of a leaf',
+      body: ['We plan our lives in decades. The Yoga Vāsiṣṭha, in which the young prince Rāma questions the meaning of life, sees it differently:'],
+      quotes: [
+        {
+          original: 'आयुः पल्लवकोणाग्रलम्बाम्बुकणभङ्गुरम्',
+          script: 'deva',
+          translit: 'āyuḥ pallava-koṇāgra-lambāmbu-kaṇa-bhaṅguram',
+          translation: 'Life is as fragile as a drop of water hanging at the tip of a leaf.',
+          source: 'Yoga Vāsiṣṭha, Vairāgya Prakaraṇa 1.14.1 (Sanskrit)',
+        },
+      ],
+    },
+    {
+      heading: 'Breath is life',
+      body: ['In the yoga traditions, breath — prāṇa — is life itself. The Haṭha Yoga Pradīpikā says it plainly:'],
+      quotes: [
+        {
+          original: 'यावद्वायुः स्थितो देहे तावज्जीवनमुच्यते ।\nमरणं तस्य निष्क्रान्तिः ततो वायुं निरोधयेत् ॥',
+          script: 'deva',
+          translit: 'yāvad vāyuḥ sthito dehe tāvaj jīvanam ucyate,\nmaraṇaṃ tasya niṣkrāntiḥ tato vāyuṃ nirodhayet.',
+          translation: 'As long as breath remains in the body, that is called life. Death is its leaving. Therefore, one should learn to restrain the breath.',
+          source: 'Haṭha Yoga Pradīpikā 2.3 (Sanskrit)',
+        },
       ],
     },
     {
       heading: 'Between one breath and the next',
       body: [
-        'In the Maraṇassati Sutta, the Buddha asks his monks how they keep death in mind. Some say they hope to live another day, or for the length of a meal. He praises the one who says: may I live just for the time it takes to breathe in after breathing out — because that monk lives with full attention.',
-        'Mindfulness of breathing, ānāpānasati, rests on the same ground: each breath is a doorway back to the present moment.',
+        'In the Maraṇassati Sutta, the Buddha asks his monks how they keep death in mind. One hopes to live another day; another, the length of a meal. He praises the monk who wishes only this:',
       ],
-      source: 'Aṅguttara Nikāya 6.19 · Majjhima Nikāya 118',
+      quotes: [
+        {
+          original: 'Aho vatāhaṃ tadantaraṃ jīveyyaṃ yadantaraṃ assasitvā vā passasāmi, passasitvā vā assasāmi.',
+          translation: 'If only I might live for the time it takes to breathe in after breathing out, or to breathe out after breathing in.',
+          source: 'Aṅguttara Nikāya 6.19, Maraṇassati Sutta (Pāli)',
+        },
+      ],
+      after: ['Mindfulness of breathing — ānāpānasati (Majjhima Nikāya 118) — rests on the same ground: each breath is a doorway back to the present moment.'],
     },
     {
       heading: 'Which comes first?',
-      body: ['Tibetan teachers keep impermanence close with a saying that is often repeated:'],
-      quote: 'Tomorrow or the next life — which comes first, we never know.',
-      source: 'A Tibetan saying',
+      body: ['Tibetan teachers keep impermanence — མི་རྟག་པ་, mi rtag pa — close with a saying repeated in monasteries and homes alike:'],
+      quotes: [
+        {
+          original: 'སང་དང་ཕྱི་མ་གང་སྔ་ཆ་མེད།',
+          script: 'tibt',
+          translit: 'sang dang phyi ma gang snga cha med',
+          translation: 'Tomorrow or the next life — which comes first, we never know.',
+          source: 'Tibetan saying',
+        },
+      ],
     },
     {
       heading: 'Why give one away',
       body: [
         'Counting breaths is not meant to frighten. Breath turns that attention outward. When someone crosses your mind, you spend one of today’s breaths on them. It is small, it is finite, and it costs you something — which is what makes it sincere.',
-        'There is no message to write and no reply expected. In Buddhist practice, giving without expecting anything back — dāna — is where generosity begins.',
+        'There is no message to write and no reply expected. In both the yogic and Buddhist traditions, giving without expecting anything back — dāna, दान — is where generosity begins.',
       ],
     },
     {
@@ -44,4 +106,5 @@ export const PHILOSOPHY = {
       ],
     },
   ],
+  note: 'Translations are our own renderings, made with reference to standard translations of each text.',
 };
