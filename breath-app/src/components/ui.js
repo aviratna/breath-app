@@ -33,6 +33,18 @@ const ICONS = {
       <Path d="M8 11V8a4 4 0 018 0v3" />
     </>
   ),
+  info: (
+    <>
+      <Circle cx="12" cy="12" r="9" />
+      <Path d="M12 11v5M12 8h.01" />
+    </>
+  ),
+  focus: (
+    <>
+      <Circle cx="12" cy="12" r="8.5" />
+      <Circle cx="12" cy="12" r="3.5" />
+    </>
+  ),
   bell: <Path d="M6 16V11a6 6 0 0112 0v5l1.5 2h-15L6 16zM10 20.5a2 2 0 004 0" />,
   copy: (
     <>

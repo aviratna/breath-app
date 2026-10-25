@@ -20,6 +20,12 @@ import NameScreen from './src/screens/NameScreen';
 import ConnectScreen from './src/screens/ConnectScreen';
 import PhilosophyScreen from './src/screens/PhilosophyScreen';
 import PersonScreen from './src/screens/PersonScreen';
+import FocusStartScreen from './src/screens/FocusStartScreen';
+import FocusSessionScreen from './src/screens/FocusSessionScreen';
+import FocusTodayScreen from './src/screens/FocusTodayScreen';
+import FocusIntentionScreen from './src/screens/FocusIntentionScreen';
+import { FocusProvider } from './src/state/FocusContext';
+import { onMorningOpened } from './src/lib/morning';
 import { codeFromUrl } from './src/lib/api';
 import { onGiftNotificationOpened } from './src/lib/push';
 import { colors } from './src/theme/tokens';
@@ -59,11 +65,24 @@ function useGiftNotifications(me, navReady) {
   }, [pendingGift, me, navReady]);
 }
 
+// Tapping the morning reminder opens today's intention.
+function useMorningNotification(me, navReady) {
+  const [pending, setPending] = useState(false);
+  useEffect(() => onMorningOpened(() => setPending(true)), []);
+  useEffect(() => {
+    if (pending && me && navReady && navigationRef.isReady()) {
+      navigationRef.navigate('FocusIntention');
+      setPending(false);
+    }
+  }, [pending, me, navReady]);
+}
+
 function Root() {
   const { ready, hasOnboarded, me } = useBreath();
   const [navReady, setNavReady] = useState(false);
   useInviteLinks(me, navReady);
   useGiftNotifications(me, navReady);
+  useMorningNotification(me, navReady);
   if (!ready) return <Loading />;
   const initial = !hasOnboarded ? 'Onboarding' : me ? 'Home' : 'Name';
   return (
@@ -80,6 +99,10 @@ function Root() {
         <Stack.Screen name="Connect" component={ConnectScreen} />
         <Stack.Screen name="Philosophy" component={PhilosophyScreen} />
         <Stack.Screen name="Person" component={PersonScreen} />
+        <Stack.Screen name="FocusStart" component={FocusStartScreen} />
+        <Stack.Screen name="FocusSession" component={FocusSessionScreen} />
+        <Stack.Screen name="FocusToday" component={FocusTodayScreen} />
+        <Stack.Screen name="FocusIntention" component={FocusIntentionScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -109,7 +132,9 @@ export default function App() {
     <SafeAreaProvider>
       <StatusBar style="dark" />
       <BreathProvider>
-        <Root />
+        <FocusProvider>
+          <Root />
+        </FocusProvider>
       </BreathProvider>
     </SafeAreaProvider>
   );
