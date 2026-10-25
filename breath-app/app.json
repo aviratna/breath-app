@@ -37,6 +37,30 @@
           "color": "#2D6A78",
           "defaultChannel": "breaths"
         }
+      ],
+      [
+        "react-native-android-widget",
+        {
+          "fonts": [
+            "./node_modules/@expo-google-fonts/newsreader/400Regular/Newsreader_400Regular.ttf"
+          ],
+          "widgets": [
+            {
+              "name": "Breath",
+              "label": "Breath",
+              "description": "Your day of breaths, and your people a tap away",
+              "minWidth": "250dp",
+              "minHeight": "110dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 2,
+              "maxResizeWidth": "420dp",
+              "maxResizeHeight": "220dp",
+              "previewImage": "./assets/widget-preview.png",
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            }
+          ]
+        }
       ]
     ]
   }

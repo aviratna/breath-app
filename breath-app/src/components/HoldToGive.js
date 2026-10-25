@@ -5,6 +5,8 @@ import { colors, fonts, radius } from '../theme/tokens';
 import { Avatar, Icon } from './ui';
 
 const HOLD_MS = 1200;
+// A press shorter than this is a tap (it opens the person); the hold screen appears after it.
+export const TAP_MS = 220;
 const RING = 236;
 const STROKE = 4;
 const R = RING / 2 - STROKE;
@@ -35,10 +37,12 @@ export function useHoldToGive({ onComplete, breathsLeft }) {
   const beat = useRef(new Animated.Value(0)).current;
   const beatLoop = useRef(null);
   const anim = useRef(null);
+  const showTimer = useRef(null);
   const [person, setPerson] = useState(null);
 
   function start(p) {
-    setPerson(p);
+    clearTimeout(showTimer.current);
+    showTimer.current = setTimeout(() => setPerson(p), TAP_MS);
     progress.setValue(0);
     // The person's circle beats softly, lub-dub, while you hold.
     beat.setValue(0);
@@ -54,6 +58,7 @@ export function useHoldToGive({ onComplete, breathsLeft }) {
     anim.current = Animated.timing(progress, { toValue: 1, duration: HOLD_MS, easing: Easing.inOut(Easing.quad), useNativeDriver: false });
     anim.current.start(({ finished }) => {
       if (beatLoop.current) beatLoop.current.stop();
+      clearTimeout(showTimer.current);
       if (!finished) return;
       Vibration.vibrate([0, 18, 90, 12]);
       setPerson(null);
@@ -64,6 +69,7 @@ export function useHoldToGive({ onComplete, breathsLeft }) {
   function cancel() {
     if (anim.current) anim.current.stop();
     if (beatLoop.current) beatLoop.current.stop();
+    clearTimeout(showTimer.current);
     setPerson(null);
   }
 
@@ -119,16 +125,29 @@ export function useHoldToGive({ onComplete, breathsLeft }) {
 
 // One person you can give to. Press and hold to give; screen-reader users get a direct
 // "Give a breath" action instead, since a long hold is hard to perform with one.
-export function PersonRow({ name, meta, favourite, onToggleFavourite, onPressIn, onPressOut, onGiveNow }) {
+export function PersonRow({ name, meta, favourite, onToggleFavourite, onPressIn, onPressOut, onGiveNow, onOpen }) {
+  const pressedAt = useRef(0);
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`${name}${meta ? `, ${meta}` : ''}`}
-      accessibilityHint="Press and hold to give a breath"
-      accessibilityActions={[{ name: 'activate', label: `Give ${name} a breath` }]}
-      onAccessibilityAction={(e) => e.nativeEvent.actionName === 'activate' && onGiveNow && onGiveNow()}
-      onPressIn={onPressIn}
-      onPressOut={onPressOut}
+      accessibilityHint="Tap to see your breaths together. Press and hold to give a breath"
+      accessibilityActions={[
+        { name: 'activate', label: `Give ${name} a breath` },
+        ...(onOpen ? [{ name: 'longpress', label: `Open ${name}` }] : []),
+      ]}
+      onAccessibilityAction={(e) => {
+        if (e.nativeEvent.actionName === 'activate' && onGiveNow) onGiveNow();
+        if (e.nativeEvent.actionName === 'longpress' && onOpen) onOpen();
+      }}
+      onPressIn={() => {
+        pressedAt.current = Date.now();
+        onPressIn && onPressIn();
+      }}
+      onPressOut={() => {
+        onPressOut && onPressOut();
+        if (onOpen && Date.now() - pressedAt.current < TAP_MS) onOpen();
+      }}
       style={({ pressed }) => [styles.row, pressed && { borderColor: colors.tide, backgroundColor: colors.tideMist }]}
     >
       <Avatar name={name} size={38} />

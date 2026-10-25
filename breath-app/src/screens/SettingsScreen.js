@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, Switch, Linking, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, fonts, type } from '../theme/tokens';
@@ -6,6 +6,7 @@ import { useBreath } from '../state/BreathContext';
 import { errorMessage, MAX_NAME, SITE_URL } from '../lib/api';
 import { Avatar, Card, Icon, ScreenHeader } from '../components/ui';
 import { radius } from '../theme/tokens';
+import { formatTime, loadMorning, MORNING_DEFAULT, morningSupported, saveMorning } from '../lib/morning';
 
 const PRIVACY_URL = `${SITE_URL}/privacy/`;
 
@@ -15,6 +16,30 @@ export default function SettingsScreen({ navigation }) {
   const [draft, setDraft] = useState('');
   const [saving, setSaving] = useState(false);
   const [query, setQuery] = useState('');
+  const [morning, setMorning] = useState(MORNING_DEFAULT);
+  const [morningNote, setMorningNote] = useState(null);
+
+  useEffect(() => {
+    if (morningSupported) loadMorning().then(setMorning);
+  }, []);
+
+  // Applies a change to the morning reminder; the time moves in quarter hours.
+  async function updateMorning(change) {
+    const next = { ...morning, ...change };
+    setMorning(next);
+    setMorningNote(null);
+    try {
+      const saved = await saveMorning(next);
+      setMorning(saved);
+      if (next.on && !saved.on) setMorningNote('Allow notifications for Breath in your phone’s settings to use this.');
+    } catch (e) {
+      setMorningNote('Couldn’t set the reminder on this phone.');
+    }
+  }
+  function shiftMorning(minutes) {
+    const total = (morning.hour * 60 + morning.minute + minutes + 1440) % 1440;
+    updateMorning({ hour: Math.floor(total / 60), minute: total % 60 });
+  }
 
   async function saveName() {
     setSaving(true);
@@ -140,6 +165,42 @@ export default function SettingsScreen({ navigation }) {
         </Card>
         <Text style={[type.small, styles.note]}>Blocked people can{'’'}t give you breaths. They aren{'’'}t told.</Text>
 
+        {morningSupported ? (
+          <>
+            <Text style={[type.label, styles.sectionLabel, { marginTop: 22 }]}>Morning breath</Text>
+            <Card style={{ overflow: 'hidden' }}>
+              <View style={[styles.row, morning.on && styles.rowDivider]}>
+                <View style={{ flex: 1, paddingVertical: 10 }}>
+                  <Text style={styles.rowLabel}>A gentle nudge each morning</Text>
+                  <Text style={type.small}>{'“'}Who{'’'}s on your mind today?{'”'} Once a day, never more.</Text>
+                </View>
+                <Switch
+                  accessibilityLabel="Morning breath reminder"
+                  value={morning.on}
+                  onValueChange={(on) => updateMorning({ on })}
+                  trackColor={{ true: colors.tide, false: colors.mist }}
+                  thumbColor={colors.paper}
+                />
+              </View>
+              {morning.on ? (
+                <View style={styles.row}>
+                  <Text style={styles.rowLabel}>Time</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Pressable accessibilityRole="button" accessibilityLabel="Fifteen minutes earlier" onPress={() => shiftMorning(-15)} style={styles.stepBtn}>
+                      <Text style={styles.stepLabel}>−</Text>
+                    </Pressable>
+                    <Text style={styles.time} accessibilityLiveRegion="polite">{formatTime(morning.hour, morning.minute)}</Text>
+                    <Pressable accessibilityRole="button" accessibilityLabel="Fifteen minutes later" onPress={() => shiftMorning(15)} style={styles.stepBtn}>
+                      <Text style={styles.stepLabel}>+</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              ) : null}
+            </Card>
+            {morningNote ? <Text style={[type.small, styles.note]}>{morningNote}</Text> : null}
+          </>
+        ) : null}
+
         <Card style={{ overflow: 'hidden', marginTop: 18 }}>
           <View style={[styles.row, styles.rowDivider]}>
             <Text style={styles.rowLabel}>Public figure mode</Text>
@@ -206,4 +267,7 @@ const styles = StyleSheet.create({
   note: { marginHorizontal: 4, marginTop: 8 },
   error: { fontFamily: fonts.ui, fontSize: 13, color: colors.danger, marginTop: 14 },
   danger: { fontFamily: fonts.uiMedium, fontSize: 15, color: colors.danger },
+  stepBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  stepLabel: { fontFamily: fonts.uiMedium, fontSize: 22, color: colors.ink },
+  time: { fontFamily: fonts.uiMedium, fontSize: 15, color: colors.tide, minWidth: 74, textAlign: 'center' },
 });

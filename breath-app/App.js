@@ -19,6 +19,7 @@ import SettingsScreen from './src/screens/SettingsScreen';
 import NameScreen from './src/screens/NameScreen';
 import ConnectScreen from './src/screens/ConnectScreen';
 import PhilosophyScreen from './src/screens/PhilosophyScreen';
+import PersonScreen from './src/screens/PersonScreen';
 import { codeFromUrl } from './src/lib/api';
 import { onGiftNotificationOpened } from './src/lib/push';
 import { colors } from './src/theme/tokens';
@@ -78,6 +79,7 @@ function Root() {
         <Stack.Screen name="Name" component={NameScreen} />
         <Stack.Screen name="Connect" component={ConnectScreen} />
         <Stack.Screen name="Philosophy" component={PhilosophyScreen} />
+        <Stack.Screen name="Person" component={PersonScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

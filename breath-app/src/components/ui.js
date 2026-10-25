@@ -27,6 +27,13 @@ const ICONS = {
   ),
   star: <Path d="M12 3.6l2.5 5.2 5.7.8-4.1 4 1 5.6L12 16.5l-5.1 2.7 1-5.6-4.1-4 5.7-.8z" />,
   edit: <Path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" />,
+  lock: (
+    <>
+      <Rect x="5" y="11" width="14" height="9" rx="2" />
+      <Path d="M8 11V8a4 4 0 018 0v3" />
+    </>
+  ),
+  bell: <Path d="M6 16V11a6 6 0 0112 0v5l1.5 2h-15L6 16zM10 20.5a2 2 0 004 0" />,
   copy: (
     <>
       <Rect x="8" y="8" width="12" height="12" rx="2" />
