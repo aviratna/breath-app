@@ -94,7 +94,7 @@ export const PHILOSOPHY = {
     },
     {
       heading: 'The one gift no one can buy',
-      founder: 'Aviratna, founder of Breath',
+      founder: 'The founder of Breath',
       body: [
         'Remember what you are giving. A breath is the most precious gift in the world — more precious than anything that can be bought, because it cannot be bought at all.',
         'No one earns it and no one can purchase it. Every one of us was given it by God, freely, from our very first moment. What we do with it is our own choice — and choosing to spend one on someone you love is a gift no price can match.',
