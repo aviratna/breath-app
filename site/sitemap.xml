@@ -1,25 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <url><loc>https://aviratna.github.io/breath-app/</loc><lastmod>2026-10-25</lastmod>
-    <xhtml:link rel="alternate" hreflang="en" href="https://aviratna.github.io/breath-app/"/>
-    <xhtml:link rel="alternate" hreflang="hi" href="https://aviratna.github.io/breath-app/hi/"/>
-  </url>
-  <url><loc>https://aviratna.github.io/breath-app/hi/</loc><lastmod>2026-10-25</lastmod>
-    <xhtml:link rel="alternate" hreflang="hi" href="https://aviratna.github.io/breath-app/hi/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://aviratna.github.io/breath-app/"/>
-  </url>
-  <url><loc>https://aviratna.github.io/breath-app/philosophy/</loc><lastmod>2026-10-25</lastmod>
-    <xhtml:link rel="alternate" hreflang="en" href="https://aviratna.github.io/breath-app/philosophy/"/>
-    <xhtml:link rel="alternate" hreflang="hi" href="https://aviratna.github.io/breath-app/hi/philosophy/"/>
-  </url>
-  <url><loc>https://aviratna.github.io/breath-app/hi/philosophy/</loc><lastmod>2026-10-25</lastmod>
-    <xhtml:link rel="alternate" hreflang="hi" href="https://aviratna.github.io/breath-app/hi/philosophy/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://aviratna.github.io/breath-app/philosophy/"/>
-  </url>
-  <url><loc>https://aviratna.github.io/breath-app/faq/</loc><lastmod>2026-10-25</lastmod>
-  </url>
-  <url><loc>https://aviratna.github.io/breath-app/privacy/</loc><lastmod>2026-10-25</lastmod>
-  </url>
-  <url><loc>https://aviratna.github.io/breath-app/delete-account/</loc><lastmod>2026-10-25</lastmod>
-  </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://aviratna.github.io/breath-app/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://aviratna.github.io/breath-app/philosophy/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://aviratna.github.io/breath-app/faq/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://aviratna.github.io/breath-app/privacy/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://aviratna.github.io/breath-app/delete-account/</loc><lastmod>2026-10-25</lastmod></url>
 </urlset>

@@ -13,7 +13,6 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { PHILOSOPHY } from '../breath-app/src/content/philosophy.js';
-import { PHILOSOPHY_HI } from './philosophy.hi.mjs';
 
 export const SITE = 'https://aviratna.github.io/breath-app';
 const BASE = new URL(SITE).pathname.replace(/\/$/, '') + '/'; // '/breath-app/'
@@ -31,11 +30,11 @@ const mark = (size, stroke = 'currentColor', dot = 'var(--accent)', sw = 1.3) =>
 const downloadIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>';
 
 // ---------------------------------------------------------------------------------------
-// Words. Hindi is a draft worth a native read before wide sharing.
+// Words.
 
 const T = {
   en: {
-    nav: { how: 'How it works', idea: 'The idea', faq: 'FAQ', download: 'Download', other: 'हिन्दी', otherLabel: 'हिन्दी में पढ़ें' },
+    nav: { how: 'How it works', idea: 'The idea', faq: 'FAQ', download: 'Download' },
     skip: 'Skip to content',
     footerNote: 'The count is a device for attention, not a medical or actuarial prediction.',
     footer: { privacy: 'Privacy', delete: 'Delete your account', faq: 'FAQ', contact: 'Contact' },
@@ -74,57 +73,14 @@ const T = {
       today: (n) => `About ${n} breaths left today.`,
     },
   },
-  hi: {
-    nav: { how: 'यह कैसे काम करता है', idea: 'विचार', faq: 'सवाल-जवाब', download: 'डाउनलोड', other: 'English', otherLabel: 'Read in English' },
-    skip: 'सीधे सामग्री पर जाएँ',
-    footerNote: 'यह गिनती ध्यान का एक साधन है, कोई चिकित्सीय या बीमांकिक भविष्यवाणी नहीं।',
-    footer: { privacy: 'गोपनीयता (English)', delete: 'अपना खाता मिटाएँ (English)', faq: 'सवाल-जवाब (English)', contact: 'संपर्क' },
-    getAndroid: 'Android के लिए डाउनलोड करें',
-    getAndroidShort: 'Android के लिए Breath पाएँ',
-    openWeb: 'iPhone या वेब पर इस्तेमाल करें',
-    home: {
-      title: 'Breath: किसी अपने पर एक साँस ख़र्च करें',
-      description: 'Breath आपके दिन में बची साँसों की एक शांत गिनती रखता है। किसी नाम को दबाकर रखें, और उनमें से एक साँस उस व्यक्ति को चली जाती है जिसे आप याद कर रहे हैं। न संदेश, न जवाब की उम्मीद।',
-      eyebrow: 'Android, iPhone और वेब के लिए एक चिंतनशील ऐप',
-      h1: 'किसी अपने पर एक साँस ख़र्च करें।',
-      lede: 'Breath आपके दिन में बची साँसों की एक शांत गिनती रखता है। किसी नाम को दबाकर रखें, और उनमें से एक साँस उस व्यक्ति को चली जाती है जिसे आप याद कर रहे हैं। न संदेश, न जवाब की उम्मीद।',
-      fine: 'मुफ़्त · कोई विज्ञापन नहीं · कोई ट्रैकिंग नहीं · Google Play पर जल्द',
-      dialLabel: 'आज बची साँसें',
-      dialNote: 'आपका दिन, अभी: हर बिंदु पंद्रह मिनट है। हर बार जब घेरा साँस छोड़ता है, एक साँस बीत जाती है — लगभग पंद्रह प्रति मिनट, आराम की गति।',
-      in: 'साँस लें', out: 'साँस छोड़ें',
-      dailyEyebrow: 'आज के लिए',
-      dailyMore: 'Breath के पीछे का विचार पढ़ें →',
-      ideaH2: 'हर प्राणी एक निश्चित संख्या में साँसें लेकर जन्म लेता है।',
-      ideaP: 'एक पुरानी योगिक सीख जीवन को वर्षों में नहीं, साँसों में गिनती है, और बौद्ध साधना बार-बार साँस पर लौटती है — हमारे पास सबसे वर्तमान चीज़। एक साँस को बीतते देखना, जीवन के एक छोटे हिस्से को बीतते देखना है। Breath उसी ध्यान को धीरे से अपनाता है।',
-      howEyebrow: 'यह कैसे काम करता है', howH2: 'बिना कुछ कहे, कह दीजिए।',
-      steps: [
-        ['अपने लोगों को बुलाएँ', 'WhatsApp या कहीं भी एक लिंक भेजें। जैसे ही वे उसे खोलेंगे, आप जुड़ जाएँगे। न फ़ोन नंबर, न कॉन्टैक्ट अपलोड।', 'invite', 'निमंत्रण स्क्रीन: छह अक्षरों का कोड और लिंक साझा करने का बटन।'],
-        ['एक नाम दबाकर रखें', 'दबाए रखने पर एक घेरा भरता है। छोड़ दें तो रद्द। हर उपहार में आपकी अपनी एक साँस लगती है — यही इसे सच्चा बनाता है।', 'hold', 'एक नाम दबाकर रखना: व्यक्ति के अक्षर के चारों ओर घेरा भर रहा है।'],
-        ['उन्हें बस पता चल जाता है', 'वे देखते हैं कि आपने उन पर एक साँस ख़र्च की। वे बस मुस्कुरा सकते हैं, या एक साँस वापस भेज सकते हैं। कोई बातचीत निभानी नहीं पड़ती।', 'received', 'साँस मिलना: माँ ने कुछ मिनट पहले आप पर एक साँस ख़र्च की।'],
-      ],
-      principles: [
-        ['बस एक नाम', 'न ईमेल, न फ़ोन नंबर, न पासवर्ड। आपको केवल वही लोग देख सकते हैं जिनसे आप जुड़ते हैं।'],
-        ['स्वभाव से शांत', 'न फ़ीड, न लाइक, न स्ट्रीक, न विज्ञापन। आपके अपनों के सिवा कुछ भी आपका ध्यान नहीं माँगता।'],
-        ['आपके नियंत्रण में', 'किसी को भी ब्लॉक करें, उन्हें बताया नहीं जाएगा। जब चाहें अपना खाता और उससे जुड़ा सब कुछ मिटा दें।'],
-      ],
-      privacyLink: 'गोपनीयता नीति (English)',
-      dlH2: 'आज में अब भी हज़ारों साँसें बाक़ी हैं।',
-      dlP: 'एक अच्छे से ख़र्च कीजिए।',
-      dlSmall: 'मुफ़्त। Android 7 या नया, या कोई भी आधुनिक ब्राउज़र।',
-      today: (n) => `आज लगभग ${n} साँसें बची हैं।`,
-    },
-  },
 };
 
 // ---------------------------------------------------------------------------------------
 // Page frame
 
-function head({ lang, title, description, page, depth, alt, noindex, jsonld, ogTitle, ogDescription }) {
+function head({ lang, title, description, page, depth, noindex, jsonld, ogTitle, ogDescription }) {
   const rel = '../'.repeat(depth);
   const url = SITE + '/' + page;
-  const alts = alt
-    ? `\n  <link rel="alternate" hreflang="en" href="${SITE}/${alt.en}">\n  <link rel="alternate" hreflang="hi" href="${SITE}/${alt.hi}">\n  <link rel="alternate" hreflang="x-default" href="${SITE}/${alt.en}">`
-    : '';
   return `<!doctype html>
 <html lang="${lang}">
 <head>
@@ -134,7 +90,7 @@ function head({ lang, title, description, page, depth, alt, noindex, jsonld, ogT
   <meta name="description" content="${e(description)}">
   <meta name="theme-color" content="#F5F1EA" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#161514" media="(prefers-color-scheme: dark)">
-  <meta name="color-scheme" content="light dark">${noindex ? '\n  <meta name="robots" content="noindex">' : `\n  <link rel="canonical" href="${url}">`}${alts}
+  <meta name="color-scheme" content="light dark">${noindex ? '\n  <meta name="robots" content="noindex">' : `\n  <link rel="canonical" href="${url}">`}
   <meta property="og:site_name" content="Breath">
   <meta property="og:type" content="website">
   <meta property="og:url" content="${url}">
@@ -144,7 +100,7 @@ function head({ lang, title, description, page, depth, alt, noindex, jsonld, ogT
   <meta property="og:image:width" content="1024">
   <meta property="og:image:height" content="500">
   <meta property="og:image:alt" content="Breath: a quiet ring and dot on linen.">
-  <meta property="og:locale" content="${lang === 'hi' ? 'hi_IN' : 'en_GB'}">
+  <meta property="og:locale" content="en_GB">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="${rel}favicon.png">
   <link rel="apple-touch-icon" href="${rel}apple-touch-icon.png">
@@ -154,10 +110,10 @@ function head({ lang, title, description, page, depth, alt, noindex, jsonld, ogT
 </head>`;
 }
 
-function header(lang, depth, current, other) {
+function header(lang, depth, current) {
   const rel = '../'.repeat(depth);
   const t = T[lang].nav;
-  const home = lang === 'hi' ? rel + 'hi/' : rel;
+  const home = rel;
   const cur = (k) => (current === k ? ' aria-current="page"' : '');
   return `  <a class="skip" href="#main">${T[lang].skip}</a>
   <div class="wrap">
@@ -169,7 +125,7 @@ function header(lang, depth, current, other) {
       <nav aria-label="Main">
         <a class="hide-sm" href="${home}#how">${t.how}</a>
         <a href="${home}philosophy/"${cur('idea')}>${t.idea}</a>
-        <a class="hide-sm" href="${rel}faq/"${cur('faq')}>${t.faq}</a>${other ? `\n        <a class="lang" href="${other}" hreflang="${lang === 'en' ? 'hi' : 'en'}" lang="${lang === 'en' ? 'hi' : 'en'}" aria-label="${t.otherLabel}">${t.other}</a>` : ''}
+        <a class="hide-sm" href="${rel}faq/"${cur('faq')}>${t.faq}</a>
         <a class="btn small" href="${home}#download">${t.download}</a>
       </nav>
     </header>
@@ -208,12 +164,11 @@ function dailyQuotes(lang) {
   const out = [];
   PHILOSOPHY.sections.forEach((s, si) => {
     (s.quotes || []).forEach((q, qi) => {
-      const hi = PHILOSOPHY_HI.sections[si].quotes[qi];
       out.push({
         original: q.original ? q.original.split('\n')[0].replace(/[;,]\s*$/, '') + (q.original.includes('\n') ? ' …' : '') : '',
         script: q.script || (q.original ? 'latn' : ''),
-        text: lang === 'hi' ? hi.translation : q.translation,
-        source: lang === 'hi' ? hi.source : q.source,
+        text: q.translation,
+        source: q.source,
       });
     });
   });
@@ -235,9 +190,9 @@ function dialSvg() {
 
 function home(lang) {
   const t = T[lang], h = t.home;
-  const depth = lang === 'hi' ? 1 : 0;
+  const depth = 0;
   const rel = '../'.repeat(depth);
-  const page = lang === 'hi' ? 'hi/' : '';
+  const page = '';
   const quotes = dailyQuotes(lang);
   const q0 = quotes[0];
   const jsonld = {
@@ -250,16 +205,16 @@ function home(lang) {
     operatingSystem: 'Android, Web',
     downloadUrl: APK,
     image: SITE + '/icon.png',
-    inLanguage: ['en', 'hi'],
+    inLanguage: 'en',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   };
   const step = ([title, body, img, altText], i) => `        <div class="step">
           <div class="stage"><div class="phone"><img src="${rel}img/${img}.jpg" width="585" height="1266" loading="lazy" alt="${e(altText)}"></div></div>
           <div class="text"><div class="n">0${i + 1}</div><div><h3>${title}</h3><p>${body}</p></div></div>
         </div>`;
-  return `${head({ lang, title: h.title, description: h.description, page, depth, alt: { en: '', hi: 'hi/' }, jsonld, ogTitle: 'Breath', ogDescription: lang === 'hi' ? h.description : 'Spend a breath on someone you love. No messages. No reply expected.' })}
+  return `${head({ lang, title: h.title, description: h.description, page, depth, jsonld, ogTitle: 'Breath', ogDescription: 'Spend a breath on someone you love. No messages. No reply expected.' })}
 <body>
-${header(lang, depth, 'home', lang === 'en' ? 'hi/' : '../')}
+${header(lang, depth, 'home')}
 
   <div class="wrap">
     <main id="main">
@@ -349,7 +304,7 @@ ${footer(lang, depth)}
     // drawn as 96 quarter-hour dots (spent ones fade, the current one glows).
     (function () {
       var QUOTES = ${JSON.stringify(quotes)};
-      var IN = ${JSON.stringify(h.in)}, OUT = ${JSON.stringify(h.out)}, LOCALE = ${JSON.stringify(lang === 'hi' ? 'hi-IN' : undefined)};
+      var IN = ${JSON.stringify(h.in)}, OUT = ${JSON.stringify(h.out)}, LOCALE = undefined;
       var dots = document.querySelectorAll('#dial .dots circle');
       // One breath every 4 seconds on the wall clock (1.6 s in, 2.4 s out), exactly as in the
       // app: the count falls by one as each out-breath ends.
@@ -403,10 +358,10 @@ ${footer(lang, depth)}
 // Philosophy
 
 function philosophy(lang) {
-  const P = lang === 'hi' ? PHILOSOPHY_HI : PHILOSOPHY;
-  const depth = lang === 'hi' ? 2 : 1;
+  const P = PHILOSOPHY;
+  const depth = 1;
   const rel = '../'.repeat(depth);
-  const page = lang === 'hi' ? 'hi/philosophy/' : 'philosophy/';
+  const page = 'philosophy/';
   const quote = (q, hq) => {
     const lang2 = q.script === 'tibt' ? 'bo' : q.script === 'deva' ? 'sa' : 'pi';
     const cls = q.script === 'tibt' ? 'orig tibt' : q.script === 'deva' ? 'orig deva' : 'orig latn';
@@ -420,9 +375,9 @@ ${q.original ? `        <p class="${cls}" lang="${lang2}">${br(q.original)}</p>\
   const sections = PHILOSOPHY.sections
     .map((en, si) => {
       const s = P.sections[si];
-      const quotes = (en.quotes || []).map((q, qi) => quote(q, lang === 'hi' ? s.quotes[qi] : null));
+      const quotes = (en.quotes || []).map((q) => quote(q, null));
       return `    <section${s.founder ? ' class="founder"' : ''}>
-${s.founder ? `      <p class="eyebrow">${lang === 'hi' ? 'संस्थापक की ओर से' : 'A note from the founder'}</p>\n` : ''}      <h2>${e(s.heading)}</h2>
+${s.founder ? `      <p class="eyebrow">A note from the founder</p>\n` : ''}      <h2>${e(s.heading)}</h2>
 ${s.body.map((t) => `      <p>${e(t)}</p>`).join('\n')}
 ${quotes.join('\n')}
 ${(s.after || []).map((t) => `      <p>${e(t)}</p>`).join('\n')}
@@ -430,11 +385,9 @@ ${s.founder ? `      <p class="signature">— ${e(s.founder)}</p>` : ''}
     </section>`;
     })
     .join('\n\n');
-  const title = lang === 'hi' ? 'Breath के पीछे का विचार' : 'The idea behind Breath';
+  const title = 'The idea behind Breath';
   const description =
-    lang === 'hi'
-      ? 'हर प्राणी एक निश्चित संख्या में साँसें लेकर जन्म लेता है। Breath के पीछे के योगिक, बौद्ध और तिब्बती विचार, मूल संस्कृत, पालि और तिब्बती के साथ।'
-      : 'Every being is born with a fixed number of breaths. The yogic, Buddhist and Tibetan ideas behind Breath, with the original Sanskrit, Pāli and Tibetan.';
+    'Every being is born with a fixed number of breaths. The yogic, Buddhist and Tibetan ideas behind Breath, with the original Sanskrit, Pāli and Tibetan.';
   const jsonld = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -446,9 +399,9 @@ ${s.founder ? `      <p class="signature">— ${e(s.founder)}</p>` : ''}
     author: { '@type': 'Organization', name: 'Breath', url: SITE + '/' },
     publisher: { '@type': 'Organization', name: 'Breath', logo: { '@type': 'ImageObject', url: SITE + '/icon.png' } },
   };
-  return `${head({ lang, title, description, page, depth, alt: { en: 'philosophy/', hi: 'hi/philosophy/' }, jsonld, ogDescription: lang === 'hi' ? description : 'A life counted in breaths, and why Breath lets you give one away.' })}
+  return `${head({ lang, title, description, page, depth, jsonld, ogDescription: 'A life counted in breaths, and why Breath lets you give one away.' })}
 <body>
-${header(lang, depth, 'idea', lang === 'en' ? '../hi/philosophy/' : '../../philosophy/')}
+${header(lang, depth, 'idea')}
 
   <main class="essay" id="main">
     <p class="eyebrow">${e(P.eyebrow)}</p>
@@ -460,7 +413,7 @@ ${sections}
     <p class="essay-note">${e(P.note)}</p>
     <div class="essay-end">
       ${mark(44, 'currentColor')}
-      <a class="btn" href="${lang === 'hi' ? '../' : '../'}#download">${T[lang].getAndroidShort}</a>
+      <a class="btn" href="../#download">${T[lang].getAndroidShort}</a>
     </div>
   </main>
 
@@ -527,7 +480,7 @@ function docPage(file, page, title, description) {
   html = html.replace(/<p>&lt;&lt;updated:(.+?)&gt;&gt;<\/p>/, '<p class="updated">Last updated: $1</p>');
   return `${head({ lang: 'en', title: `${title} · Breath`, description, page, depth: 1 })}
 <body>
-${header('en', 1, page, null)}
+${header('en', 1, page)}
 
   <main class="essay" id="main">
     <p class="eyebrow">Breath</p>
@@ -567,7 +520,7 @@ function faq() {
   };
   return `${head({ lang: 'en', title: 'Questions · Breath', description: 'Answers about Breath: how the count works, connecting with people, the iPhone and web version, notifications, privacy and deleting your account.', page: 'faq/', depth: 1, jsonld })}
 <body>
-${header('en', 1, 'faq', null)}
+${header('en', 1, 'faq')}
 
   <main class="essay faq" id="main">
     <p class="eyebrow">Breath</p>
@@ -699,9 +652,7 @@ function notFound() {
 
 const pages = [
   ['index.html', home('en'), ''],
-  ['hi/index.html', home('hi'), 'hi/'],
   ['philosophy/index.html', philosophy('en'), 'philosophy/'],
-  ['hi/philosophy/index.html', philosophy('hi'), 'hi/philosophy/'],
   ['faq/index.html', faq(), 'faq/'],
   ['privacy/index.html', docPage('PRIVACY.md', 'privacy/', 'Privacy policy', 'What Breath stores, why, and who can see it. No ads, no tracking, no contacts.'), 'privacy/'],
   ['delete-account/index.html', docPage('DELETE-ACCOUNT.md', 'delete-account/', 'Delete your account', 'How to delete your Breath account and everything stored with it.'), 'delete-account/'],
@@ -714,17 +665,10 @@ const today = new Date().toISOString().slice(0, 10);
 write(
   'sitemap.xml',
   `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${pages
   .filter((p) => p[2] !== null)
-  .map(([, , p]) => {
-    const pair = { '': 'hi/', 'hi/': '', 'philosophy/': 'hi/philosophy/', 'hi/philosophy/': 'philosophy/' }[p];
-    const links =
-      pair !== undefined
-        ? `\n    <xhtml:link rel="alternate" hreflang="${p.startsWith('hi/') ? 'hi' : 'en'}" href="${SITE}/${p}"/>\n    <xhtml:link rel="alternate" hreflang="${p.startsWith('hi/') ? 'en' : 'hi'}" href="${SITE}/${pair}"/>`
-        : '';
-    return `  <url><loc>${SITE}/${p}</loc><lastmod>${today}</lastmod>${links}\n  </url>`;
-  })
+  .map(([, , p]) => `  <url><loc>${SITE}/${p}</loc><lastmod>${today}</lastmod></url>`)
   .join('\n')}
 </urlset>
 `
