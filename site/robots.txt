@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /breath-app/join/
+Disallow: /join/
 
-Sitemap: https://aviratna.github.io/breath-app/sitemap.xml
+Sitemap: https://givebreath.app/sitemap.xml

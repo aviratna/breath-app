@@ -14,7 +14,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { PHILOSOPHY } from '../breath-app/src/content/philosophy.js';
 
-export const SITE = 'https://aviratna.github.io/breath-app';
+export const SITE = 'https://givebreath.app';
 const BASE = new URL(SITE).pathname.replace(/\/$/, '') + '/'; // '/breath-app/'
 const APK = 'https://github.com/aviratna/breath-app/releases/latest/download/breath.apk';
 const REPO = 'https://github.com/aviratna/breath-app';

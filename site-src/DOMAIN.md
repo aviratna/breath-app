@@ -1,6 +1,7 @@
 # Moving Breath to its own domain
 
-The site works at `https://aviratna.github.io/breath-app/` today. To move it to, say,
+The site lives at **https://givebreath.app** (since October 2026; it was at
+`https://aviratna.github.io/breath-app/` before, which now redirects). To move it again, say to
 `https://breath.app`:
 
 ## 1. Buy the domain and point it at GitHub Pages

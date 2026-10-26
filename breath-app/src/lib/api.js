@@ -24,7 +24,7 @@ export const CODE_LENGTH = 6;
 export const MAX_NAME = 40;
 
 export const APK_URL = 'https://github.com/aviratna/breath-app/releases/latest/download/breath.apk';
-export const SITE_URL = 'https://aviratna.github.io/breath-app';
+export const SITE_URL = 'https://givebreath.app';
 
 export function inviteLink(code) {
   return `${SITE_URL}/join/?c=${code}`;
