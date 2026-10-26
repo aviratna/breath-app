@@ -604,7 +604,7 @@ function join() {
       if (android) {
         // An intent link opens the app if it's installed and comes back here otherwise.
         var fallback = location.origin + location.pathname + '?c=' + code + '&nf=1';
-        var appLink = 'intent://join/' + code + '#Intent;scheme=breath;package=com.aviratna.breath;S.browser_fallback_url=' + encodeURIComponent(fallback) + ';end';
+        var appLink = 'intent://join/' + code + '#Intent;scheme=breath;package=com.givebreath.app;S.browser_fallback_url=' + encodeURIComponent(fallback) + ';end';
         primary.href = appLink;
         tertiary.href = web;
         // Try the app once automatically, unless we just came back because it isn't installed.
