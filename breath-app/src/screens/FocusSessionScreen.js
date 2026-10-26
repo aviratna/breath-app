@@ -50,7 +50,6 @@ export default function FocusSessionScreen({ navigation }) {
   const used = a ? Math.min(breathsUsed(a, now), a.planned) : 0;
   const left = a ? a.planned - used : 0;
   const spent = !!a && left <= 0;
-  const paused = !!a?.pausedAt;
 
   useEffect(() => {
     if (spent && !buzzed.current) {
@@ -94,7 +93,7 @@ export default function FocusSessionScreen({ navigation }) {
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       <View style={styles.top}>
-        <Text style={styles.eyebrow}>{paused ? 'Paused' : spent ? 'Spent' : 'Focusing'}</Text>
+        <Text style={styles.eyebrow}>{spent ? 'Spent' : 'Focusing'}</Text>
         <Pressable accessibilityRole="button" onPress={() => navigation.navigate('Home')} hitSlop={8} style={{ padding: 8 }}>
           <Text style={styles.muted}>Home</Text>
         </Pressable>
@@ -116,8 +115,8 @@ export default function FocusSessionScreen({ navigation }) {
                 borderRadius: halo / 2,
                 left: (SIZE - halo) / 2,
                 top: (SIZE - halo) / 2,
-                opacity: paused ? 0.35 : breath.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }),
-                transform: [{ scale: paused || reduceMotion ? 0.9 : breath.interpolate({ inputRange: [0, 1], outputRange: [0.82, 1.06] }) }],
+                opacity: breath.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }),
+                transform: [{ scale: reduceMotion ? 0.9 : breath.interpolate({ inputRange: [0, 1], outputRange: [0.82, 1.06] }) }],
               },
             ]}
           />
@@ -125,7 +124,7 @@ export default function FocusSessionScreen({ navigation }) {
             {dots}
           </Svg>
           <View style={[StyleSheet.absoluteFill, styles.center]} pointerEvents="none">
-            {!paused && !spent && !reduceMotion ? <Text style={styles.cue}>{inhaling ? 'breathe in' : 'breathe out'}</Text> : null}
+            {!spent && !reduceMotion ? <Text style={styles.cue}>{inhaling ? 'breathe in' : 'breathe out'}</Text> : null}
             <Text style={styles.count}>{spent ? a.planned.toLocaleString() : left.toLocaleString()}</Text>
             <Text style={styles.muted}>{spent ? 'breaths spent on this' : `of ${a.planned.toLocaleString()} left on this`}</Text>
           </View>
@@ -145,10 +144,12 @@ export default function FocusSessionScreen({ navigation }) {
             <Btn label="Done" primary onPress={done} />
           </View>
         ) : (
-          <View style={styles.row}>
-            <Btn label={paused ? 'Resume' : 'Pause'} onPress={paused ? focus.resume : focus.pause} />
-            <Btn label="Done" primary onPress={done} />
-          </View>
+          <>
+            <Text style={styles.never}>Your breaths don{'’'}t pause. Neither does this.</Text>
+            <View style={styles.row}>
+              <Btn label="Done" primary onPress={done} />
+            </View>
+          </>
         )}
         <Pressable accessibilityRole="button" onPress={() => navigation.navigate('Home')} style={{ paddingVertical: 14, alignItems: 'center' }}>
           <Text style={styles.link}>Someone on your mind? Give them a breath</Text>
@@ -183,6 +184,7 @@ const styles = StyleSheet.create({
   muted: { fontFamily: fonts.ui, fontSize: 13, color: colors.moonMuted },
   note: { fontFamily: fonts.ui, fontSize: 13.5, lineHeight: 20, color: colors.moonMuted, textAlign: 'center', maxWidth: 290, marginTop: 26 },
   footer: { paddingHorizontal: 22, paddingBottom: 8 },
+  never: { fontFamily: fonts.displayItalic, fontSize: 16, color: colors.moon, textAlign: 'center', marginBottom: 14 },
   row: { flexDirection: 'row', gap: 10 },
   btn: { flex: 1, height: 54, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
   btnGhost: { borderWidth: 1, borderColor: '#3A3733' },

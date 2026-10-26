@@ -92,7 +92,7 @@ export default function HomeScreen({ navigation }) {
             <Pressable accessibilityRole="button" onPress={() => navigation.navigate('FocusSession')} style={[styles.focusPill, styles.focusPillOn]}>
               <Icon name="focus" size={16} color={colors.linen} />
               <Text style={[styles.focusText, { color: colors.linen }]} numberOfLines={1}>
-                {focus.active.pausedAt ? 'Paused' : 'Focusing'} · {focus.active.title} · {focusLeft} left
+                Focusing · {focus.active.title} · {focusLeft} left
               </Text>
             </Pressable>
           ) : (

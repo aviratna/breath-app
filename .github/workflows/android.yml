@@ -87,7 +87,8 @@ jobs:
     # Builds the signed AAB. With GOOGLE_SERVICE_ACCOUNT_JSON set it is also submitted to
     # Google Play; without it, the AAB is attached to a GitHub pre-release so it can be
     # uploaded by hand (Google requires the very first upload to be manual anyway).
-    if: github.ref_type == 'tag' || inputs.target == 'play' || inputs.target == 'both'
+    # Also runs for a merge to main whose message contains [play].
+    if: github.ref_type == 'tag' || inputs.target == 'play' || inputs.target == 'both' || contains(github.event.head_commit.message, '[play]')
     runs-on: ubuntu-latest
     permissions:
       contents: write
