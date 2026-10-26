@@ -1,6 +1,6 @@
 # Breath — Delete your account and data
 
-**App:** Breath (developer: aviratna)
+**App:** Breath (developer: Iki Studio)
 
 ## Delete it yourself in the app (immediate)
 
@@ -25,7 +25,6 @@ Nothing is kept for backups beyond Google Firebase's standard operations.
 
 ## If you no longer have the app
 
-Open an issue at https://github.com/aviratna/breath-app/issues titled
-"Delete my Breath account", including your invite code (shown in the app under
-Settings → You). Do not post anything else personal. Your data will be deleted
-within 30 days.
+Email [ikistudio.app@gmail.com](mailto:ikistudio.app@gmail.com) with the subject "Delete my Breath account",
+including your invite code (shown in the app under Settings → You). Your data will be
+deleted within 30 days, and we will reply to confirm.

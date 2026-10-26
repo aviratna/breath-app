@@ -51,5 +51,5 @@ If this policy changes, the "Last updated" date above will change.
 
 ## Contact
 
-Questions about this policy: open an issue at
-https://github.com/aviratna/breath-app/issues
+Breath is made by Iki Studio. Questions about this policy or your data: email
+[ikistudio.app@gmail.com](mailto:ikistudio.app@gmail.com).
