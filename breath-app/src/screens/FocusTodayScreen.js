@@ -59,7 +59,7 @@ export default function FocusTodayScreen({ navigation }) {
               <View style={[styles.swatch, { backgroundColor: colors.ink }]} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.rowTitle}>{active.title}</Text>
-                <Text style={type.small}>{active.pausedAt ? 'paused' : 'now'} · {activeUsed} of {active.planned}</Text>
+                <Text style={type.small}>now · {activeUsed} of {active.planned}</Text>
               </View>
               <Icon name="chevron" size={16} color={colors.stone} />
             </Pressable>
