@@ -541,6 +541,61 @@ ${footer('en', 1)}
 }
 
 // ---------------------------------------------------------------------------------------
+// Testers: Google requires 12 testers for 14 days before a new app can go public.
+
+const PLAY_TESTING = 'https://play.google.com/apps/testing/com.givebreath.app';
+
+function testers() {
+  const mail = `mailto:${EMAIL}?subject=${encodeURIComponent('I’d like to test Breath')}&body=${encodeURIComponent('Please add my Google Play email as a tester:\n\n')}`;
+  const share = encodeURIComponent('Would you test a small app I care about? It’s called Breath: you spend one of your day’s breaths on someone you love. It takes 2 minutes to join: ' + SITE + '/testers/');
+  return `${head({ lang: 'en', title: 'Become a tester · Breath', description: 'Help Breath reach Google Play: join the 14-day test on your Android phone.', page: 'testers/', depth: 1 })}
+<body>
+${header('en', 1, 'testers')}
+
+  <main class="essay" id="main">
+    <p class="eyebrow">Breath on Google Play</p>
+    <h1>Help Breath take its first breath.</h1>
+    <p class="essay-lede">Before a new app can appear on Google Play, Google asks for at least twelve people to test it for fourteen days. If you have an Android phone, you can be one of them. It takes two minutes.</p>
+
+    <section>
+      <h2>1. Send us your Google Play email</h2>
+      <p>The Gmail address you use on your Android phone. We add it to the test list, usually within a day.</p>
+      <p><a class="btn" href="${mail}">Email ${EMAIL}</a></p>
+    </section>
+
+    <section>
+      <h2>2. Join the test</h2>
+      <p>Once we tell you you’re on the list, open this link on your phone and tap <b>Become a tester</b>.</p>
+      <p><a class="btn ghost" href="${PLAY_TESTING}">Join the Breath test on Google Play</a></p>
+    </section>
+
+    <section>
+      <h2>3. Install Breath from Google Play</h2>
+      <p>The same page links to the Play Store. If you installed Breath from our website before, uninstall that one first.</p>
+    </section>
+
+    <section>
+      <h2>4. Keep it for fourteen days</h2>
+      <p>Leave Breath installed and opted in for fourteen days in a row, and open it now and then: give a breath to someone, try a focus session. Google counts testers who stay.</p>
+      <p>Tell us what you notice, good or confusing, at <a href="mailto:${EMAIL}">${EMAIL}</a>. That is the most helpful thing a tester can do.</p>
+    </section>
+
+    <section>
+      <h2>Know someone with Android?</h2>
+      <p>Twelve is the number we need. Share this page:</p>
+      <p><a class="btn ghost" href="https://wa.me/?text=${share}">Share on WhatsApp</a></p>
+    </section>
+
+    <p class="essay-note">On an iPhone? Use <a href="../app/">Breath on the web</a> for now. Testing doesn’t collect anything beyond what the app already does; see the <a href="../privacy/">privacy policy</a>.</p>
+  </main>
+
+${footer('en', 1)}
+</body>
+</html>
+`;
+}
+
+// ---------------------------------------------------------------------------------------
 // Invite link page: /join/?c=CODE
 
 function join() {
@@ -655,6 +710,7 @@ const pages = [
   ['index.html', home('en'), ''],
   ['philosophy/index.html', philosophy('en'), 'philosophy/'],
   ['faq/index.html', faq(), 'faq/'],
+  ['testers/index.html', testers(), 'testers/'],
   ['privacy/index.html', docPage('PRIVACY.md', 'privacy/', 'Privacy policy', 'What Breath stores, why, and who can see it. No ads, no tracking, no contacts.'), 'privacy/'],
   ['delete-account/index.html', docPage('DELETE-ACCOUNT.md', 'delete-account/', 'Delete your account', 'How to delete your Breath account and everything stored with it.'), 'delete-account/'],
   ['join/index.html', join(), null],
