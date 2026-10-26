@@ -8,10 +8,10 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.aviratna.breath"
+      "bundleIdentifier": "com.givebreath.app"
     },
     "android": {
-      "package": "com.aviratna.breath",
+      "package": "com.givebreath.app",
       "adaptiveIcon": {
         "backgroundColor": "#161514",
         "foregroundImage": "./assets/android-icon-foreground.png",
