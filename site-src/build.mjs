@@ -18,6 +18,7 @@ export const SITE = 'https://aviratna.github.io/breath-app';
 const BASE = new URL(SITE).pathname.replace(/\/$/, '') + '/'; // '/breath-app/'
 const APK = 'https://github.com/aviratna/breath-app/releases/latest/download/breath.apk';
 const REPO = 'https://github.com/aviratna/breath-app';
+const EMAIL = 'ikistudio.app@gmail.com';
 const UPDATED = '25 October 2026';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -139,13 +140,13 @@ function footer(lang, depth) {
     <footer>
       <div class="note">
         ${mark(22, 'currentColor')}
-        ${t.footerNote}
+        <span>${t.footerNote} Made by Iki Studio.</span>
       </div>
       <nav aria-label="Footer">
         <a href="${rel}privacy/">${t.footer.privacy}</a>
         <a href="${rel}delete-account/">${t.footer.delete}</a>
         <a href="${rel}faq/">${t.footer.faq}</a>
-        <a href="${REPO}/issues">${t.footer.contact}</a>
+        <a href="mailto:${EMAIL}">${t.footer.contact}</a>
       </nav>
     </footer>
   </div>`;
@@ -530,7 +531,7 @@ ${FAQ.map(([q, a], i) => `    <details${i === 0 ? ' open' : ''}>
       <summary>${q}</summary>
       <div><p>${a}</p></div>
     </details>`).join('\n')}
-    <p class="essay-note">Something else? <a href="${REPO}/issues">Ask us</a>.</p>
+    <p class="essay-note">Something else? Write to <a href="mailto:${EMAIL}">${EMAIL}</a>.</p>
   </main>
 
 ${footer('en', 1)}

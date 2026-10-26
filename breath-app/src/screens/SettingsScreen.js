@@ -9,6 +9,7 @@ import { radius } from '../theme/tokens';
 import { formatTime, loadMorning, MORNING_DEFAULT, morningSupported, saveMorning } from '../lib/morning';
 
 const PRIVACY_URL = `${SITE_URL}/privacy/`;
+const CONTACT_EMAIL = 'ikistudio.app@gmail.com';
 
 export default function SettingsScreen({ navigation }) {
   const { me, connections, toggleBlock, previewMode, setPreviewMode, deleteAccount, rename } = useBreath();
@@ -224,9 +225,13 @@ export default function SettingsScreen({ navigation }) {
             <Text style={styles.rowLabel}>Breath website</Text>
             <Icon name="external" size={16} color={colors.stone} />
           </Pressable>
-          <Pressable style={styles.row} onPress={() => Linking.openURL(PRIVACY_URL)}>
+          <Pressable style={[styles.row, styles.rowDivider]} onPress={() => Linking.openURL(PRIVACY_URL)}>
             <Text style={styles.rowLabel}>Privacy policy</Text>
             <Icon name="external" size={16} color={colors.stone} />
+          </Pressable>
+          <Pressable style={styles.row} onPress={() => Linking.openURL(`mailto:${CONTACT_EMAIL}?subject=Breath`)}>
+            <Text style={styles.rowLabel}>Write to us</Text>
+            <Text style={styles.rowActionLabel}>{CONTACT_EMAIL}</Text>
           </Pressable>
         </Card>
 
