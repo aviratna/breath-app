@@ -1,6 +1,6 @@
 name: Website
 
-# Publishes site/ to GitHub Pages at https://aviratna.github.io/breath-app/, together with
+# Publishes site/ to GitHub Pages at https://givebreath.app/, together with
 # the web version of the app at /app/ (for iPhone and computers).
 # One-time setup: repo Settings → Pages → Build and deployment → Source: GitHub Actions.
 
