@@ -58,6 +58,9 @@ Made by Iki Studio · givebreath.app
 - App icon: `icon-512.png` (512 × 512)
 - Feature graphic: `feature-graphic-1024x500.png`
 - Phone screenshots: `phone/01-home.png` … `phone/08-philosophy.png` (1080 × 1920, in order)
+- 7-inch tablet screenshots: `tablet-7in/01…06.png` (1080 × 1920)
+- 10-inch tablet screenshots: `tablet-10in/01…06.png` (1440 × 2560)
+- Desktop, Android XR screenshots and XR videos: leave empty (Breath is a phone and tablet app)
 
 ## App content answers
 
