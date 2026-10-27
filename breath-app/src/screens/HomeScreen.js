@@ -6,7 +6,8 @@ import { useLiveBreaths } from '../lib/breathClock';
 import { useBreath } from '../state/BreathContext';
 import { breathsUsed, useFocus } from '../state/FocusContext';
 import { relativeTime } from '../lib/api';
-import { Avatar, BreathMark, Icon, IconButton, ProgressRing, SecondaryButton } from '../components/ui';
+import { Avatar, BreathMark, Icon, IconButton, SecondaryButton } from '../components/ui';
+import BreathDial from '../components/BreathDial';
 import { PersonRow, useHoldToGive } from '../components/HoldToGive';
 
 export default function HomeScreen({ navigation }) {
@@ -81,12 +82,7 @@ export default function HomeScreen({ navigation }) {
         {isPublic ? <Text style={styles.publicTag}>One to one, not one to a million</Text> : null}
 
         <View style={styles.ringWrap}>
-          <ProgressRing size={232} progress={dayProgress}>
-            <Text style={styles.count} accessibilityLabel={`${dailyBreathsRemaining} breaths left today`}>
-              {dailyBreathsRemaining.toLocaleString()}
-            </Text>
-            <Text style={styles.countLabel}>breaths left today</Text>
-          </ProgressRing>
+          <BreathDial size={272} progress={dayProgress} breathsLeft={dailyBreathsRemaining} dark={false} />
           <Text style={styles.estimate}>A contemplative estimate, not a prediction</Text>
           {focus.active ? (
             <Pressable accessibilityRole="button" onPress={() => navigation.navigate('FocusSession')} style={[styles.focusPill, styles.focusPillOn]}>
@@ -204,8 +200,6 @@ const styles = StyleSheet.create({
   wordmark: { fontFamily: fonts.displayItalic, fontSize: 24, color: colors.ink },
   publicTag: { fontFamily: fonts.displayItalic, fontSize: 15, color: colors.tide, paddingLeft: 4, marginTop: 2 },
   ringWrap: { alignItems: 'center', marginTop: 18, marginBottom: 22 },
-  count: { fontFamily: fonts.displayLight, fontSize: 58, lineHeight: 64, letterSpacing: -1.5, color: colors.ink },
-  countLabel: { fontFamily: fonts.ui, fontSize: 13, color: colors.stone, marginTop: 4 },
   estimate: { fontFamily: fonts.ui, fontSize: 12.5, color: colors.stone, marginTop: 12 },
   focusPill: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 14, minHeight: 40, paddingHorizontal: 16, borderRadius: 999, borderWidth: 1, borderColor: colors.border, maxWidth: '100%' },
   focusPillOn: { backgroundColor: colors.ink, borderColor: colors.ink },

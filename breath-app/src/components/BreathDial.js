@@ -118,7 +118,7 @@ export default function BreathDial({ size = 300, progress, breathsLeft, dark = t
       />
       <View style={[StyleSheet.absoluteFill, styles.center]} pointerEvents="none">
         {!reduceMotion ? <Text style={[styles.cue, { color: fg }]}>{inhaling ? 'breathe in' : 'breathe out'}</Text> : null}
-        <Text style={[styles.count, { color: fg }]}>{breathsLeft.toLocaleString()}</Text>
+        <Text style={[styles.count, { color: fg, fontSize: Math.round(size * 0.15) }]}>{breathsLeft.toLocaleString()}</Text>
         <Text style={[styles.label, { color: muted }]}>breaths left today</Text>
       </View>
     </View>

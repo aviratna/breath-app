@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import Svg, { Circle } from 'react-native-svg';
 import { colors, fonts } from '../theme/tokens';
 import { useBreath } from '../state/BreathContext';
+import { useLiveBreaths } from '../lib/breathClock';
 import { PrimaryButton, TextButton } from '../components/ui';
+import BreathDial from '../components/BreathDial';
 
 const STEPS = [
   {
@@ -21,10 +22,15 @@ const STEPS = [
     title: 'Say it without saying anything.',
     body: 'When you think of someone but don’t have a conversation in you, give them a breath. It costs one of your own, which is what makes it sincere. No thread, no reply expected.',
   },
+  {
+    title: 'Spend them on purpose.',
+    body: 'Tap a name to see your month together. Price a task in breaths with Breath for focus: your breaths don’t pause, and neither does it. On Android, keep the day on your home screen with the widget.',
+  },
 ];
 
 export default function OnboardingScreen({ navigation }) {
-  const { completeOnboarding, me } = useBreath();
+  const { completeOnboarding, me, dayProgress, givenToday } = useBreath();
+  const breathsLeft = useLiveBreaths(givenToday);
   const [step, setStep] = useState(0);
   const s = STEPS[step];
   const isLast = step === STEPS.length - 1;
@@ -44,12 +50,9 @@ export default function OnboardingScreen({ navigation }) {
       <View style={styles.content}>
         <Text style={styles.wordmark}>Breath</Text>
 
+        {/* Your real day, breathing: the same dial as Home and the lock screen. */}
         <View style={styles.mark}>
-          <Svg width={168} height={168} viewBox="0 0 168 168">
-            <Circle cx={84} cy={84} r={78} fill="none" stroke={colors.moon} strokeOpacity={0.18} strokeWidth={1} />
-            <Circle cx={84} cy={84} r={62} fill="none" stroke={colors.moon} strokeWidth={1.5} />
-            <Circle cx={84} cy={84} r={6} fill={colors.tideLight} />
-          </Svg>
+          <BreathDial size={204} progress={dayProgress} breathsLeft={breathsLeft} />
         </View>
 
         <Text style={styles.title}>{s.title}</Text>
@@ -89,7 +92,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.night },
   content: { flex: 1, paddingTop: 24, paddingHorizontal: 28, paddingBottom: 20 },
   wordmark: { fontFamily: fonts.displayItalic, fontSize: 22, color: colors.moon },
-  mark: { alignItems: 'center', marginTop: 44, marginBottom: 40 },
+  mark: { alignItems: 'center', marginTop: 28, marginBottom: 30 },
   title: { fontFamily: fonts.display, fontSize: 34, lineHeight: 39, letterSpacing: -0.4, color: colors.moon, marginBottom: 14 },
   attribution: { fontFamily: fonts.displayItalic, fontSize: 16, color: colors.tideLight, marginBottom: 14 },
   body: { fontFamily: fonts.ui, fontSize: 16, lineHeight: 26, color: colors.moonMuted },

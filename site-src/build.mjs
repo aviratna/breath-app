@@ -59,8 +59,14 @@ const T = {
       howEyebrow: 'How it works', howH2: 'Say it without saying anything.',
       steps: [
         ['Invite your people', 'Share a link over WhatsApp or anywhere. When they open it, you’re connected. No phone numbers, no contact uploads.', 'invite', 'The invite screen with a six-letter invite code and a Share invite link button.'],
-        ['Hold a name', 'A ring fills as you hold. Let go to cancel. Each gift costs one of your own breaths, which is what makes it sincere.', 'hold', 'Holding a name: a ring fills around the person’s initial, with Keep holding underneath.'],
+        ['Hold a name', 'A ring fills and a heartbeat crosses the screen as you hold. Let go to cancel. Each gift costs one of your own breaths, which is what makes it sincere.', 'hold', 'Holding a name: a ring fills around Dad’s initial while a heartbeat line draws beneath it.'],
         ['They simply know', 'They see that you spent a breath on them. They can just smile, or breathe one back. There is no thread to keep up.', 'received', 'Receiving: Mom spent a breath on you, a few minutes ago. No reply needed.'],
+      ],
+      moreEyebrow: 'More in Breath', moreH2: 'Breaths, spent on purpose.',
+      more: [
+        ['Your month, together', 'Tap a name to see this month as a quiet grid of days: the days you gave, the days they gave, the days you both did. Only on your phone. No streaks, no scores.', 'person', 'A month of dots between you and Mom: filled for days you gave, rings for days she gave.'],
+        ['Breath for focus', 'Price a task in breaths before you begin — 450 is about half an hour — and watch them pass. Your breaths don’t pause, and neither does a focus session.', 'focus', 'A focus session: 436 of 450 breaths left on Write the launch email, as a ring of fading dots.'],
+        ['Your day, breathing', 'The day as 96 quarter-hour dots and a breathing circle, on the lock screen and, on Android, as a home-screen widget with your people a tap away.', 'lock', 'The lock screen dial: 8,535 breaths left today, with one given and one received.'],
       ],
       principles: [
         ['Just a name', 'No email, phone number or password. Only the people you connect with can see you.'],
@@ -275,6 +281,14 @@ ${header(lang, depth, 'home')}
       <h2>${h.howH2}</h2>
       <div class="steps">
 ${h.steps.map(step).join('\n')}
+      </div>
+    </section>
+
+    <section class="how more" id="features">
+      <p class="eyebrow">${h.moreEyebrow}</p>
+      <h2>${h.moreH2}</h2>
+      <div class="steps">
+${h.more.map((m, i) => step(m, i).replace(/<div class="n">0\d<\/div>/, '')).join('\n')}
       </div>
     </section>
 
@@ -505,6 +519,10 @@ const FAQ = [
   ['Is there an iPhone app?', 'Not yet. Use <a href="../app/">Breath on the web</a> in Safari, then tap <b>Share → Add to Home Screen</b> to keep it like an app. An App Store version is planned.'],
   ['How do I install the Android app?', 'Tap <a href="' + APK + '">Download for Android</a> and open the file. Android may ask you to allow installs from your browser the first time — that is normal for apps from outside Google Play. Google Play is coming soon.'],
   ['Will I be notified when someone gives me a breath?', 'Yes, on Android, if you allow notifications when the app asks. Tapping the notification opens the breath. The web version shows breaths when you open it.'],
+  ['What is Breath for focus?', 'Before a task, you decide what it is worth in breaths — 225, 450 or 900, about 15, 30 or 60 minutes — and watch them pass on a breathing dial. There is no pause button, on purpose: your breaths don’t stop while you step away. In the evening, see where today’s breaths went. It all stays on your phone.'],
+  ['What does tapping a name show?', 'Your month together: a grid of days showing when you gave a breath, when they did, and when you both did. It is built only from your own account and only you see it. No streaks, no scores.'],
+  ['Is there a widget?', 'On Android, yes. Long-press your home screen, choose <b>Widgets</b>, then <b>Breath</b>. It shows the day as a dial of quarter-hour dots and up to three of your people. Tap a name twice to give a breath without opening the app.'],
+  ['What is Morning breath?', 'An optional, gentle notification once a day at a time you choose: “Who’s on your mind today?” It is off unless you turn it on in Settings, and opens today’s intention.'],
   ['Can I send a message with a breath?', 'No, and that is on purpose. A breath says “I thought of you” without asking anything back.'],
   ['What if I block someone?', 'They are not told. They simply can no longer send you breaths or see your notification address. You can unblock them in Settings.'],
   ['What does Breath know about me?', 'Only the name you type, an anonymous account ID, your invite code, your connections and the breaths you receive. No email, phone number, contacts, location or ads. <a href="../privacy/">Privacy policy</a>.'],

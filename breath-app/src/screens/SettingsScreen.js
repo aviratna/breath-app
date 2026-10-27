@@ -152,7 +152,14 @@ export default function SettingsScreen({ navigation }) {
         <Card style={{ overflow: 'hidden' }}>
           {people.map((c, i) => (
             <View key={c.id} style={[styles.row, i < people.length - 1 && styles.rowDivider]}>
-              <Text style={[styles.rowLabel, c.blocked && { color: colors.stone }]}>{c.name}</Text>
+              <Pressable
+                accessibilityRole="button"
+                disabled={c.blocked}
+                onPress={() => navigation.navigate('Person', { id: c.id, name: c.name })}
+                style={{ flex: 1, paddingVertical: 14 }}
+              >
+                <Text style={[styles.rowLabel, c.blocked && { color: colors.stone }]}>{c.name}</Text>
+              </Pressable>
               <Pressable accessibilityRole="button" accessibilityLabel={`${c.blocked ? 'Unblock' : 'Block'} ${c.name}`} onPress={() => onBlock(c.id)} style={styles.rowAction}>
                 <Text style={styles.rowActionLabel}>{c.blocked ? 'Unblock' : 'Block'}</Text>
               </Pressable>
