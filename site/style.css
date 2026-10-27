@@ -226,3 +226,5 @@ footer nav a { color: var(--muted); padding: 10px; }
   .top nav a { padding: 10px 8px; }
 }
 .essay > h2 { margin-top: 44px; }
+
+.how.more { padding-top: 24px; }

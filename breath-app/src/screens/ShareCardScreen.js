@@ -4,12 +4,39 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { colors, fonts } from '../theme/tokens';
-import { BreathMark, PrimaryButton, ScreenHeader, TextButton } from '../components/ui';
+import Svg, { Circle } from 'react-native-svg';
+import { PrimaryButton, ScreenHeader, TextButton } from '../components/ui';
 import { useBreath } from '../state/BreathContext';
+
+// The day as 96 quarter-hour dots, still (no animation, so the saved image is crisp).
+function DayDots({ size = 132, progress }) {
+  const n = 96;
+  const r = size / 2 - 6;
+  const now = Math.min(n - 1, Math.floor(progress * n));
+  return (
+    <Svg width={size} height={size}>
+      {Array.from({ length: n }, (_, i) => {
+        const a = (i / n) * 2 * Math.PI - Math.PI / 2;
+        const isNow = i === now;
+        return (
+          <Circle
+            key={i}
+            cx={size / 2 + r * Math.cos(a)}
+            cy={size / 2 + r * Math.sin(a)}
+            r={isNow ? 3.6 : 1.7}
+            fill={isNow ? colors.tideLight : colors.moon}
+            opacity={i < now ? 0.18 : 0.9}
+          />
+        );
+      })}
+      <Circle cx={size / 2} cy={size / 2} r={size * 0.22} fill="rgba(140,195,207,0.14)" stroke="rgba(140,195,207,0.35)" strokeWidth={1} />
+    </Svg>
+  );
+}
 
 export default function ShareCardScreen({ route, navigation }) {
   const { name } = route.params;
-  const { lastGift, previewMode } = useBreath();
+  const { lastGift, previewMode, dayProgress } = useBreath();
   const isCeleb = previewMode === 'celebrity';
   const cardRef = useRef(null);
   const [busy, setBusy] = useState(false);
@@ -51,7 +78,7 @@ export default function ShareCardScreen({ route, navigation }) {
         </View>
 
         <View ref={cardRef} collapsable={false} style={styles.card}>
-          <BreathMark size={64} color={colors.moon} dot={colors.tideLight} strokeWidth={1.4} />
+          <DayDots progress={dayProgress} />
           <Text style={styles.line}>
             {isCeleb ? `${name === 'you' ? 'They' : name} gave a fan a breath.` : 'I spent a breath thinking of you.'}
           </Text>
